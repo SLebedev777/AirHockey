@@ -1,4 +1,7 @@
 #include "GameScene.h"
+#include "KeyboardInputController.h"
+#include "AIInputController.h"
+
 
 USING_NS_CC;
 
@@ -69,15 +72,26 @@ bool GameScene::init()
     auto game_layer = Layer::create();
  
     auto background = cocos2d::LayerGradient::create(cocos2d::Color4B::BLUE, cocos2d::Color4B::ORANGE);
-    this->addChild(background, 1);
+    game_layer->addChild(background, 1);
 
     Rect GAMEFIELDRECT = Rect(frameCenter.x - m_currLevel.m_width / 2, 
                               frameCenter.y - m_currLevel.m_height / 2, 
                               m_currLevel.m_width, m_currLevel.m_height);
     auto field_draw_border = DrawNode::create(5);
-    field_draw_border->drawSolidRect(GAMEFIELDRECT.origin, GAMEFIELDRECT.origin + GAMEFIELDRECT.size, Color4F::RED);
-    game_layer->addChild(field_draw_border, -1, TAG_GAME_LAYER_FIELD_BORDER_RECT);
+    field_draw_border->drawRect(GAMEFIELDRECT.origin, GAMEFIELDRECT.origin + GAMEFIELDRECT.size, Color4F::RED);
+    game_layer->addChild(field_draw_border, 1, TAG_GAME_LAYER_FIELD_BORDER_RECT);
 
+    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 10, 10, 100);
+    game_layer->addChild(m_paddle1->getSprite(), 1);
+
+    m_keyboardController = std::make_unique<KeyboardInputController>("KB");
+    m_paddle1->attachInputController(std::move(m_keyboardController));
+
+    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 2, 2, 100);
+    game_layer->addChild(m_paddle2->getSprite(), 1);
+
+    m_AIController = std::make_unique<AIInputController>("AI", m_paddle2);
+    m_paddle2->attachInputController(std::move(m_AIController));
 
 
     //////////////////////////////////////////////////
@@ -117,6 +131,7 @@ bool GameScene::init()
 
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_keyboard_listener, this);
 
+    scheduleUpdate();
 
     return true;
 }
@@ -151,42 +166,10 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
         }
         return;
     }
-    if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
-    {
-        m_leftPressed = true;
-    }
-    else if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
-    {
-        m_rightPressed = true;
-    }
-    else if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
-    {
-        m_upPressed = true;
-    }
-    else if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
-    {
-        m_downPressed = true;
-    }
 }
 
 void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 {
-    if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
-    {
-        m_leftPressed = false;
-    }
-    else if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
-    {
-        m_rightPressed = false;
-    }
-    else if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
-    {
-        m_upPressed = false;
-    }
-    else if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
-    {
-        m_downPressed = false;
-    }
 }
 
 void GameScene::onGameMenuOpen(Ref* sender)
@@ -211,16 +194,10 @@ void GameScene::updateTimer(float dt)
     m_timeElapsed += dt;
 }
 
-void GameScene::updateInputDirectionState()
-{
-    m_up = int(m_upPressed) - int(m_downPressed);
-    m_right = int(m_rightPressed) - int(m_leftPressed);
-}
-
-
 
 void GameScene::update(float dt)
 {
     // GAME LOGIC HERE
-
+    m_paddle1->move();
+    m_paddle2->move();
 }

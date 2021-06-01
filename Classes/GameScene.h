@@ -3,6 +3,8 @@
 
 #include "cocos2d.h"
 #include "GameLevel.h"
+#include "Paddle.h"
+#include "PlayerInputController.h"
 
 USING_NS_CC;
 
@@ -33,13 +35,16 @@ public:
 
     void updateTimer(float dt);
 
-    // calc up and right based on pressed and released keyboard keys
-    void updateInputDirectionState();
 
     void update(float dt) override;
 
 protected:
     GameLevel m_currLevel;
+
+    PaddlePtr m_paddle1, m_paddle2;
+ 
+    IPlayerInputControllerPtr m_keyboardController = nullptr;
+    IPlayerInputControllerPtr m_AIController = nullptr;
 
     bool m_upPressed = false;
     bool m_downPressed = false;
