@@ -18,6 +18,9 @@ Paddle::~Paddle()
 
 void Paddle::attachInputController(IPlayerInputControllerPtr controller)
 {
+	if (m_pController)
+		throw std::runtime_error("Controller already attached. Can't attach more than 1 controller");
+
 	m_pController = std::move(controller);
 
 	m_pController->bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_MOVE_LEFT, [=](EventCustom* event) { onMovingLeft();  });

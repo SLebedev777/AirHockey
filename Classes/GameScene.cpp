@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "KeyboardInputController.h"
 #include "AIInputController.h"
+#include "MouseInputController.h"
 
 
 USING_NS_CC;
@@ -84,8 +85,11 @@ bool GameScene::init()
     m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 10, 10, 100);
     game_layer->addChild(m_paddle1->getSprite(), 1);
 
-    m_keyboardController = std::make_unique<KeyboardInputController>("KB");
-    m_paddle1->attachInputController(std::move(m_keyboardController));
+    //m_keyboardController = std::make_unique<KeyboardInputController>("KB");
+    //m_paddle1->attachInputController(std::move(m_keyboardController));
+
+    m_mouseController = std::make_unique<MouseInputController>("MOUSE", m_paddle1);
+    m_paddle1->attachInputController(std::move(m_mouseController));
 
     m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 2, 2, 100);
     game_layer->addChild(m_paddle2->getSprite(), 1);

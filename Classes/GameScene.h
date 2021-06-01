@@ -44,6 +44,7 @@ protected:
     PaddlePtr m_paddle1, m_paddle2;
  
     IPlayerInputControllerPtr m_keyboardController = nullptr;
+    IPlayerInputControllerPtr m_mouseController = nullptr;
     IPlayerInputControllerPtr m_AIController = nullptr;
 
     bool m_upPressed = false;

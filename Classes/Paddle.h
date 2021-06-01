@@ -25,6 +25,8 @@ public:
 	bool move();
 
 	cocos2d::Sprite* getSprite() const { return m_ccSprite; }
+	cocos2d::Vec2 getPosition() const { return cocos2d::Vec2(m_centerX, m_centerY); }
+	float getRadius() const { return m_radius; }
 
 private:
 	cocos2d::Sprite* m_ccSprite = nullptr;

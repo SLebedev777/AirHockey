@@ -805,6 +805,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\Classes\GameLevel.h" />
     <ClInclude Include="..\Classes\GameScene.h" />
     <ClInclude Include="..\Classes\KeyboardInputController.h" />
+    <ClInclude Include="..\Classes\MouseInputController.h" />
     <ClInclude Include="..\Classes\Paddle.h" />
     <ClInclude Include="..\Classes\PlayerInputController.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.h" />
@@ -814,6 +815,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\Classes\AIInputController.cpp" />
     <ClCompile Include="..\Classes\GameScene.cpp" />
     <ClCompile Include="..\Classes\KeyboardInputController.cpp" />
+    <ClCompile Include="..\Classes\MouseInputController.cpp" />
     <ClCompile Include="..\Classes\Paddle.cpp" />
     <ClCompile Include="..\Classes\PlayerInputController.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.cpp" />
