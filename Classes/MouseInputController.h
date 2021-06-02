@@ -22,6 +22,7 @@ public:
 
 	void bindInputListeners() override;
 
+	bool isMouseWithinPaddle(EventMouse* em);
 	void sendStopPaddleEvent();
 	void onMouseDown(cocos2d::Event* event);
 	void onMouseUp(cocos2d::Event* event);
@@ -30,5 +31,5 @@ public:
 
 private:
 	PaddlePtr m_myPaddle = nullptr;
-	bool m_isMouseButtonPressed = false;
+	bool m_isMyPaddleGrabbed = false;
 };

@@ -19,22 +19,27 @@ void MouseInputController::sendStopPaddleEvent()
     m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_RIGHT));
     m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_UP));
     m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_DOWN));
+    m_myPaddle->setNormalizedVelocity(Vec2(0, 0));
+}
+
+bool MouseInputController::isMouseWithinPaddle(EventMouse* em)
+{
+    // check that mouse cursor is within paddle's circle
+    // TODO: check if it's correct when button is down but mouse doesn't move
+    Vec2 mouse_pos = Director::getInstance()->convertToUI(em->getLocation());
+    return (mouse_pos.getDistance(m_myPaddle->getPosition()) < m_myPaddle->getRadius());
 }
 
 void MouseInputController::onMouseDown(Event* event)
 {
     EventMouse* em = static_cast<EventMouse*>(event);
-    if (em->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT)
+    if (em->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT && isMouseWithinPaddle(em))
     {
-        if (em->getDelta().getLength() > 5.0f)
-        {
-            m_isMouseButtonPressed = true;
-        }
-        else
-        {
-            sendStopPaddleEvent();
-        }
+        m_isMyPaddleGrabbed = true;
+        return;
     }
+    m_isMyPaddleGrabbed = false;
+    sendStopPaddleEvent();
 }
 
 void MouseInputController::onMouseUp(Event* event)
@@ -42,40 +47,26 @@ void MouseInputController::onMouseUp(Event* event)
     EventMouse* em = static_cast<EventMouse*>(event);
     if (em->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT)
     {
-        m_isMouseButtonPressed = false;
+        m_isMyPaddleGrabbed = false;
         sendStopPaddleEvent();
     }
 }
 
 void MouseInputController::onMouseMove(Event* event)
 {
-    if (!m_isMouseButtonPressed)
+    if (!m_isMyPaddleGrabbed)
+    {
+        sendStopPaddleEvent();
         return;
+    }
 
     EventMouse* em = static_cast<EventMouse*>(event);
 
     Vec2 mouse_pos = Director::getInstance()->convertToUI(em->getLocation());
-    // check that mouse cursor is within paddle's circle
-    if (mouse_pos.getDistance(m_myPaddle->getPosition()) > m_myPaddle->getRadius())
-        return;
 
-    Vec2 delta = m_myPaddle->getPosition() - mouse_pos;
-    if (delta.x < 0)
-    {
-        m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_RIGHT));
-    }
-    if (delta.x > 0)
-    {
-        m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_LEFT));
-    }
-    if (delta.y < 0)
-    {
-        m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_UP));
-    }
-    if (delta.y > 0)
-    {
-        m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_DOWN));
-    }
+    Vec2 delta = mouse_pos - m_myPaddle->getPosition();
+    m_myPaddle->setNormalizedVelocity(delta.getNormalized());
+    
 }
 
 void MouseInputController::onMouseScroll(Event* event)

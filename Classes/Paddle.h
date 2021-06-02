@@ -22,11 +22,12 @@ public:
 	void onStopMovingUp();
 	void onStopMovingDown();
 
-	bool move();
+	bool move(float dt);
 
 	cocos2d::Sprite* getSprite() const { return m_ccSprite; }
 	cocos2d::Vec2 getPosition() const { return cocos2d::Vec2(m_centerX, m_centerY); }
 	float getRadius() const { return m_radius; }
+	void setNormalizedVelocity(cocos2d::Vec2& nvel) { m_velXnorm = nvel.x; m_velYnorm = nvel.y; }
 
 private:
 	cocos2d::Sprite* m_ccSprite = nullptr;
@@ -35,6 +36,8 @@ private:
 	float m_centerY = 0.0f;
 	float m_velX = 0.0f;
 	float m_velY = 0.0f;
+	float m_velXnorm = 0.0f;  // normalized velocity vector in range(0, 0) - (1, 1)
+	float m_velYnorm = 0.0f;
 	float m_accX = 0.0f;
 	float m_accY = 0.0f;
 	float m_radius = 100;

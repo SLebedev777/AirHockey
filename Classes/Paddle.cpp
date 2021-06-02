@@ -36,47 +36,47 @@ void Paddle::attachInputController(IPlayerInputControllerPtr controller)
 
 void Paddle::onMovingLeft()
 {
-	if (m_movingRight >= 0) { m_movingRight = -1; }
+	if (m_movingRight >= 0) { m_movingRight = -1; m_velXnorm = -1; }
 }
 
 void Paddle::onMovingRight()
 {
-	if (m_movingRight <= 0) { m_movingRight = 1; }
+	if (m_movingRight <= 0) { m_movingRight = 1; m_velXnorm = 1; }
 }
 
 void Paddle::onMovingUp()
 {
-	if (m_movingUp <= 0) { m_movingUp = 1; }
+	if (m_movingUp <= 0) { m_movingUp = 1;  m_velYnorm = 1; }
 }
 
 void Paddle::onMovingDown()
 {
-	if (m_movingUp >= 0) { m_movingUp = -1; }
+	if (m_movingUp >= 0) { m_movingUp = -1; m_velYnorm = -1; }
 }
 
 void Paddle::onStopMovingLeft()
 {
-	if (m_movingRight < 0) { m_movingRight = 0; }
+	if (m_movingRight < 0) { m_movingRight = 0; m_velXnorm = 0; }
 }
 void Paddle::onStopMovingRight()
 {
-	if (m_movingRight > 0) { m_movingRight = 0; }
+	if (m_movingRight > 0) { m_movingRight = 0; m_velXnorm = 0; }
 }
 
 void Paddle::onStopMovingUp()
 {
-	if (m_movingUp > 0) { m_movingUp = 0; }
+	if (m_movingUp > 0) { m_movingUp = 0;  m_velYnorm = 0; }
 }
 
 void Paddle::onStopMovingDown()
 {
-	if (m_movingUp < 0) { m_movingUp = 0; }
+	if (m_movingUp < 0) { m_movingUp = 0; m_velYnorm = 0;  }
 }
 
-bool Paddle::move()
+bool Paddle::move(float dt)
 {
-	m_centerX += m_velX * m_movingRight;
-	m_centerY += m_velY * m_movingUp;
+	m_centerX += dt * m_velX * m_velXnorm;
+	m_centerY += dt * m_velY * m_velYnorm;
 
 	m_ccSprite->setPosition(Vec2(m_centerX, m_centerY));
 
