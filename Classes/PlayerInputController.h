@@ -37,4 +37,4 @@ protected:
 	std::string m_name;
 };
 
-typedef std::unique_ptr<IPlayerInputController> IPlayerInputControllerPtr;
+typedef std::shared_ptr<IPlayerInputController> IPlayerInputControllerPtr;

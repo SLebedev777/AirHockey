@@ -82,20 +82,20 @@ bool GameScene::init()
     field_draw_border->drawRect(GAMEFIELDRECT.origin, GAMEFIELDRECT.origin + GAMEFIELDRECT.size, Color4F::RED);
     game_layer->addChild(field_draw_border, 1, TAG_GAME_LAYER_FIELD_BORDER_RECT);
 
-    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 100);
+    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50);
     game_layer->addChild(m_paddle1->getSprite(), 1);
 
-    //m_keyboardController = std::make_unique<KeyboardInputController>("KB");
-    //m_paddle1->attachInputController(std::move(m_keyboardController));
+    //m_keyboardController = std::make_shared<KeyboardInputController>("KB");
+    //m_paddle1->attachInputController(m_keyboardController);
 
-    m_mouseController = std::make_unique<MouseInputController>("MOUSE", m_paddle1);
-    m_paddle1->attachInputController(std::move(m_mouseController));
+    m_mouseController = std::make_shared<MouseInputController>("MOUSE", m_paddle1);
+    m_paddle1->attachInputController(m_mouseController);
 
-    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 100);
+    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 50);
     game_layer->addChild(m_paddle2->getSprite(), 1);
 
-    m_AIController = std::make_unique<AIInputController>("AI", m_paddle2);
-    m_paddle2->attachInputController(std::move(m_AIController));
+    m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
+    m_paddle2->attachInputController(m_AIController);
 
 
     //////////////////////////////////////////////////
@@ -204,4 +204,5 @@ void GameScene::update(float dt)
     // GAME LOGIC HERE
     m_paddle1->move(dt);
     m_paddle2->move(dt);
+
 }
