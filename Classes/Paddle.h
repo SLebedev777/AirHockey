@@ -2,13 +2,14 @@
 
 #include "cocos2d.h"
 #include "PlayerInputController.h"
+#include "cocos/math/CCGeometry.h"
 
 USING_NS_CC;
 
 class Paddle
 {
 public:
-	Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius);
+	Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect);
 	~Paddle();
 
 	void attachInputController(IPlayerInputControllerPtr controller);
@@ -26,11 +27,13 @@ public:
 
 	cocos2d::Sprite* getSprite() const { return m_ccSprite; }
 	cocos2d::Vec2 getPosition() const { return cocos2d::Vec2(m_centerX, m_centerY); }
-	void setPosition(cocos2d::Vec2 pos) { m_centerX = pos.x; m_centerY = pos.y; m_ccSprite->setPosition(Vec2(m_centerX, m_centerY)); }
+	void setPosition(cocos2d::Vec2 pos);
+	cocos2d::Vec2 boundToFieldRect(Vec2 pos);
 	float getRadius() const { return m_radius; }
 	void setNormalizedVelocity(cocos2d::Vec2& nvel) { m_velXnorm = nvel.x; m_velYnorm = nvel.y; }
 
 private:
+	Rect m_fieldRect;
 	cocos2d::Sprite* m_ccSprite = nullptr;
 	IPlayerInputControllerPtr m_pController = nullptr;
 	float m_centerX = 0.0f;

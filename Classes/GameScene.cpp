@@ -82,7 +82,23 @@ bool GameScene::init()
     field_draw_border->drawRect(GAMEFIELDRECT.origin, GAMEFIELDRECT.origin + GAMEFIELDRECT.size, Color4F::RED);
     game_layer->addChild(field_draw_border, 1, TAG_GAME_LAYER_FIELD_BORDER_RECT);
 
-    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50);
+    // human (lower)
+    Rect PLAYER1_FIELDRECT = Rect(frameCenter.x - m_currLevel.m_width / 2,
+        frameCenter.y - m_currLevel.m_height / 2,
+        m_currLevel.m_width, m_currLevel.m_height / 2);
+    auto field_draw_border1 = DrawNode::create(5);
+    field_draw_border1->drawRect(PLAYER1_FIELDRECT.origin, PLAYER1_FIELDRECT.origin + PLAYER1_FIELDRECT.size, Color4F::GREEN);
+    game_layer->addChild(field_draw_border1, 1);
+
+    // AI (upper)
+    Rect PLAYER2_FIELDRECT = Rect(frameCenter.x - m_currLevel.m_width / 2,
+        frameCenter.y,
+        m_currLevel.m_width, m_currLevel.m_height / 2);
+    auto field_draw_border2 = DrawNode::create(5);
+    field_draw_border2->drawRect(PLAYER2_FIELDRECT.origin, PLAYER2_FIELDRECT.origin + PLAYER2_FIELDRECT.size, Color4F::BLACK);
+    game_layer->addChild(field_draw_border2, 1);
+
+    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50, PLAYER1_FIELDRECT);
     game_layer->addChild(m_paddle1->getSprite(), 1);
 
     //m_keyboardController = std::make_shared<KeyboardInputController>("KB");
@@ -91,7 +107,7 @@ bool GameScene::init()
     m_mouseController = std::make_shared<MouseInputController>("MOUSE", m_paddle1);
     m_paddle1->attachInputController(m_mouseController);
 
-    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 50);
+    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 50, PLAYER2_FIELDRECT);
     game_layer->addChild(m_paddle2->getSprite(), 1);
 
     m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
