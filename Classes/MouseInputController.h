@@ -29,7 +29,10 @@ public:
 	void onMouseMove(cocos2d::Event* event);
 	void onMouseScroll(cocos2d::Event* event);
 
+	void scheduleDebugOutput(cocos2d::Node* layer);
+
 private:
 	PaddlePtr m_myPaddle = nullptr;
 	bool m_isMyPaddleGrabbed = false;
+	cocos2d::Node* m_HUDLayer = nullptr;
 };

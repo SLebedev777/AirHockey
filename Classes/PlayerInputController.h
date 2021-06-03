@@ -31,6 +31,8 @@ public:
 	std::string makeCustomEventName(const std::string& input_action_event_name);
 	// bind virtual input event to owner's callback
 	void bindActionEventListener(const std::string& input_action_event_name, const std::function<void(cocos2d::EventCustom*)>& callback);
+	
+	virtual void scheduleDebugOutput(cocos2d::Node* layer) {};
 
 protected:
 	cocos2d::EventDispatcher* m_eventDispatcher = nullptr;

@@ -103,7 +103,7 @@ bool GameScene::init()
     // non-interactive elements over main game process
     
     auto hud_layer = LayerColor::create(Color4B(0, 0, 0, 0));
-
+    m_mouseController->scheduleDebugOutput(hud_layer);
 
     //////////////////////////////////////////////////
     // HUD CONTROL LAYER

@@ -25,7 +25,6 @@ void MouseInputController::sendStopPaddleEvent()
 bool MouseInputController::isMouseWithinPaddle(EventMouse* em)
 {
     // check that mouse cursor is within paddle's circle
-    // TODO: check if it's correct when button is down but mouse doesn't move
     Vec2 mouse_pos = Director::getInstance()->convertToUI(em->getLocation());
     return (mouse_pos.getDistance(m_myPaddle->getPosition()) < m_myPaddle->getRadius());
 }
@@ -61,13 +60,21 @@ void MouseInputController::onMouseMove(Event* event)
     }
 
     EventMouse* em = static_cast<EventMouse*>(event);
-
     Vec2 mouse_pos = Director::getInstance()->convertToUI(em->getLocation());
-
-    Vec2 delta = mouse_pos - m_myPaddle->getPosition();
-    m_myPaddle->setNormalizedVelocity(delta.getNormalized());
-    
+    m_myPaddle->setPosition(mouse_pos);
 }
 
 void MouseInputController::onMouseScroll(Event* event)
 {}
+
+void MouseInputController::scheduleDebugOutput(cocos2d::Node* layer)
+{
+    const std::string font_path = "fonts/arial.ttf";
+    Label* label_is_my_paddle_grabbed = Label::createWithTTF("is_my_paddle_grabbed: ", font_path, 24);
+    layer->addChild(label_is_my_paddle_grabbed, 1, "label_is_my_paddle_grabbed");
+    label_is_my_paddle_grabbed->setAnchorPoint(Vec2(0, 0));
+    label_is_my_paddle_grabbed->setPosition(Vec2(50, 500));
+    layer->schedule([=](float dt) {
+        label_is_my_paddle_grabbed->setString("is_my_paddle_grabbed: " + std::to_string(int(m_isMyPaddleGrabbed)));
+        }, "callback_is_my_paddle_grabbed");
+}
