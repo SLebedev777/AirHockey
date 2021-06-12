@@ -55,7 +55,6 @@ void MouseInputController::onMouseMove(Event* event)
 {
     if (!m_isMyPaddleGrabbed)
     {
-        sendStopPaddleEvent();
         return;
     }
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "PlayerInputController.h"
 #include "cocos/math/CCGeometry.h"
 
 USING_NS_CC;
@@ -11,8 +10,6 @@ class Paddle
 public:
 	Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect);
 	~Paddle();
-
-	void attachInputController(IPlayerInputControllerPtr controller);
 
 	void onMovingLeft();
 	void onMovingRight();
@@ -35,7 +32,6 @@ public:
 private:
 	Rect m_fieldRect;
 	cocos2d::Sprite* m_ccSprite = nullptr;
-	IPlayerInputControllerPtr m_pController = nullptr;
 	float m_centerX = 0.0f;
 	float m_centerY = 0.0f;
 	float m_velX = 0.0f;

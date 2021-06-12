@@ -7,6 +7,7 @@
 #include <string>
 #include <memory>
 #include "cocos2d.h"
+#include "Paddle.h"
 
 namespace InputActionEvent
 {
@@ -23,7 +24,7 @@ namespace InputActionEvent
 class IPlayerInputController
 {
 public:
-	IPlayerInputController(const std::string& name);
+	IPlayerInputController(const std::string& name, PaddlePtr paddle);
 	IPlayerInputController(IPlayerInputController& other);
 
 	virtual void bindInputListeners() = 0;  // bind device- or agent-specific events to virtual events
@@ -37,6 +38,7 @@ public:
 protected:
 	cocos2d::EventDispatcher* m_eventDispatcher = nullptr;
 	std::string m_name;
+	PaddlePtr m_myPaddle = nullptr;
 };
 
 typedef std::shared_ptr<IPlayerInputController> IPlayerInputControllerPtr;

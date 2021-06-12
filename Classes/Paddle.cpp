@@ -17,24 +17,6 @@ Paddle::Paddle(const std::string& image_name, float x, float y, float vel_x, flo
 Paddle::~Paddle()
 {}
 
-void Paddle::attachInputController(IPlayerInputControllerPtr controller)
-{
-	if (m_pController)
-		throw std::runtime_error("Controller already attached. Can't attach more than 1 controller");
-
-	m_pController = controller;
-
-	m_pController->bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_MOVE_LEFT, [=](EventCustom* event) { onMovingLeft();  });
-	m_pController->bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_MOVE_RIGHT, [=](EventCustom* event) { onMovingRight();  });
-	m_pController->bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_MOVE_UP, [=](EventCustom* event) { onMovingUp();  });
-	m_pController->bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_MOVE_DOWN, [=](EventCustom* event) { onMovingDown();  });
-	m_pController->bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_LEFT, [=](EventCustom* event) { onStopMovingLeft();  });
-	m_pController->bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_RIGHT, [=](EventCustom* event) { onStopMovingRight();  });
-	m_pController->bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_UP, [=](EventCustom* event) { onStopMovingUp();  });
-	m_pController->bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_DOWN, [=](EventCustom* event) { onStopMovingDown();  });
-
-}
-
 void Paddle::onMovingLeft()
 {
 	if (m_movingRight >= 0) { m_movingRight = -1; m_velXnorm = -1; }

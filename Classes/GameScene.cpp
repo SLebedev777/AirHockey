@@ -105,13 +105,12 @@ bool GameScene::init()
     //m_paddle1->attachInputController(m_keyboardController);
 
     m_mouseController = std::make_shared<MouseInputController>("MOUSE", m_paddle1);
-    m_paddle1->attachInputController(m_mouseController);
 
     m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 50, PLAYER2_FIELDRECT);
     game_layer->addChild(m_paddle2->getSprite(), 1);
 
     m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
-    m_paddle2->attachInputController(m_AIController);
+    m_mouseController2 = std::make_shared<MouseInputController>("MOUSE2", m_paddle2);
 
 
     //////////////////////////////////////////////////

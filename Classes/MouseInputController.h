@@ -1,19 +1,16 @@
 #pragma once
 #include "PlayerInputController.h"
-#include "Paddle.h"
 
 class MouseInputController : public IPlayerInputController
 {
 public:
 	MouseInputController(const std::string& name, PaddlePtr my_paddle) :
-		IPlayerInputController(name),
-		m_myPaddle(my_paddle)
+		IPlayerInputController(name, my_paddle)
 	{
 		bindInputListeners();
 	}
 	MouseInputController(MouseInputController& other) :
-		IPlayerInputController(other.m_name),
-		m_myPaddle(other.m_myPaddle)
+		IPlayerInputController(other.m_name, other.m_myPaddle)
 	{
 		bindInputListeners();
 	}
@@ -32,7 +29,6 @@ public:
 	void scheduleDebugOutput(cocos2d::Node* layer);
 
 private:
-	PaddlePtr m_myPaddle = nullptr;
 	bool m_isMyPaddleGrabbed = false;
 	cocos2d::Node* m_HUDLayer = nullptr;
 };

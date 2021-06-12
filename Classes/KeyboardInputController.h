@@ -4,13 +4,13 @@
 class KeyboardInputController : public IPlayerInputController
 {
 public:
-	KeyboardInputController(const std::string& name) :
-		IPlayerInputController(name)
+	KeyboardInputController(const std::string& name, PaddlePtr my_paddle) :
+		IPlayerInputController(name, my_paddle)
 	{
 		bindInputListeners();
 	}
 	KeyboardInputController(KeyboardInputController& other) :
-		IPlayerInputController(other.m_name)
+		IPlayerInputController(other.m_name, other.m_myPaddle)
 	{
 		bindInputListeners();
 	}
