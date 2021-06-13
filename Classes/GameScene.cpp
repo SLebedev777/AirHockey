@@ -2,6 +2,7 @@
 #include "KeyboardInputController.h"
 #include "AIInputController.h"
 #include "MouseInputController.h"
+#include "TouchInputController.h"
 
 
 USING_NS_CC;
@@ -101,10 +102,11 @@ bool GameScene::init()
     m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50, PLAYER1_FIELDRECT);
     game_layer->addChild(m_paddle1->getSprite(), 1);
 
-    //m_keyboardController = std::make_shared<KeyboardInputController>("KB");
-    //m_paddle1->attachInputController(m_keyboardController);
+    //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
 
-    m_mouseController = std::make_shared<MouseInputController>("MOUSE", m_paddle1);
+    //m_mouseController = std::make_shared<MouseInputController>("MOUSE", m_paddle1);
+
+    m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
 
     m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 50, PLAYER2_FIELDRECT);
     game_layer->addChild(m_paddle2->getSprite(), 1);
@@ -118,7 +120,7 @@ bool GameScene::init()
     // non-interactive elements over main game process
     
     auto hud_layer = LayerColor::create(Color4B(0, 0, 0, 0));
-    m_mouseController->scheduleDebugOutput(hud_layer);
+    m_touchController->scheduleDebugOutput(hud_layer);
 
     //////////////////////////////////////////////////
     // HUD CONTROL LAYER

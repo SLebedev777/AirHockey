@@ -808,6 +808,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\Classes\MouseInputController.h" />
     <ClInclude Include="..\Classes\Paddle.h" />
     <ClInclude Include="..\Classes\PlayerInputController.h" />
+    <ClInclude Include="..\Classes\TouchInputController.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.h" />
@@ -818,6 +819,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\Classes\MouseInputController.cpp" />
     <ClCompile Include="..\Classes\Paddle.cpp" />
     <ClCompile Include="..\Classes\PlayerInputController.cpp" />
+    <ClCompile Include="..\Classes\TouchInputController.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.cpp" />
