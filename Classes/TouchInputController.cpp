@@ -5,6 +5,7 @@ USING_NS_CC;
 void TouchInputController::bindInputListeners()
 {
     auto touch_listener = EventListenerTouchOneByOne::create();
+    touch_listener->setSwallowTouches(true);
     touch_listener->onTouchBegan = [this](Touch* touch, Event* event) { onTouchBegan(touch, event); return true; };
     touch_listener->onTouchMoved = [this](Touch* touch, Event* event) { onTouchMoved(touch, event); };
     touch_listener->onTouchEnded = [this](Touch* touch, Event* event) { onTouchEnded(touch, event); };
@@ -24,8 +25,9 @@ void TouchInputController::sendStopPaddleEvent()
 bool TouchInputController::isTouchWithinPaddle(Touch* touch)
 {
     // check that touch position is within paddle's circle
-    Vec2 touch_pos = Director::getInstance()->convertToUI(touch->getLocation());
-    return (touch_pos.getDistance(m_myPaddle->getPosition()) < m_myPaddle->getRadius());
+    Vec2 touch_pos = Director::getInstance()->convertToGL(touch->getLocationInView());
+    Vec2 paddle_pos = m_myPaddle->getPosition();
+    return (touch_pos.getDistance(paddle_pos) < m_myPaddle->getRadius());
 }
 
 void TouchInputController::onTouchBegan(cocos2d::Touch* touch, Event* event)
@@ -52,7 +54,7 @@ void TouchInputController::onTouchMoved(cocos2d::Touch* touch, Event* event)
         return;
     }
 
-    Vec2 touch_pos = Director::getInstance()->convertToUI(touch->getLocation());
+    Vec2 touch_pos = Director::getInstance()->convertToGL(touch->getLocationInView());
     m_myPaddle->setPosition(touch_pos);
 }
 

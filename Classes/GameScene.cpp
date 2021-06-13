@@ -112,7 +112,7 @@ bool GameScene::init()
     game_layer->addChild(m_paddle2->getSprite(), 1);
 
     m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
-    m_mouseController2 = std::make_shared<MouseInputController>("MOUSE2", m_paddle2);
+    //m_mouseController2 = std::make_shared<MouseInputController>("MOUSE2", m_paddle2);
 
 
     //////////////////////////////////////////////////
