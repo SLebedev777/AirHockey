@@ -58,10 +58,25 @@ endif()
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
      Classes/HelloWorldScene.cpp
+     Classes/GameScene.cpp
+     Classes/Paddle.cpp
+     Classes/PlayerInputController.cpp
+     Classes/KeyboardInputController.cpp
+     Classes/MouseInputController.cpp
+     Classes/TouchInputController.cpp
+     Classes/AIInputController.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/HelloWorldScene.h
+     Classes/GameScene.h
+     Classes/Paddle.h
+     Classes/PlayerInputController.h
+     Classes/KeyboardInputController.h
+     Classes/MouseInputController.h
+     Classes/TouchInputController.h
+     Classes/AIInputController.h
+     Classes/GameLevel.h
      )
 
 if(ANDROID)

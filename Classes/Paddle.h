@@ -25,9 +25,9 @@ public:
 	cocos2d::Sprite* getSprite() const { return m_ccSprite; }
 	cocos2d::Vec2 getPosition() const { return cocos2d::Vec2(m_centerX, m_centerY); }
 	void setPosition(cocos2d::Vec2 pos);
-	cocos2d::Vec2 boundToFieldRect(Vec2 pos);
+	cocos2d::Vec2 boundToFieldRect(cocos2d::Vec2 pos);
 	float getRadius() const { return m_radius; }
-	void setNormalizedVelocity(cocos2d::Vec2& nvel) { m_velXnorm = nvel.x; m_velYnorm = nvel.y; }
+	void setNormalizedVelocity(const cocos2d::Vec2& nvel) { m_velXnorm = nvel.x; m_velYnorm = nvel.y; }
 
 private:
 	Rect m_fieldRect;

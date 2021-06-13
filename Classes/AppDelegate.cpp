@@ -165,7 +165,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // create a scene. it's an autorelease object
     float level_width = designResolutionSize.width * 0.9;
     float level_height = level_width * 16 / 9;
-    auto scene = GameScene::createScene(GameLevel(0, level_width, level_height));
+    GameLevel level = GameLevel(0, level_width, level_height);
+    auto scene = GameScene::createScene(level);
 
     // run
     director->runWithScene(scene);
