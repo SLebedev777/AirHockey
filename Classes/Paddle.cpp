@@ -2,15 +2,23 @@
 
 USING_NS_CC;
 
-Paddle::Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect):
-	m_ccSprite(cocos2d::Sprite::create(image_name)),
+Paddle::Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent):
+	m_ccsSprite(cocos2d::Sprite::create(image_name)),
 	m_centerX(x),
 	m_centerY(y),
 	m_velX(vel_x),
 	m_velY(vel_y),
 	m_radius(radius),
-	m_fieldRect(field_rect)
+	m_fieldRect(field_rect),
+	m_ccnParent(parent)
 {
+	if (!m_ccnParent)
+	{
+		throw std::runtime_error("Parent node for paddle is null");
+	}
+
+	m_ccnParent->addChild(m_ccsSprite, 1);
+
 	setPosition(Vec2(m_centerX, m_centerY));
 }
 
@@ -96,5 +104,5 @@ void Paddle::setPosition(Vec2 pos)
 	Vec2 bound_pos = boundToFieldRect(pos);
 	m_centerX = bound_pos.x; 
 	m_centerY = bound_pos.y; 
-	m_ccSprite->setPosition(Vec2(m_centerX, m_centerY));
+	m_ccsSprite->setPosition(Vec2(m_centerX, m_centerY));
 }

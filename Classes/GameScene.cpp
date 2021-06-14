@@ -59,7 +59,7 @@ bool GameScene::init()
 {
     //////////////////////////////
     // 1. super init first
-    if (!Scene::init())
+    if (!Scene::initWithPhysics())
     {
         return false;
     }
@@ -99,20 +99,15 @@ bool GameScene::init()
     field_draw_border2->drawRect(PLAYER2_FIELDRECT.origin, PLAYER2_FIELDRECT.origin + PLAYER2_FIELDRECT.size, Color4F::BLACK);
     game_layer->addChild(field_draw_border2, 1);
 
-    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50, PLAYER1_FIELDRECT);
-    game_layer->addChild(m_paddle1->getSprite(), 1);
+    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50, PLAYER1_FIELDRECT, game_layer);
 
     //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
 
-    //m_mouseController = std::make_shared<MouseInputController>("MOUSE", m_paddle1);
-
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
 
-    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 50, PLAYER2_FIELDRECT);
-    game_layer->addChild(m_paddle2->getSprite(), 1);
+    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 50, PLAYER2_FIELDRECT, game_layer);
 
     m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
-    //m_mouseController2 = std::make_shared<MouseInputController>("MOUSE2", m_paddle2);
 
 
     //////////////////////////////////////////////////

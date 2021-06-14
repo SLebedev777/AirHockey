@@ -8,7 +8,7 @@ USING_NS_CC;
 class Paddle
 {
 public:
-	Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect);
+	Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent);
 	~Paddle();
 
 	void onMovingLeft();
@@ -22,7 +22,7 @@ public:
 
 	bool move(float dt);
 
-	cocos2d::Sprite* getSprite() const { return m_ccSprite; }
+	cocos2d::Sprite* getSprite() const { return m_ccsSprite; }
 	cocos2d::Vec2 getPosition() const { return cocos2d::Vec2(m_centerX, m_centerY); }
 	void setPosition(cocos2d::Vec2 pos);
 	cocos2d::Vec2 boundToFieldRect(cocos2d::Vec2 pos);
@@ -31,7 +31,7 @@ public:
 
 private:
 	Rect m_fieldRect;
-	cocos2d::Sprite* m_ccSprite = nullptr;
+	cocos2d::Sprite* m_ccsSprite = nullptr;
 	float m_centerX = 0.0f;
 	float m_centerY = 0.0f;
 	float m_velX = 0.0f;
@@ -43,6 +43,8 @@ private:
 	float m_radius = 100;
 	int m_movingUp = 0;  // -1 (down), 0, +1 (up)
 	int m_movingRight = 0;  // -1 (left), 0, +1 (right)
+	cocos2d::Node* m_ccnParent = nullptr;
+	cocos2d::Node* m_ccnStick = nullptr;
 };
 
 typedef std::shared_ptr<Paddle> PaddlePtr;
