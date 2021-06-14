@@ -7,32 +7,32 @@
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.cpp">
       <Filter>Source Files\Classes</Filter>
     </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\Paddle.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\PlayerInputController.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\KeyboardInputController.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\MouseInputController.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\TouchInputController.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AIInputController.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.cpp">
       <Filter>Source Files\proj.win32</Filter>
     </ClCompile>
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\cocos2d\cocos\precheader.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GameScene.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\PlayerInputController.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\KeyboardInputController.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Paddle.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\AIInputController.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\MouseInputController.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\TouchInputController.cpp">
-      <Filter>Source Files\Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -42,11 +42,38 @@
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.h">
       <Filter>Source Files\Classes</Filter>
     </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\Paddle.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\PlayerInputController.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\KeyboardInputController.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\MouseInputController.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\TouchInputController.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AIInputController.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameLevel.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.h">
       <Filter>Source Files\proj.win32</Filter>
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\resource.h">
       <Filter>Source Files\proj.win32</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\540_960_back.png">
+      <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\CloseNormal.png">
       <Filter>Resources</Filter>
@@ -54,8 +81,11 @@
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\CloseSelected.png">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HelloWorld.png">
-      <Filter>Resources</Filter>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\HelloWorld.png">
+      <Filter>Resources\HD</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\paddle.png">
+      <Filter>Resources\HD</Filter>
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\fonts\Marker Felt.ttf">
       <Filter>Resources\fonts</Filter>
@@ -65,30 +95,6 @@
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\res\.gitkeep">
       <Filter>Resources\res</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GameScene.h">
-      <Filter>Source Files\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GameLevel.h">
-      <Filter>Source Files\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\PlayerInputController.h">
-      <Filter>Source Files\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Paddle.h">
-      <Filter>Source Files\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\KeyboardInputController.h">
-      <Filter>Source Files\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\AIInputController.h">
-      <Filter>Source Files\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\MouseInputController.h">
-      <Filter>Source Files\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\TouchInputController.h">
-      <Filter>Source Files\Classes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +108,9 @@
   <ItemGroup>
     <Filter Include="Resources">
       <UniqueIdentifier>{28189BD9-6C57-3C09-9CFC-C90A91D64684}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\HD">
+      <UniqueIdentifier>{685DE461-055E-336D-9D34-830D5F56C688}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resources\fonts">
       <UniqueIdentifier>{ED5EB285-F434-3338-B214-7496DC0BF695}</UniqueIdentifier>
