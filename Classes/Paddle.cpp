@@ -2,7 +2,8 @@
 
 USING_NS_CC;
 
-Paddle::Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent):
+Paddle::Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent,
+	PhysicsWorld* physics_world):
 	m_ccsSprite(cocos2d::Sprite::create(image_name)),
 	m_centerX(x),
 	m_centerY(y),
@@ -10,16 +11,34 @@ Paddle::Paddle(const std::string& image_name, float x, float y, float vel_x, flo
 	m_velY(vel_y),
 	m_radius(radius),
 	m_fieldRect(field_rect),
-	m_ccnParent(parent)
+	m_ccnParent(parent),
+	m_ccnStick(cocos2d::Node::create()),
+	m_ccPhysicsWorld(physics_world)
 {
 	if (!m_ccnParent)
 	{
 		throw std::runtime_error("Parent node for paddle is null");
 	}
 
-	m_ccnParent->addChild(m_ccsSprite, 1);
+	// init physics bodies
+	Vec2 location = Vec2(m_centerX, m_centerY);
+	m_ccsSprite->setPosition(location);
 
-	setPosition(Vec2(m_centerX, m_centerY));
+	auto paddle_physics_body = PhysicsBody::createCircle(m_radius, PHYSICSBODY_MATERIAL_DEFAULT);
+	paddle_physics_body->setDynamic(true);
+	m_ccsSprite->addComponent(paddle_physics_body);
+
+	auto stick_physics_body = PhysicsBody::create(PHYSICS_INFINITY, PHYSICS_INFINITY);
+	stick_physics_body->setDynamic(false);
+	m_ccnStick->addComponent(stick_physics_body);
+	m_ccnStick->setPosition(location);
+	auto joint = PhysicsJointFixed::construct(stick_physics_body, paddle_physics_body, location);
+	joint->setMaxForce(50000.0f * paddle_physics_body->getMass());  // TODO: define a constant
+	m_ccPhysicsWorld->addJoint(joint);
+
+	m_ccnParent->addChild(m_ccsSprite, 1);
+	m_ccnParent->addChild(m_ccnStick, 1);
+
 }
 
 Paddle::~Paddle()
@@ -104,5 +123,5 @@ void Paddle::setPosition(Vec2 pos)
 	Vec2 bound_pos = boundToFieldRect(pos);
 	m_centerX = bound_pos.x; 
 	m_centerY = bound_pos.y; 
-	m_ccsSprite->setPosition(Vec2(m_centerX, m_centerY));
+	m_ccnStick->setPosition(Vec2(m_centerX, m_centerY));
 }

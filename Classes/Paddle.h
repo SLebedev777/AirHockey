@@ -8,7 +8,8 @@ USING_NS_CC;
 class Paddle
 {
 public:
-	Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent);
+	Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent,
+		PhysicsWorld* physics_world);
 	~Paddle();
 
 	void onMovingLeft();
@@ -43,6 +44,8 @@ private:
 	float m_radius = 100;
 	int m_movingUp = 0;  // -1 (down), 0, +1 (up)
 	int m_movingRight = 0;  // -1 (left), 0, +1 (right)
+
+	cocos2d::PhysicsWorld* m_ccPhysicsWorld = nullptr;
 	cocos2d::Node* m_ccnParent = nullptr;
 	cocos2d::Node* m_ccnStick = nullptr;
 };
