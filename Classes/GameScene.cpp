@@ -118,7 +118,7 @@ bool GameScene::init()
     m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50, PLAYER1_FIELDRECT, game_layer,
         this->getPhysicsWorld());
 
-    //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
+    m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
 
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
 
