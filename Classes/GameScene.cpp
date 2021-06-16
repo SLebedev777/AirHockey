@@ -82,6 +82,13 @@ bool GameScene::init()
     auto field_draw_border = DrawNode::create(5);
     field_draw_border->drawRect(GAMEFIELDRECT.origin, GAMEFIELDRECT.origin + GAMEFIELDRECT.size, Color4F::RED);
     game_layer->addChild(field_draw_border, 1, TAG_GAME_LAYER_FIELD_BORDER_RECT);
+    // add table boundaries to physics world to make ball bounce from it
+    Node* field_node = Node::create();
+    field_node->setPosition(frameCenter);
+    PhysicsBody* field_box = PhysicsBody::createEdgeBox(GAMEFIELDRECT.size, PhysicsMaterial(0.1f, 1.0f, 0.0f));
+    field_box->setDynamic(false);
+    field_node->addComponent(field_box);
+    game_layer->addChild(field_node, 1);
 
     // human (lower)
     Rect PLAYER1_FIELDRECT = Rect(frameCenter.x - m_currLevel.m_width / 2,
@@ -100,6 +107,13 @@ bool GameScene::init()
     game_layer->addChild(field_draw_border2, 1);
 
     _physicsWorld->setGravity(Vec2::ZERO);
+
+    // PUCK
+    Sprite* puck = Sprite::create("puck.png");
+    PhysicsMaterial puck_material = PhysicsMaterial(0.1f, 1.0f, 0.0f);
+    puck->addComponent(PhysicsBody::createCircle(puck->getBoundingBox().size.width / 2, puck_material));
+    puck->setPosition(frameCenter.x, frameCenter.y - GAMEFIELDRECT.size.height / 4);
+    game_layer->addChild(puck, 1);
 
     m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50, PLAYER1_FIELDRECT, game_layer,
         this->getPhysicsWorld());
