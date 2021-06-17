@@ -42,6 +42,7 @@ protected:
     GameLevel m_currLevel;
 
     PaddlePtr m_paddle1, m_paddle2;
+    cocos2d::Sprite* m_puck;
  
     IPlayerInputControllerPtr m_keyboardController = nullptr;
     IPlayerInputControllerPtr m_mouseController = nullptr;

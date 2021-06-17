@@ -109,11 +109,11 @@ bool GameScene::init()
     _physicsWorld->setGravity(Vec2::ZERO);
 
     // PUCK
-    Sprite* puck = Sprite::create("puck.png");
-    PhysicsMaterial puck_material = PhysicsMaterial(0.1f, 1.0f, 0.0f);
-    puck->addComponent(PhysicsBody::createCircle(puck->getBoundingBox().size.width / 2, puck_material));
-    puck->setPosition(frameCenter.x, frameCenter.y - GAMEFIELDRECT.size.height / 4);
-    game_layer->addChild(puck, 1);
+    m_puck = Sprite::create("puck.png");
+    PhysicsMaterial puck_material = PhysicsMaterial(0.1f, 1.0f, 0.2f);
+    m_puck->addComponent(PhysicsBody::createCircle(m_puck->getBoundingBox().size.width / 2, puck_material));
+    m_puck->setPosition(frameCenter.x, frameCenter.y - GAMEFIELDRECT.size.height / 4);
+    game_layer->addChild(m_puck, 1);
 
     m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50, PLAYER1_FIELDRECT, game_layer,
         this->getPhysicsWorld());
