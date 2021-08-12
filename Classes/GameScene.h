@@ -5,6 +5,7 @@
 #include "GameLevel.h"
 #include "Paddle.h"
 #include "PlayerInputController.h"
+#include "GameField.h"
 
 USING_NS_CC;
 
@@ -40,6 +41,8 @@ public:
 
 protected:
     GameLevel m_currLevel;
+
+    GameFieldPtr m_field;
 
     PaddlePtr m_paddle1, m_paddle2;
     cocos2d::Sprite* m_puck;

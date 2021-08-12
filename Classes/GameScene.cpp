@@ -90,6 +90,47 @@ bool GameScene::init()
     field_node->addComponent(field_box);
     game_layer->addChild(field_node, 1);
 
+    
+    GameFieldBuilder builder = GameFieldBuilder();
+    // building steps
+    builder.addPlayRect(GAMEFIELDRECT);
+    
+    const int SIDE_WIDTH = 40;
+    const int SIDE_HEIGHT = 40;
+
+    GameFieldSidePtr left_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::UP);
+    Size long_part_size = Size(SIDE_WIDTH, GAMEFIELDRECT.size.height / 2); 
+    left_long_side->addSidePart({std::make_unique<GameFieldSidePart>(long_part_size, Color4F::GREEN)});
+    left_long_side->addSidePart({std::make_unique<GameFieldSidePart>(long_part_size, Color4F::RED)});
+    builder.addSide(std::move(left_long_side));
+
+    GameFieldSidePtr upper_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::RIGHT);
+    Size short_part_size = Size(GAMEFIELDRECT.size.width / 2, SIDE_HEIGHT);
+    upper_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::YELLOW)});
+    upper_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::WHITE)});
+    builder.addSide(std::move(upper_short_side));
+
+    GameFieldSidePtr right_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::DOWN);
+    right_long_side->addSidePart({std::make_unique<GameFieldSidePart>(long_part_size, Color4F::GREEN)});
+    right_long_side->addSidePart({std::make_unique<GameFieldSidePart>(long_part_size, Color4F::RED)});
+    builder.addSide(std::move(right_long_side));
+
+    GameFieldSidePtr lower_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::LEFT);
+    lower_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::YELLOW)});
+    lower_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::BLUE)});
+    builder.addSide(std::move(lower_short_side));
+    /*
+    Size corner_size = Size(SIDE_WIDTH, SIDE_WIDTH);
+    builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::ORANGE));
+    builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::ORANGE));
+    builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::ORANGE));
+    builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::ORANGE));
+    */
+    //
+    m_field = builder.getResult();
+    m_field->setParent(game_layer);
+    
+
     // human (lower)
     Rect PLAYER1_FIELDRECT = Rect(frameCenter.x - m_currLevel.m_width / 2,
         frameCenter.y - m_currLevel.m_height / 2,
