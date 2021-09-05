@@ -25,6 +25,11 @@ void GameFieldSidePart::setParent(Node* parent)
 	parent->addChild(m_node, 1);
 }
 
+void GameFieldSidePart::setAnchorPoint(const cocos2d::Vec2& anchor_point)
+{
+	m_node->setAnchorPoint(anchor_point);
+}
+
 /// <summary>
 /// GameFieldSide
 /// </summary>
@@ -75,7 +80,7 @@ void GameFieldSide::moveTo(const cocos2d::Vec2& pos)
 	moveBy(shift);
 }
 
-const cocos2d::Vec2& GameFieldSide::getOrigin() const
+cocos2d::Vec2 GameFieldSide::getOrigin() const
 {
 	if (m_parts.empty())
 		return Vec2::ZERO;
@@ -96,7 +101,9 @@ const cocos2d::Vec2& GameFieldSide::getOrigin() const
 	case GameFieldSide::DIRECTION::LEFT:
 		return Vec2(first_rect.getMaxX(), first_rect.getMaxY());
 		break;
-	default: break;
+	default:
+		throw;
+		break;
 	}
 }
 
@@ -115,7 +122,7 @@ void GameFieldSide::setParent(Node* parent)
 void GameField::setParent(Node* parent)
 {
 	m_ccParent = parent;
-	// TODO: add all recursive parts of game table to parent layer
+	// adding all recursive parts of game table to parent layer is done in Builder
 	m_ccParent->addChild(m_ccGameFieldNode, 1);
 }
 
@@ -124,10 +131,37 @@ GameField::~GameField()
 	m_ccGameFieldNode->removeFromParent();
 }
 
+cocos2d::Vec2 GameField::getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type)
+{
+	switch (corner_type)
+	{
+	case GameFieldPlayRectCornerType::BOTTOM_LEFT:
+		return m_playRect.origin;
+		break;
+	case GameFieldPlayRectCornerType::TOP_LEFT:
+		return Vec2(m_playRect.getMinX(), m_playRect.getMaxY());
+		break;
+	case GameFieldPlayRectCornerType::TOP_RIGHT:
+		return Vec2(m_playRect.getMaxX(), m_playRect.getMaxY());
+		break;
+	case GameFieldPlayRectCornerType::BOTTOM_RIGHT:
+		return Vec2(m_playRect.getMaxX(), m_playRect.getMinY());
+		break;
+	default:
+		throw;
+		break;
+	}
+}
 
 /// <summary>
 /// GameFieldBuilder
 /// </summary>
+
+GameFieldBuilder::GameFieldBuilder() :
+	m_field(std::make_unique<GameField>())
+{
+	m_field->m_ccGameFieldNode = cocos2d::Node::create();
+}
 
 void GameFieldBuilder::addPlayRect(const cocos2d::Rect& rect)
 {
@@ -157,6 +191,41 @@ void GameFieldBuilder::addSide(GameFieldSidePtr side)
 
 	side->setParent(m_field->m_ccGameFieldNode);
 	m_field->m_sides.push_back(std::move(side));
+}
+
+void GameFieldBuilder::addCorner(GameFieldSidePartPtr corner, const GameField::GameFieldPlayRectCornerType& play_rect_corner_type)
+{
+	// bottom-left corner
+	switch (play_rect_corner_type)
+	{
+	case GameField::GameFieldPlayRectCornerType::BOTTOM_LEFT:
+		corner->setAnchorPoint(Vec2(1.0, 1.0));
+		break;
+	case GameField::GameFieldPlayRectCornerType::TOP_LEFT:
+		corner->setAnchorPoint(Vec2(1.0, 0.0));
+		break;
+	case GameField::GameFieldPlayRectCornerType::TOP_RIGHT:
+		corner->setAnchorPoint(Vec2(0.0, 0.0));
+		break;
+	case GameField::GameFieldPlayRectCornerType::BOTTOM_RIGHT:
+		corner->setAnchorPoint(Vec2(0.0, 1.0));
+		break;
+	default:
+		return;
+		break;
+	}
+	corner->setPosition(m_field->getPlayRectCornerPoint(play_rect_corner_type));
+
+	corner->setParent(m_field->m_ccGameFieldNode);
+	m_field->m_corners.push_back(std::move(corner));
+}
+
+GameFieldPtr GameFieldBuilder::getResult()
+{
+	if (check())
+		return std::move(m_field);
+	else
+		return nullptr;
 }
 
 bool GameFieldBuilder::check() const

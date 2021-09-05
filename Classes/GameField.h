@@ -97,7 +97,9 @@ private:
 	cocos2d::Sprite* m_sprite = nullptr;
 };
 
-
+/* Часть борта игрового стола - элемент, из которых состоит борт.
+*  Функционально - это графический нод с физическим телом.
+*/
 class GameFieldSidePart
 {
 public:
@@ -111,6 +113,7 @@ public:
 	const cocos2d::Vec2& getPosition() const { return m_node->getPosition(); }  // v
 	void setPosition(const cocos2d::Vec2& pos) { m_node->setPosition(pos); }  // v
 	cocos2d::Rect getRect() const { return m_node->getBoundingBox(); }  // v
+	void setAnchorPoint(const cocos2d::Vec2& anchor_point);  // v
 	void setParent(cocos2d::Node* parent);  // v
 	void addPhysicsBody();
 
@@ -121,7 +124,9 @@ private:
 };
 typedef std::unique_ptr<GameFieldSidePart> GameFieldSidePartPtr;
 
-
+/*
+  Борт - ориентированная боковая сторона игрового стола. Состоит из частей-объектов GameFieldSidePart.
+*/
 class GameFieldSide
 {
 public:
@@ -144,7 +149,7 @@ public:
 	void moveBy(const cocos2d::Vec2& shift);  // v
 	void moveTo(const cocos2d::Vec2& pos);  // v
 	const DIRECTION& getDirection() const { return m_direction; }  // v
-	const cocos2d::Vec2& getOrigin() const;  // v стартовый внутренний угол борта, в зависимости от направления борта 
+	cocos2d::Vec2 getOrigin() const;  // v стартовый внутренний угол борта, в зависимости от направления борта 
 	void setParent(cocos2d::Node* parent);  // v
 
 private:
@@ -153,29 +158,36 @@ private:
 };
 typedef std::unique_ptr<GameFieldSide> GameFieldSidePtr;
 
-// борта стола задаются как ломаная, т.е. как список вершин, из которых получаются отрезки
-// отсчет ВСЕГДА начинается от левого нижнего угла стола (от точки origin стола), что ссответствует точке (0, 0)
-// первый (0й) элемент в списке вершин описывает отрезок из точки origin в точку, которая содержится в элементе.
-// т.е. в элементе содержится КОНЕЦ отрезка, а НАЧАЛО содержится в предыдущем элементе
 
-// описание вершин идет по часовой стрелке и должно заканчиваться также в точке origin (0, 0)
-// кол-во отрезков должно быть четным
-// в списке вершин обязательно дожны присутствовать вершины (0, height), 
-
+// fwd declaration
 class GameFieldBuilder;
 
+
+/*
+* Игровое поле (игровой стол в виде сверху).
+*/
 class GameField
 {
 	friend class GameFieldBuilder;
 
 public:
-	void setParent(cocos2d::Node* parent);
+	enum class GameFieldPlayRectCornerType
+	{
+		BOTTOM_LEFT = 0,
+		TOP_LEFT,
+		TOP_RIGHT,
+		BOTTOM_RIGHT
+	};
+
+public:
+	void setParent(cocos2d::Node* parent);  // v
 	//GameField(const GameField& other);
 	//GameField& operator=(const GameField& other);
 	~GameField(); // v
 
-
 	GameField() = default;
+
+	cocos2d::Vec2 getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type);  // v
 
 private:
 	std::vector<GameFieldSidePtr> m_sides;
@@ -191,27 +203,21 @@ private:
 typedef std::unique_ptr<GameField> GameFieldPtr;
 
 
+/*
+* Класс-построитель игрового поля.
+*/
 class GameFieldBuilder
 {
 
 public:
-	GameFieldBuilder()
-	{ 
-		m_field = std::make_unique<GameField>();
-		m_field->m_ccGameFieldNode = cocos2d::Node::create();
-	}
+	GameFieldBuilder(); // v
 	void addPlayRect(const cocos2d::Rect& rect); // v
 	void addSide(GameFieldSidePtr side); // v
-	void addCorner(GameFieldSidePartPtr corner);
+	void addCorner(GameFieldSidePartPtr corner, const GameField::GameFieldPlayRectCornerType& play_rect_corner_type);  // v
 	void addGoalGate(const GoalGateSettings& settings, const cocos2d::Vec2& pos);
 	void addCentralCircle(const CentralCircleSettings& settings);
-	GameFieldPtr getResult()
-	{
-		if (check())
-			return std::move(m_field);
-		else
-			return nullptr;
-	}
+	GameFieldPtr getResult();  // v
+
 private:
 	bool check() const;
 
