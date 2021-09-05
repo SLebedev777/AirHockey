@@ -2,7 +2,7 @@
 
 USING_NS_CC;
 
-CentralCircle::CentralCircle(const CentralCircleSettings& settings) :
+CentralCircleMarking::CentralCircleMarking(const CentralCircleMarkingSettings& settings) :
 	m_settings(settings),
 	m_drawNode(DrawNode::create())
 {
@@ -12,12 +12,12 @@ CentralCircle::CentralCircle(const CentralCircleSettings& settings) :
 	m_drawNode->drawCircle(Vec2::ZERO, m_settings.radius, 0.0, 64, false, m_settings.lineColor);
 }
 
-void CentralCircle::setPosition(const cocos2d::Vec2& pos)
+void CentralCircleMarking::setPosition(const cocos2d::Vec2& pos)
 {
 	m_drawNode->setPosition(pos);
 }
 
-void CentralCircle::setParent(Node* parent)
+void CentralCircleMarking::setParent(Node* parent)
 {
 	parent->addChild(m_drawNode, 1);
 }
@@ -241,11 +241,11 @@ void GameFieldBuilder::addCorner(GameFieldSidePartPtr corner, const GameField::G
 	m_field->m_corners.push_back(std::move(corner));
 }
 
-void GameFieldBuilder::addCentralCircle(const CentralCircleSettings& settings)
+void GameFieldBuilder::addCentralCircleMarking(const CentralCircleMarkingSettings& settings)
 {
-	m_field->m_centralCircle = std::make_unique<CentralCircle>(settings);
-	m_field->m_centralCircle->setPosition(m_field->getCenter());
-	m_field->m_centralCircle->setParent(m_field->m_ccGameFieldNode);
+	m_field->m_centralCircleMarking = std::make_unique<CentralCircleMarking>(settings);
+	m_field->m_centralCircleMarking->setPosition(m_field->getCenter());
+	m_field->m_centralCircleMarking->setParent(m_field->m_ccGameFieldNode);
 }
 
 GameFieldPtr GameFieldBuilder::getResult()

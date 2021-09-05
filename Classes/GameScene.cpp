@@ -126,7 +126,7 @@ bool GameScene::init()
     builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::BLACK), GameField::GameFieldPlayRectCornerType::TOP_RIGHT);
     builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::WHITE), GameField::GameFieldPlayRectCornerType::BOTTOM_RIGHT);
     
-    builder.addCentralCircle(CentralCircleSettings(100, 3, Color4F::MAGENTA, Color4F::GRAY));
+    builder.addCentralCircleMarking(CentralCircleMarkingSettings(100, 3, Color4F::MAGENTA, Color4F::GRAY));
     //
     m_field = builder.getResult();
     m_field->setParent(game_layer);

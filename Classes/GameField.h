@@ -23,22 +23,24 @@
 
 */
 
-
-struct GoalGateSettings
+/*
+* Параметры разметки поля у игровых ворот на короткому борту.
+*/
+struct GoalGateMarkingSettings
 {
-	enum class GoalGateShapeType
+	enum class GoalGateMarkingShapeType
 	{
 		HALF_CIRCLE,
 		RECTANGLE
 	};
 
-	explicit GoalGateSettings(float gate_width, float line_width, const cocos2d::Color4F& fill_color, const cocos2d::Color4F& line_color,
-		GoalGateShapeType goal_gate_shape_type, cocos2d::Texture2D* texture = nullptr) :
+	explicit GoalGateMarkingSettings(float gate_width, float line_width, const cocos2d::Color4F& fill_color, const cocos2d::Color4F& line_color,
+		GoalGateMarkingShapeType goal_gate_marking_shape_type, cocos2d::Texture2D* texture = nullptr) :
 		gateWidth(gate_width),
 		lineWidth(line_width),
 		fillColor(fill_color),
 		lineColor(line_color),
-		goalGateShapeType(goal_gate_shape_type),
+		goalGateMarkingShapeType(goal_gate_marking_shape_type),
 		texture(texture)
 	{}
 
@@ -46,28 +48,29 @@ struct GoalGateSettings
 	float lineWidth;
 	cocos2d::Color4F fillColor;
 	cocos2d::Color4F lineColor;
-	GoalGateShapeType goalGateShapeType;
+	GoalGateMarkingShapeType goalGateMarkingShapeType;
 	cocos2d::Texture2D* texture = nullptr;
 };
 
-class GoalGate
+class GoalGateMarking
 {
 public:
-	GoalGate(const GoalGateSettings& settings) :
+	GoalGateMarking(const GoalGateMarkingSettings& settings) :
 		m_settings(settings)
 	{}
-	~GoalGate() {}
+	~GoalGateMarking() {}
 
 private:
-	GoalGateSettings m_settings;
+	GoalGateMarkingSettings m_settings;
 	cocos2d::DrawNode* m_drawNode = nullptr;
 	cocos2d::Sprite* m_sprite = nullptr;
 };
+typedef std::unique_ptr<GoalGateMarking> GoalGateMarkingPtr;
 
 
-struct CentralCircleSettings
+struct CentralCircleMarkingSettings
 {
-	explicit CentralCircleSettings(float radius, float line_width, const cocos2d::Color4F& fill_color, const cocos2d::Color4F& line_color,
+	explicit CentralCircleMarkingSettings(float radius, float line_width, const cocos2d::Color4F& fill_color, const cocos2d::Color4F& line_color,
 		cocos2d::Texture2D* texture = nullptr):
 		radius(radius),
 		lineWidth(line_width),
@@ -83,20 +86,20 @@ struct CentralCircleSettings
 	cocos2d::Texture2D* texture = nullptr;
 };
 
-class CentralCircle
+class CentralCircleMarking
 {
 public:
-	CentralCircle(const CentralCircleSettings& settings);  // v
-	~CentralCircle() {}
+	CentralCircleMarking(const CentralCircleMarkingSettings& settings);  // v
+	~CentralCircleMarking() {}
 	void setPosition(const cocos2d::Vec2& pos);  // v
 	void setParent(cocos2d::Node* parent);  // v
 
 private:
-	CentralCircleSettings m_settings;
+	CentralCircleMarkingSettings m_settings;
 	cocos2d::DrawNode* m_drawNode = nullptr;
 	cocos2d::Sprite* m_sprite = nullptr;
 };
-typedef std::unique_ptr<CentralCircle> CentralCirclePtr;
+typedef std::unique_ptr<CentralCircleMarking> CentralCircleMarkingPtr;
 
 /* Часть борта игрового стола - элемент, из которых состоит борт.
 *  Функционально - это графический нод с физическим телом.
@@ -166,6 +169,7 @@ class GameFieldBuilder;
 
 /*
 * Игровое поле (игровой стол в виде сверху).
+* Создать можно только через билдер.
 */
 class GameField
 {
@@ -181,15 +185,14 @@ public:
 	};
 
 public:
-	void setParent(cocos2d::Node* parent);  // v
-	//GameField(const GameField& other);
-	//GameField& operator=(const GameField& other);
+	GameField() = default;
+	GameField(const GameField& other) = delete;
+	GameField& operator=(const GameField& other) = delete;
 	~GameField(); // v
 
-	GameField() = default;
-
 	cocos2d::Vec2 getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type);  // v
-	const cocos2d::Vec2& getCenter() { return m_center; }
+	const cocos2d::Vec2& getCenter() { return m_center; }  // v
+	void setParent(cocos2d::Node* parent);  // v
 
 private:
 	std::vector<GameFieldSidePtr> m_sides;
@@ -199,7 +202,7 @@ private:
 	cocos2d::Rect m_playRect = cocos2d::Rect::ZERO;
 	cocos2d::Node* m_ccGameFieldNode = nullptr;
 	cocos2d::Node* m_ccParent = nullptr;
-	CentralCirclePtr m_centralCircle = nullptr;
+	CentralCircleMarkingPtr m_centralCircleMarking = nullptr;
 };
 
 typedef std::unique_ptr<GameField> GameFieldPtr;
@@ -216,8 +219,8 @@ public:
 	void addPlayRect(const cocos2d::Rect& rect); // v
 	void addSide(GameFieldSidePtr side); // v
 	void addCorner(GameFieldSidePartPtr corner, const GameField::GameFieldPlayRectCornerType& play_rect_corner_type);  // v
-	void addGoalGate(const GoalGateSettings& settings, const cocos2d::Vec2& pos);
-	void addCentralCircle(const CentralCircleSettings& settings);
+	void addGoalGateMarking(const GoalGateMarkingSettings& settings, const cocos2d::Vec2& pos);
+	void addCentralCircleMarking(const CentralCircleMarkingSettings& settings);
 	GameFieldPtr getResult();  // v
 
 private:
