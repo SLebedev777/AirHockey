@@ -2,6 +2,26 @@
 
 USING_NS_CC;
 
+CentralCircle::CentralCircle(const CentralCircleSettings& settings) :
+	m_settings(settings),
+	m_drawNode(DrawNode::create())
+{
+	m_drawNode->setAnchorPoint(Vec2(0.5, 0.5));
+	m_drawNode->drawSolidCircle(Vec2::ZERO, m_settings.radius, 0.0, 64, m_settings.fillColor);
+	m_drawNode->setLineWidth(m_settings.lineWidth);
+	m_drawNode->drawCircle(Vec2::ZERO, m_settings.radius, 0.0, 64, false, m_settings.lineColor);
+}
+
+void CentralCircle::setPosition(const cocos2d::Vec2& pos)
+{
+	m_drawNode->setPosition(pos);
+}
+
+void CentralCircle::setParent(Node* parent)
+{
+	parent->addChild(m_drawNode, 1);
+}
+
 /// <summary>
 /// GameFieldSidePart
 /// </summary>
@@ -166,6 +186,7 @@ GameFieldBuilder::GameFieldBuilder() :
 void GameFieldBuilder::addPlayRect(const cocos2d::Rect& rect)
 {
 	m_field->m_playRect = rect;
+	m_field->m_center = Vec2(rect.getMidX(), rect.getMidY());
 }
 
 void GameFieldBuilder::addSide(GameFieldSidePtr side)
@@ -218,6 +239,13 @@ void GameFieldBuilder::addCorner(GameFieldSidePartPtr corner, const GameField::G
 
 	corner->setParent(m_field->m_ccGameFieldNode);
 	m_field->m_corners.push_back(std::move(corner));
+}
+
+void GameFieldBuilder::addCentralCircle(const CentralCircleSettings& settings)
+{
+	m_field->m_centralCircle = std::make_unique<CentralCircle>(settings);
+	m_field->m_centralCircle->setPosition(m_field->getCenter());
+	m_field->m_centralCircle->setParent(m_field->m_ccGameFieldNode);
 }
 
 GameFieldPtr GameFieldBuilder::getResult()

@@ -86,16 +86,17 @@ struct CentralCircleSettings
 class CentralCircle
 {
 public:
-	CentralCircle(const CentralCircleSettings& settings) :
-		m_settings(settings)
-	{}
+	CentralCircle(const CentralCircleSettings& settings);  // v
 	~CentralCircle() {}
+	void setPosition(const cocos2d::Vec2& pos);  // v
+	void setParent(cocos2d::Node* parent);  // v
 
 private:
 	CentralCircleSettings m_settings;
 	cocos2d::DrawNode* m_drawNode = nullptr;
 	cocos2d::Sprite* m_sprite = nullptr;
 };
+typedef std::unique_ptr<CentralCircle> CentralCirclePtr;
 
 /* Часть борта игрового стола - элемент, из которых состоит борт.
 *  Функционально - это графический нод с физическим телом.
@@ -188,16 +189,17 @@ public:
 	GameField() = default;
 
 	cocos2d::Vec2 getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type);  // v
+	const cocos2d::Vec2& getCenter() { return m_center; }
 
 private:
 	std::vector<GameFieldSidePtr> m_sides;
 	std::vector<GameFieldSidePartPtr> m_corners;
 	//GoalGate m_gatePlayer1, m_gatePlayer2;
-	//CentralCircle m_centralCircle;
-	cocos2d::Vec2 m_center;
-	cocos2d::Rect m_playRect;
+	cocos2d::Vec2 m_center = cocos2d::Vec2::ZERO;
+	cocos2d::Rect m_playRect = cocos2d::Rect::ZERO;
 	cocos2d::Node* m_ccGameFieldNode = nullptr;
 	cocos2d::Node* m_ccParent = nullptr;
+	CentralCirclePtr m_centralCircle = nullptr;
 };
 
 typedef std::unique_ptr<GameField> GameFieldPtr;
