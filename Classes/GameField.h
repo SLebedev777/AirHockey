@@ -159,6 +159,7 @@ public:
 private:
 	std::vector<GameFieldSidePartPtr> m_parts;
 	DIRECTION m_direction;
+	float start_gap = 0.0f;
 };
 typedef std::unique_ptr<GameFieldSide> GameFieldSidePtr;
 

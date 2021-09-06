@@ -56,14 +56,16 @@ void GameFieldSidePart::setAnchorPoint(const cocos2d::Vec2& anchor_point)
 
 void GameFieldSide::addSidePart(GameFieldSidePartPtr part, float gap)
 {
+	Vec2 new_pos = Vec2::ZERO;
+	Rect last_rect = Rect::ZERO;
 	if (m_parts.empty())
 	{
-		m_parts.push_back(std::move(part));
-		return;
+		start_gap = gap;
 	}
-
-	Vec2 new_pos = Vec2::ZERO;
-	Rect last_rect = m_parts.back()->getRect();
+	else
+	{
+		last_rect = m_parts.back()->getRect();
+	}
 
 	switch (m_direction)
 	{
@@ -110,16 +112,16 @@ cocos2d::Vec2 GameFieldSide::getOrigin() const
 	switch(m_direction)
 	{
 	case GameFieldSide::DIRECTION::UP:
-		return Vec2(first_rect.getMaxX(), first_rect.getMinY());
+		return Vec2(first_rect.getMaxX(), first_rect.getMinY() - start_gap);
 		break;
 	case GameFieldSide::DIRECTION::RIGHT:
-		return Vec2(first_rect.getMinX(), first_rect.getMinY());
+		return Vec2(first_rect.getMinX() - start_gap, first_rect.getMinY());
 		break;
 	case GameFieldSide::DIRECTION::DOWN:
-		return Vec2(first_rect.getMinX(), first_rect.getMaxY());
+		return Vec2(first_rect.getMinX(), first_rect.getMaxY() + start_gap);
 		break;
 	case GameFieldSide::DIRECTION::LEFT:
-		return Vec2(first_rect.getMaxX(), first_rect.getMaxY());
+		return Vec2(first_rect.getMaxX() + start_gap, first_rect.getMaxY());
 		break;
 	default:
 		throw;
