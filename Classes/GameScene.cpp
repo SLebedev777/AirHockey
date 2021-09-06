@@ -105,9 +105,9 @@ bool GameScene::init()
     builder.addSide(std::move(left_long_side));
 
     GameFieldSidePtr upper_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::RIGHT);
-    Size short_part_size = Size(GAMEFIELDRECT.size.width / 2, SIDE_HEIGHT);
+    Size short_part_size = Size(GAMEFIELDRECT.size.width / 3, SIDE_HEIGHT);
     upper_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::YELLOW)});
-    upper_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::WHITE)});
+    upper_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::WHITE)}, short_part_size.width);
     builder.addSide(std::move(upper_short_side));
 
     GameFieldSidePtr right_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::DOWN);
@@ -117,7 +117,7 @@ bool GameScene::init()
 
     GameFieldSidePtr lower_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::LEFT);
     lower_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::YELLOW)});
-    lower_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::BLUE)});
+    lower_short_side->addSidePart({std::make_unique<GameFieldSidePart>(short_part_size, Color4F::BLUE)}, short_part_size.width);
     builder.addSide(std::move(lower_short_side));
     
     Size corner_size = Size(SIDE_WIDTH*2, SIDE_WIDTH*2);

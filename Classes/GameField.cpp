@@ -54,7 +54,7 @@ void GameFieldSidePart::setAnchorPoint(const cocos2d::Vec2& anchor_point)
 /// GameFieldSide
 /// </summary>
 
-void GameFieldSide::addSidePart(GameFieldSidePartPtr part)
+void GameFieldSide::addSidePart(GameFieldSidePartPtr part, float gap)
 {
 	if (m_parts.empty())
 	{
@@ -68,16 +68,16 @@ void GameFieldSide::addSidePart(GameFieldSidePartPtr part)
 	switch (m_direction)
 	{
 	case GameFieldSide::DIRECTION::UP:
-		new_pos = Vec2(last_rect.getMinX(), last_rect.getMaxY());
+		new_pos = Vec2(last_rect.getMinX(), last_rect.getMaxY() + gap);
 		break;
 	case GameFieldSide::DIRECTION::RIGHT:
-		new_pos = Vec2(last_rect.getMaxX(), last_rect.getMinY());
+		new_pos = Vec2(last_rect.getMaxX() + gap, last_rect.getMinY());
 		break;
 	case GameFieldSide::DIRECTION::DOWN:
-		new_pos = Vec2(last_rect.getMinX(), last_rect.getMinY() - part->getRect().size.height);
+		new_pos = Vec2(last_rect.getMinX(), last_rect.getMinY() - part->getRect().size.height - gap);
 		break;
 	case GameFieldSide::DIRECTION::LEFT:
-		new_pos = Vec2(last_rect.getMinX() - part->getRect().size.width, last_rect.getMinY());
+		new_pos = Vec2(last_rect.getMinX() - part->getRect().size.width - gap, last_rect.getMinY());
 		break;
 	default: break;
 	}

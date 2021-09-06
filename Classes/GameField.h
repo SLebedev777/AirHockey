@@ -149,7 +149,7 @@ public:
 	GameFieldSide(const GameFieldSide& other);
 	GameFieldSide& operator=(const GameFieldSide& other);
 
-	void addSidePart(GameFieldSidePartPtr part);  // v
+	void addSidePart(GameFieldSidePartPtr part, float gap = 0.0f);  // v
 	void moveBy(const cocos2d::Vec2& shift);  // v
 	void moveTo(const cocos2d::Vec2& pos);  // v
 	const DIRECTION& getDirection() const { return m_direction; }  // v
