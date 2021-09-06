@@ -127,6 +127,9 @@ bool GameScene::init()
     builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::BLACK), GameField::GameFieldPlayRectCornerType::TOP_RIGHT);
     builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::WHITE), GameField::GameFieldPlayRectCornerType::BOTTOM_RIGHT);
     
+    builder.addGoalGate(std::make_unique<GoalGate>(short_part_size, GoalGateLocationType::LOWER));
+    builder.addGoalGate(std::make_unique<GoalGate>(short_part_size, GoalGateLocationType::UPPER));
+
     builder.addCentralCircleMarking(CentralCircleMarkingSettings(100, 3, Color4F::MAGENTA, Color4F::GRAY));
     //
     m_field = builder.getResult();

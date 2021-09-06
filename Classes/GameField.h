@@ -23,6 +23,13 @@
 
 */
 
+
+enum class GoalGateLocationType
+{
+	LOWER = 0,
+	UPPER
+};
+
 /*
 * Параметры разметки поля у игровых ворот на короткому борту.
 */
@@ -128,6 +135,26 @@ private:
 };
 typedef std::unique_ptr<GameFieldSidePart> GameFieldSidePartPtr;
 
+
+/*
+* Ворота. Пока -просто прямоугольник, на который будет срабатывать расположение шайбы, чтобы засчитать гол.
+*/
+class GoalGate
+{
+public:
+	GoalGate(const cocos2d::Size& size, const GoalGateLocationType& location_type);  // v
+
+	const GoalGateLocationType& getLocationType() const { return m_locationType; }  // v
+	cocos2d::Rect getRect() const { return m_rect; }
+	void setCenteredPosition(const cocos2d::Vec2& pos);  // v
+
+private:
+	cocos2d::Sprite* m_sprite = nullptr;
+	cocos2d::Rect m_rect = cocos2d::Rect::ZERO;
+	GoalGateLocationType m_locationType;
+};
+typedef std::unique_ptr<GoalGate> GoalGatePtr;
+
 /*
   Борт - ориентированная боковая сторона игрового стола. Состоит из частей-объектов GameFieldSidePart.
 */
@@ -198,7 +225,8 @@ public:
 private:
 	std::vector<GameFieldSidePtr> m_sides;
 	std::vector<GameFieldSidePartPtr> m_corners;
-	//GoalGate m_gatePlayer1, m_gatePlayer2;
+	GoalGatePtr m_gateLower = nullptr;
+	GoalGatePtr m_gateUpper = nullptr;
 	cocos2d::Vec2 m_center = cocos2d::Vec2::ZERO;
 	cocos2d::Rect m_playRect = cocos2d::Rect::ZERO;
 	cocos2d::Node* m_ccGameFieldNode = nullptr;
@@ -220,8 +248,9 @@ public:
 	void addPlayRect(const cocos2d::Rect& rect); // v
 	void addSide(GameFieldSidePtr side); // v
 	void addCorner(GameFieldSidePartPtr corner, const GameField::GameFieldPlayRectCornerType& play_rect_corner_type);  // v
+	void addGoalGate(GoalGatePtr gate);
 	void addGoalGateMarking(const GoalGateMarkingSettings& settings, const cocos2d::Vec2& pos);
-	void addCentralCircleMarking(const CentralCircleMarkingSettings& settings);
+	void addCentralCircleMarking(const CentralCircleMarkingSettings& settings);  // v
 	GameFieldPtr getResult();  // v
 
 private:
