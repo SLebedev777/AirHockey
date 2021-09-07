@@ -114,9 +114,9 @@ typedef std::unique_ptr<CentralCircleMarking> CentralCircleMarkingPtr;
 class GameFieldSidePart
 {
 public:
-	GameFieldSidePart(const cocos2d::Size& size, cocos2d::Texture2D* texture);
-	GameFieldSidePart(const cocos2d::Size& size, const cocos2d::Color4F& fill_color); // v
-	GameFieldSidePart(const std::string& sprite_name);
+	GameFieldSidePart(const cocos2d::Size& size, cocos2d::Texture2D* texture, bool add_default_physics_body = true);
+	GameFieldSidePart(const cocos2d::Size& size, const cocos2d::Color4F& fill_color, bool add_default_physics_body = true); // v
+	GameFieldSidePart(const std::string& sprite_name, bool add_default_physics_body = true);
 	GameFieldSidePart(const GameFieldSidePart& other);
 	GameFieldSidePart& operator=(const GameFieldSidePart& other);
 
@@ -126,7 +126,7 @@ public:
 	cocos2d::Rect getRect() const { return m_node->getBoundingBox(); }  // v
 	void setAnchorPoint(const cocos2d::Vec2& anchor_point);  // v
 	void setParent(cocos2d::Node* parent);  // v
-	void addPhysicsBody();
+	void addPhysicsBody(const cocos2d::PhysicsMaterial& material = cocos2d::PhysicsMaterial(0.1f, 1.0f, 0.0f));  // v
 
 private:
 	cocos2d::Node* m_node = nullptr;

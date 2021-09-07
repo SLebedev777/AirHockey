@@ -26,13 +26,17 @@ void CentralCircleMarking::setParent(Node* parent)
 /// GameFieldSidePart
 /// </summary>
 
-GameFieldSidePart::GameFieldSidePart(const cocos2d::Size& size, const cocos2d::Color4F& fill_color)
+GameFieldSidePart::GameFieldSidePart(const cocos2d::Size& size, const cocos2d::Color4F& fill_color, bool add_default_physics_body) :
+	m_node(DrawNode::create())
 {
-	m_node = DrawNode::create();
 	static_cast<DrawNode*>(m_node)->drawSolidRect(Vec2::ZERO, Vec2(size.width, size.height), fill_color);
 	m_node->setAnchorPoint(Vec2(0, 0));
 	m_node->setPosition(Vec2::ZERO);
 	m_node->setContentSize(size);
+	if (add_default_physics_body)
+	{
+		addPhysicsBody();
+	}
 }
 
 void GameFieldSidePart::moveBy(const cocos2d::Vec2& shift)
@@ -48,6 +52,13 @@ void GameFieldSidePart::setParent(Node* parent)
 void GameFieldSidePart::setAnchorPoint(const cocos2d::Vec2& anchor_point)
 {
 	m_node->setAnchorPoint(anchor_point);
+}
+
+void GameFieldSidePart::addPhysicsBody(const cocos2d::PhysicsMaterial& material)
+{
+	PhysicsBody* box = PhysicsBody::createEdgeBox(m_node->getContentSize(), material);
+	box->setDynamic(false);
+	m_node->addComponent(box);
 }
 
 /// <summary>
