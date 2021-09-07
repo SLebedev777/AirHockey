@@ -22,6 +22,7 @@ enum GameLayerTags
 
 enum HUDLayerTags
 {
+    TAG_HUD_LAYER_SCORE_STRING = 1
 };
 
 GameScene::GameScene(GameLevel& level) :
@@ -79,18 +80,6 @@ bool GameScene::init()
     Rect GAMEFIELDRECT = Rect(frameCenter.x - m_currLevel.m_width / 2, 
                               frameCenter.y - m_currLevel.m_height / 2, 
                               m_currLevel.m_width, m_currLevel.m_height);
-    /*
-    auto field_draw_border = DrawNode::create(5);
-    field_draw_border->drawRect(GAMEFIELDRECT.origin, GAMEFIELDRECT.origin + GAMEFIELDRECT.size, Color4F::RED);
-    game_layer->addChild(field_draw_border, 1, TAG_GAME_LAYER_FIELD_BORDER_RECT);
-    // add table boundaries to physics world to make ball bounce from it
-    Node* field_node = Node::create();
-    field_node->setPosition(frameCenter);
-    PhysicsBody* field_box = PhysicsBody::createEdgeBox(GAMEFIELDRECT.size, PhysicsMaterial(0.1f, 1.0f, 0.0f));
-    field_box->setDynamic(false);
-    field_node->addComponent(field_box);
-    game_layer->addChild(field_node, 1);
-    */
     
     GameFieldBuilder builder = GameFieldBuilder();
     // building steps
@@ -158,21 +147,24 @@ bool GameScene::init()
     // PUCK
     m_puck = Sprite::create("puck.png");
     PhysicsMaterial puck_material = PhysicsMaterial(0.1f, 1.0f, 0.2f);
-    m_puck->addComponent(PhysicsBody::createCircle(m_puck->getBoundingBox().size.width / 2, puck_material));
+    auto puck_body = PhysicsBody::createCircle(m_puck->getBoundingBox().size.width / 2, puck_material);
+    puck_body->setName("puck_body");
+    m_puck->addComponent(puck_body);
     m_puck->setPosition(frameCenter.x, frameCenter.y - GAMEFIELDRECT.size.height / 4);
     game_layer->addChild(m_puck, 1);
 
     m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50, PLAYER1_FIELDRECT, game_layer,
         this->getPhysicsWorld());
 
-    m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
+    //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
 
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
 
     m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 50, PLAYER2_FIELDRECT, game_layer,
         this->getPhysicsWorld());
 
-    m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
+    //m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
+    m_keyboardController = std::make_shared<KeyboardInputController>("KB2", m_paddle2);
 
     //////////////////////////////////////////////////
     // HUD LAYER
@@ -180,6 +172,15 @@ bool GameScene::init()
     
     auto hud_layer = LayerColor::create(Color4B(0, 0, 0, 0));
     m_touchController->scheduleDebugOutput(hud_layer);
+
+    auto label_score = Label::createWithTTF("0 : 0", "fonts/arial.ttf", 72);
+    label_score->setAnchorPoint(Vec2(0.5f, 0.5f));
+    if (label_score)
+    {
+        label_score->setPosition(frameCenter);
+    }
+    hud_layer->addChild(label_score, 1, TAG_HUD_LAYER_SCORE_STRING);
+
 
     //////////////////////////////////////////////////
     // HUD CONTROL LAYER
@@ -274,11 +275,36 @@ void GameScene::updateTimer(float dt)
     m_timeElapsed += dt;
 }
 
+void GameScene::drawHUDString(int str_tag, const std::string& str)
+{
+    auto hud_layer = this->getChildByTag(TAG_HUD_LAYER);
+    auto label_node = hud_layer->getChildByTag(str_tag);
+    auto label = static_cast<cocos2d::Label*> (label_node);
+    label->setString(str);
+
+}
 
 void GameScene::update(float dt)
 {
     // GAME LOGIC HERE
     m_paddle1->move(dt);
     m_paddle2->move(dt);
+
+    if (m_field->getGoalGate(GoalGateLocationType::LOWER)->getRect().containsPoint(m_puck->getPosition()))
+    {
+        ++m_score2;
+        m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y - m_field->getPlayRect().size.height / 4);
+        static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"))->setVelocity(Vec2::ZERO);
+        static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"))->setAngularVelocity(0.0f);
+    }
+    else if (m_field->getGoalGate(GoalGateLocationType::UPPER)->getRect().containsPoint(m_puck->getPosition()))
+    {
+        ++m_score1;
+        m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y + m_field->getPlayRect().size.height / 4);
+        static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"))->setVelocity(Vec2::ZERO);
+        static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"))->setAngularVelocity(0.0f);
+    }
+
+    drawHUDString(TAG_HUD_LAYER_SCORE_STRING, std::to_string(m_score1) + " : " + std::to_string(m_score2));
 
 }

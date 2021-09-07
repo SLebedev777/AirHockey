@@ -35,7 +35,7 @@ public:
     void onGameLoose(Ref* sender);
 
     void updateTimer(float dt);
-
+    void drawHUDString(int str_tag, const std::string& str);
 
     void update(float dt) override;
 
@@ -61,6 +61,8 @@ protected:
     int m_right = 0; // 1 = right, -1 = left
     
     float m_timeElapsed = 0.0f;
+
+    uint32_t m_score1 = 0, m_score2 = 0;
 };
 
 #endif // __GAMESCENE_H__

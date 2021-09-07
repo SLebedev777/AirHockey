@@ -147,6 +147,7 @@ public:
 	const GoalGateLocationType& getLocationType() const { return m_locationType; }  // v
 	cocos2d::Rect getRect() const { return m_node->getBoundingBox(); }
 	void setPosition(const cocos2d::Vec2& pos);  // v
+	void setParent(cocos2d::Node* parent);
 
 private:
 	cocos2d::Sprite* m_sprite = nullptr;
@@ -218,9 +219,11 @@ public:
 	GameField& operator=(const GameField& other) = delete;
 	~GameField(); // v
 
-	cocos2d::Vec2 getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type);  // v
-	const cocos2d::Vec2& getCenter() { return m_center; }  // v
+	cocos2d::Vec2 getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type) const;  // v
+	const cocos2d::Vec2& getCenter() const { return m_center; }  // v
+	cocos2d::Rect getPlayRect() const { return m_playRect; }  // v
 	void setParent(cocos2d::Node* parent);  // v
+	GoalGate* getGoalGate(const GoalGateLocationType& location_type) const; 
 
 private:
 	std::vector<GameFieldSidePtr> m_sides;

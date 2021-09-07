@@ -78,6 +78,12 @@ void GoalGate::setPosition(const cocos2d::Vec2& pos)
 	m_node->setPosition(pos);
 }
 
+void GoalGate::setParent(cocos2d::Node* parent)
+{
+	parent->addChild(m_node, 1);
+}
+
+
 /// <summary>
 /// GameFieldSide
 /// </summary>
@@ -181,7 +187,7 @@ GameField::~GameField()
 	m_ccGameFieldNode->removeFromParent();
 }
 
-cocos2d::Vec2 GameField::getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type)
+cocos2d::Vec2 GameField::getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type) const
 {
 	switch (corner_type)
 	{
@@ -201,6 +207,14 @@ cocos2d::Vec2 GameField::getPlayRectCornerPoint(const GameFieldPlayRectCornerTyp
 		throw;
 		break;
 	}
+}
+
+GoalGate* GameField::getGoalGate(const GoalGateLocationType& location_type) const
+{
+	if (location_type == GoalGateLocationType::LOWER)
+		return m_gateLower.get();
+	else if (location_type == GoalGateLocationType::UPPER)
+		return m_gateUpper.get();
 }
 
 /// <summary>
@@ -276,6 +290,7 @@ void GameFieldBuilder::addGoalGate(GoalGatePtr gate)
 	if (m_field->m_playRect.equals(Rect::ZERO))
 		throw std::runtime_error("Can't add goal gate to empty game field!");
 
+	gate->setParent(m_field->m_ccGameFieldNode);
 	// can add concrete type of gate only once
 	if (gate->getLocationType() == GoalGateLocationType::LOWER)
 	{
