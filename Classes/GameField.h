@@ -145,12 +145,12 @@ public:
 	GoalGate(const cocos2d::Size& size, const GoalGateLocationType& location_type);  // v
 
 	const GoalGateLocationType& getLocationType() const { return m_locationType; }  // v
-	cocos2d::Rect getRect() const { return m_rect; }
-	void setCenteredPosition(const cocos2d::Vec2& pos);  // v
+	cocos2d::Rect getRect() const { return m_node->getBoundingBox(); }
+	void setPosition(const cocos2d::Vec2& pos);  // v
 
 private:
 	cocos2d::Sprite* m_sprite = nullptr;
-	cocos2d::Rect m_rect = cocos2d::Rect::ZERO;
+	cocos2d::Node* m_node = nullptr;
 	GoalGateLocationType m_locationType;
 };
 typedef std::unique_ptr<GoalGate> GoalGatePtr;

@@ -55,13 +55,16 @@ void GameFieldSidePart::setAnchorPoint(const cocos2d::Vec2& anchor_point)
 /// </summary>
 
 GoalGate::GoalGate(const cocos2d::Size& size, const GoalGateLocationType& location_type) :
-	m_rect(Rect(0.0f, 0.0f, size.width, size.height)),
+	m_node(Node::create()),
 	m_locationType(location_type)
-{}
-
-void GoalGate::setCenteredPosition(const cocos2d::Vec2& pos)
 {
-	m_rect.setRect(pos.x - m_rect.size.width / 2, pos.y - m_rect.size.height / 2, m_rect.size.width, m_rect.size.height);
+	m_node->setContentSize(size);
+	m_node->setAnchorPoint(Vec2(0.5f, 0.5f));
+}
+
+void GoalGate::setPosition(const cocos2d::Vec2& pos)
+{
+	m_node->setPosition(pos);
 }
 
 /// <summary>
@@ -268,7 +271,7 @@ void GameFieldBuilder::addGoalGate(GoalGatePtr gate)
 		if (m_field->m_gateLower)
 			return;
 
-		gate->setCenteredPosition(Vec2(m_field->m_playRect.getMidX(), m_field->m_playRect.getMinY() - gate->getRect().size.height / 2));
+		gate->setPosition(Vec2(m_field->m_playRect.getMidX(), m_field->m_playRect.getMinY() - gate->getRect().size.height / 2));
 		m_field->m_gateLower = std::move(gate);
 	}
 	else if (gate->getLocationType() == GoalGateLocationType::UPPER)
@@ -276,7 +279,7 @@ void GameFieldBuilder::addGoalGate(GoalGatePtr gate)
 		if (m_field->m_gateUpper)
 			return;
 
-		gate->setCenteredPosition(Vec2(m_field->m_playRect.getMidX(), m_field->m_playRect.getMaxY() + gate->getRect().size.height / 2));
+		gate->setPosition(Vec2(m_field->m_playRect.getMidX(), m_field->m_playRect.getMaxY() + gate->getRect().size.height / 2));
 		m_field->m_gateUpper = std::move(gate);
 	}
 }
