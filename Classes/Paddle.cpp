@@ -2,18 +2,19 @@
 
 USING_NS_CC;
 
-Paddle::Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent,
+Paddle::Paddle(const std::string& image_name, float start_x, float start_y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent,
 	PhysicsWorld* physics_world):
 	m_ccsSprite(cocos2d::Sprite::create(image_name)),
-	m_centerX(x),
-	m_centerY(y),
+	m_centerX(start_x),
+	m_centerY(start_y),
 	m_velX(vel_x),
 	m_velY(vel_y),
 	m_radius(radius),
 	m_fieldRect(field_rect),
 	m_ccnParent(parent),
 	m_ccnStick(cocos2d::Node::create()),
-	m_ccPhysicsWorld(physics_world)
+	m_ccPhysicsWorld(physics_world),
+	m_startPos(Vec2(start_x, start_y))
 {
 	if (!m_ccnParent)
 	{

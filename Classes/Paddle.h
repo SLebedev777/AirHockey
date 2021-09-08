@@ -8,7 +8,7 @@ USING_NS_CC;
 class Paddle
 {
 public:
-	Paddle(const std::string& image_name, float x, float y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent,
+	Paddle(const std::string& image_name, float start_x, float start_y, float vel_x, float vel_y, float radius, Rect& field_rect, Node* parent,
 		PhysicsWorld* physics_world);
 	~Paddle();
 
@@ -29,6 +29,8 @@ public:
 	cocos2d::Vec2 boundToFieldRect(cocos2d::Vec2 pos);
 	float getRadius() const { return m_radius; }
 	void setNormalizedVelocity(const cocos2d::Vec2& nvel) { m_velXnorm = nvel.x; m_velYnorm = nvel.y; }
+	void setStartPosition(const cocos2d::Vec2& pos) { m_startPos = pos; }
+	const cocos2d::Vec2& getStartPosition() const { return m_startPos; }
 
 private:
 	Rect m_fieldRect;
@@ -48,6 +50,8 @@ private:
 	cocos2d::PhysicsWorld* m_ccPhysicsWorld = nullptr;
 	cocos2d::Node* m_ccnParent = nullptr;
 	cocos2d::Node* m_ccnStick = nullptr;
+
+	cocos2d::Vec2 m_startPos = cocos2d::Vec2::ZERO;
 };
 
 typedef std::shared_ptr<Paddle> PaddlePtr;

@@ -160,7 +160,7 @@ bool GameScene::init()
 
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
 
-    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 100, 100, 50, PLAYER2_FIELDRECT, game_layer,
+    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 1000, 1000, 50, PLAYER2_FIELDRECT, game_layer,
         this->getPhysicsWorld());
 
     //m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
@@ -262,11 +262,7 @@ void GameScene::onGameMenuClose(Event* event)
 }
 
 
-void GameScene::onGameWin(Ref* sender)
-{
-}
-
-void GameScene::onGameLoose(Ref* sender)
+void GameScene::onGameEnd(Ref* sender)
 {
 }
 
@@ -290,19 +286,26 @@ void GameScene::update(float dt)
     m_paddle1->move(dt);
     m_paddle2->move(dt);
 
+    auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
+    // goal to Player1's gate (lower)
     if (m_field->getGoalGate(GoalGateLocationType::LOWER)->getRect().containsPoint(m_puck->getPosition()))
     {
         ++m_score2;
         m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y - m_field->getPlayRect().size.height / 4);
-        static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"))->setVelocity(Vec2::ZERO);
-        static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"))->setAngularVelocity(0.0f);
+        puck_body->setVelocity(Vec2::ZERO);
+        puck_body->setAngularVelocity(0.0f);
+        m_paddle1->setPosition(m_paddle1->getStartPosition());
+        m_paddle2->setPosition(m_paddle2->getStartPosition());
     }
+    // goal to Player2's gate (upper)
     else if (m_field->getGoalGate(GoalGateLocationType::UPPER)->getRect().containsPoint(m_puck->getPosition()))
     {
         ++m_score1;
         m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y + m_field->getPlayRect().size.height / 4);
-        static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"))->setVelocity(Vec2::ZERO);
-        static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"))->setAngularVelocity(0.0f);
+        puck_body->setVelocity(Vec2::ZERO);
+        puck_body->setAngularVelocity(0.0f);
+        m_paddle1->setPosition(m_paddle1->getStartPosition());
+        m_paddle2->setPosition(m_paddle2->getStartPosition());
     }
 
     drawHUDString(TAG_HUD_LAYER_SCORE_STRING, std::to_string(m_score1) + " : " + std::to_string(m_score2));
