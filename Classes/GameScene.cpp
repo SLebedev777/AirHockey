@@ -3,7 +3,8 @@
 #include "AIInputController.h"
 #include "MouseInputController.h"
 #include "TouchInputController.h"
-
+#include "GameMenuLayer.h"
+#include "GameEndLayer.h"
 
 USING_NS_CC;
 
@@ -12,7 +13,8 @@ enum LayersTags
     TAG_GAME_LAYER = 1,
     TAG_HUD_LAYER,
     TAG_HUD_CONTROL_LAYER,
-    TAG_GAME_MENU_LAYER
+    TAG_GAME_MENU_LAYER,
+    TAG_GAME_END_MENU_LAYER
 };
 
 enum GameLayerTags
@@ -212,6 +214,17 @@ bool GameScene::init()
 
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_keyboard_listener, this);
 
+    auto _game_menu_close_listener = EventListenerCustom::create("event_game_menu_close", [=](EventCustom* event) {
+        onGameMenuClose(event);
+        });
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(_game_menu_close_listener, this);
+
+    auto _game_end_menu_close_listener = EventListenerCustom::create("event_game_end_menu_close", [=](EventCustom* event) {
+        onGameEndMenuClose(event);
+        });
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(_game_end_menu_close_listener, this);
+
+
     scheduleUpdate();
 
     return true;
@@ -255,16 +268,47 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 
 void GameScene::onGameMenuOpen(Ref* sender)
 {
+    Director::getInstance()->getScheduler()->pauseTarget(this);
+
+    auto game_menu_layer = GameMenuLayer::create(this);
+    this->addChild(game_menu_layer, 255, TAG_GAME_MENU_LAYER);
 }
 
 void GameScene::onGameMenuClose(Event* event)
 {
+    Director::getInstance()->getScheduler()->resumeTarget(this);
+
+    auto game_menu_layer = this->getChildByTag(TAG_GAME_MENU_LAYER);
+    if (game_menu_layer)
+    {
+        this->removeChildByTag(TAG_GAME_MENU_LAYER);
+    }
+
 }
 
 
-void GameScene::onGameEnd(Ref* sender)
+void GameScene::onGameEndMenuOpen(Ref* sender)
 {
+    Director::getInstance()->getScheduler()->pauseTarget(this);
+
+    auto game_end_menu_layer = GameEndMenuLayer::create(this);
+    this->addChild(game_end_menu_layer, 255, TAG_GAME_END_MENU_LAYER);
 }
+
+void GameScene::onGameEndMenuClose(Event* event)
+{
+    Director::getInstance()->getScheduler()->resumeTarget(this);
+
+    auto game_end_menu_layer = this->getChildByTag(TAG_GAME_END_MENU_LAYER);
+    if (game_end_menu_layer)
+    {
+        this->removeChildByTag(TAG_GAME_END_MENU_LAYER);
+    }
+
+    m_score1 = 0;
+    m_score2 = 0;
+}
+
 
 void GameScene::updateTimer(float dt)
 {
@@ -286,6 +330,7 @@ void GameScene::update(float dt)
     m_paddle1->move(dt);
     m_paddle2->move(dt);
 
+    // TODO: check X center of puck is within width of gate and Y is out of table bounds (avoid failing catching goal when puck has high vel) 
     auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
     // goal to Player1's gate (lower)
     if (m_field->getGoalGate(GoalGateLocationType::LOWER)->getRect().containsPoint(m_puck->getPosition()))
@@ -306,6 +351,12 @@ void GameScene::update(float dt)
         puck_body->setAngularVelocity(0.0f);
         m_paddle1->setPosition(m_paddle1->getStartPosition());
         m_paddle2->setPosition(m_paddle2->getStartPosition());
+    }
+    
+    const int MAX_SCORE = 3;
+    if (m_score1 >= MAX_SCORE || m_score2 >= MAX_SCORE)
+    {
+        onGameEndMenuOpen(nullptr);
     }
 
     drawHUDString(TAG_HUD_LAYER_SCORE_STRING, std::to_string(m_score1) + " : " + std::to_string(m_score2));

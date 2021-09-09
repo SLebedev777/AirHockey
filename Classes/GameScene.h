@@ -31,7 +31,8 @@ public:
     void onGameMenuClose(Event* event);
     void onGameMenuOpen(Ref* sender);
 
-    void onGameEnd(Ref* sender);
+    void onGameEndMenuOpen(Ref* sender);
+    void onGameEndMenuClose(Event* event);
 
     void updateTimer(float dt);
     void drawHUDString(int str_tag, const std::string& str);
