@@ -1,25 +1,33 @@
-#pragma once
+#ifndef __KEYBOARDINPUTCONTROLLER_H__
+#define __KEYBOARDINPUTCONTROLLER_H__
+
 #include "PlayerInputController.h"
 
-class KeyboardInputController : public IPlayerInputController
+namespace airhockey
 {
-public:
-	KeyboardInputController(const std::string& name, PaddlePtr my_paddle) :
-		IPlayerInputController(name, my_paddle)
+
+	class KeyboardInputController : public IPlayerInputController
 	{
-		bindInputListeners();
-	}
-	KeyboardInputController(KeyboardInputController& other) :
-		IPlayerInputController(other.m_name, other.m_myPaddle)
-	{
-		bindInputListeners();
-	}
+	public:
+		KeyboardInputController(const std::string& name, PaddlePtr my_paddle) :
+			IPlayerInputController(name, my_paddle)
+		{
+			bindInputListeners();
+		}
+		KeyboardInputController(KeyboardInputController& other) :
+			IPlayerInputController(other.m_name, other.m_myPaddle)
+		{
+			bindInputListeners();
+		}
 
-	~KeyboardInputController() {}
+		~KeyboardInputController() {}
 
-	void bindInputListeners() override;
+		void bindInputListeners() override;
 
-	void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
-	void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+		void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+		void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
 
-};
+	};
+
+}
+#endif  // __KEYBOARDINPUTCONTROLLER_H__

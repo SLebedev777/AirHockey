@@ -1,17 +1,20 @@
-#pragma once
+#ifndef __UIBUTTONMENU_H__
+#define __UIBUTTONMENU_H__
+
 #include "ui/CocosGUI.h"
 #include "cocos2d.h"
 
+
 USING_NS_CC;
 
-class UIButtonMenu: public Node
+class UIButtonMenu : public Node
 {
 public:
-	UIButtonMenu(std::vector<std::pair<ui::Button*, ui::Widget::ccWidgetClickCallback>>& buttons_callbacks, 
-		Node* parent, EventDispatcher* dispatcher, std::function<Action* ()> focused_button_action_callback=nullptr);
+	UIButtonMenu(std::vector<std::pair<ui::Button*, ui::Widget::ccWidgetClickCallback>>& buttons_callbacks,
+		Node* parent, EventDispatcher* dispatcher, std::function<Action* ()> focused_button_action_callback = nullptr);
 	virtual bool init();
 	static UIButtonMenu* create(std::vector<std::pair<ui::Button*, ui::Widget::ccWidgetClickCallback>>& buttons_callbacks,
-		Node* parent, EventDispatcher* dispatcher, std::function<Action* ()> focused_button_action_callback=nullptr);
+		Node* parent, EventDispatcher* dispatcher, std::function<Action* ()> focused_button_action_callback = nullptr);
 	void update();
 
 private:
@@ -29,3 +32,5 @@ private:
 	bool m_isDownPressed = false;
 	Sprite* m_pointer = nullptr;
 };
+
+#endif  // __UIBUTTONMENU_H__

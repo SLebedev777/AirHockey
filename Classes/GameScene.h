@@ -12,12 +12,12 @@ USING_NS_CC;
 class GameScene : public Scene
 {
 public:
-    GameScene(GameLevel& level);
-    static Scene* createScene(GameLevel& level);
+    GameScene(airhockey::GameLevel& level);
+    static Scene* createScene(airhockey::GameLevel& level);
 
     virtual bool init();
 
-    static GameScene* create(GameLevel& level);
+    static GameScene* create(airhockey::GameLevel& level);
 
 
     void onMouseDown(Event* event);
@@ -40,18 +40,18 @@ public:
     void update(float dt) override;
 
 protected:
-    GameLevel m_currLevel;
+    airhockey::GameLevel m_currLevel;
 
-    GameFieldPtr m_field;
+    airhockey::GameFieldPtr m_field;
 
-    PaddlePtr m_paddle1, m_paddle2;
+    airhockey::PaddlePtr m_paddle1, m_paddle2;
     cocos2d::Sprite* m_puck;
  
-    IPlayerInputControllerPtr m_keyboardController = nullptr;
-    IPlayerInputControllerPtr m_mouseController = nullptr;
-    IPlayerInputControllerPtr m_mouseController2 = nullptr;
-    IPlayerInputControllerPtr m_AIController = nullptr;
-    IPlayerInputControllerPtr m_touchController = nullptr;
+    airhockey::IPlayerInputControllerPtr m_keyboardController = nullptr;
+    airhockey::IPlayerInputControllerPtr m_mouseController = nullptr;
+    airhockey::IPlayerInputControllerPtr m_mouseController2 = nullptr;
+    airhockey::IPlayerInputControllerPtr m_AIController = nullptr;
+    airhockey::IPlayerInputControllerPtr m_touchController = nullptr;
 
     bool m_upPressed = false;
     bool m_downPressed = false;

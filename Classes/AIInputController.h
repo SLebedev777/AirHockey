@@ -1,24 +1,33 @@
-#pragma once
+#ifndef __AIINPUTCONTROLLER_H__
+#define __AIINPUTCONTROLLER_H__
+
 #include "PlayerInputController.h"
 
-class AIInputController : public IPlayerInputController
+namespace airhockey
 {
-public:
-	AIInputController(const std::string& name, PaddlePtr my_paddle) :
-		IPlayerInputController(name, my_paddle)
+
+	class AIInputController : public IPlayerInputController
 	{
-		bindInputListeners();
-	}
-	AIInputController(AIInputController& other) :
-		IPlayerInputController(other.m_name, other.m_myPaddle)
-	{
-		bindInputListeners();
-	}
+	public:
+		AIInputController(const std::string& name, PaddlePtr my_paddle) :
+			IPlayerInputController(name, my_paddle)
+		{
+			bindInputListeners();
+		}
+		AIInputController(AIInputController& other) :
+			IPlayerInputController(other.m_name, other.m_myPaddle)
+		{
+			bindInputListeners();
+		}
 
-	~AIInputController() {}
+		~AIInputController() {}
 
-	void bindInputListeners() override;
+		void bindInputListeners() override;
 
-	void onMyPaddleMove();
+		void onMyPaddleMove();
 
-};
+	};
+
+}
+
+#endif //  __AIINPUTCONTROLLER_H__

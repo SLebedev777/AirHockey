@@ -1,33 +1,41 @@
-#pragma once
+#ifndef __TOUCHINPUTCONTROLLER_H__
+#define __TOUCHINPUTCONTROLLER_H__
+
 #include "PlayerInputController.h"
 
-class TouchInputController : public IPlayerInputController
+namespace airhockey
 {
-public:
-	TouchInputController(const std::string& name, PaddlePtr my_paddle) :
-		IPlayerInputController(name, my_paddle)
+
+	class TouchInputController : public IPlayerInputController
 	{
-		bindInputListeners();
-	}
-	TouchInputController(TouchInputController& other) :
-		IPlayerInputController(other.m_name, other.m_myPaddle)
-	{
-		bindInputListeners();
-	}
+	public:
+		TouchInputController(const std::string& name, PaddlePtr my_paddle) :
+			IPlayerInputController(name, my_paddle)
+		{
+			bindInputListeners();
+		}
+		TouchInputController(TouchInputController& other) :
+			IPlayerInputController(other.m_name, other.m_myPaddle)
+		{
+			bindInputListeners();
+		}
 
-	~TouchInputController() {}
+		~TouchInputController() {}
 
-	void bindInputListeners() override;
+		void bindInputListeners() override;
 
-	bool isTouchWithinPaddle(cocos2d::Touch* touch);
-	void sendStopPaddleEvent();
-	void onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
-	void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
-	void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
+		bool isTouchWithinPaddle(cocos2d::Touch* touch);
+		void sendStopPaddleEvent();
+		void onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
+		void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
+		void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
 
-	void scheduleDebugOutput(cocos2d::Node* layer);
+		void scheduleDebugOutput(cocos2d::Node* layer);
 
-private:
-	bool m_isMyPaddleGrabbed = false;
-	cocos2d::Node* m_HUDLayer = nullptr;
-};
+	private:
+		bool m_isMyPaddleGrabbed = false;
+		cocos2d::Node* m_HUDLayer = nullptr;
+	};
+
+}
+#endif  // __TOUCHINPUTCONTROLLER_H__

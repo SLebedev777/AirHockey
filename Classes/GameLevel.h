@@ -3,27 +3,28 @@
 
 #include <memory>
 
-
-struct GameLevel
+namespace airhockey
 {
-	explicit GameLevel(
-		int number,
-		float width,
-		float height
-	) :
-		m_number(number),
-		m_width(width),
-		m_height(height)
-	{}
+	struct GameLevel
+	{
+		explicit GameLevel(
+			int number,
+			float width,
+			float height
+		) :
+			m_number(number),
+			m_width(width),
+			m_height(height)
+		{}
 
-	~GameLevel() {}
+		~GameLevel() {}
 
-	int m_number;
-	float m_width;
-	float m_height;
-};
+		int m_number;
+		float m_width;
+		float m_height;
+	};
 
-typedef std::shared_ptr<GameLevel> GameLevelPtr;
+	typedef std::shared_ptr<GameLevel> GameLevelPtr;
 
-
+}
 #endif // __GAMELEVEL_H__

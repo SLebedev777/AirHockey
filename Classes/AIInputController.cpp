@@ -1,14 +1,17 @@
 #include "AIInputController.h"
 
-USING_NS_CC;
-
-void AIInputController::bindInputListeners()
+namespace airhockey
 {
-    m_myPaddle->getSprite()->schedule([this](float dt) {onMyPaddleMove(); }, "AI_onMyPaddleMove");
-}
+    USING_NS_CC;
 
-void AIInputController::onMyPaddleMove()
-{
-    m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_LEFT));
-}
+    void AIInputController::bindInputListeners()
+    {
+        m_myPaddle->getSprite()->schedule([this](float dt) {onMyPaddleMove(); }, "AI_onMyPaddleMove");
+    }
 
+    void AIInputController::onMyPaddleMove()
+    {
+        m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_LEFT));
+    }
+
+}

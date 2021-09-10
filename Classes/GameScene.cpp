@@ -27,11 +27,11 @@ enum HUDLayerTags
     TAG_HUD_LAYER_SCORE_STRING = 1
 };
 
-GameScene::GameScene(GameLevel& level) :
+GameScene::GameScene(airhockey::GameLevel& level) :
     m_currLevel(level)
 {}
 
-GameScene* GameScene::create(GameLevel& level)
+GameScene* GameScene::create(airhockey::GameLevel& level)
 {
     GameScene* pRet = new(std::nothrow) GameScene(level);
     if (pRet && pRet->init()) {
@@ -45,7 +45,7 @@ GameScene* GameScene::create(GameLevel& level)
     }
 }
 
-Scene* GameScene::createScene(GameLevel& level)
+Scene* GameScene::createScene(airhockey::GameLevel& level)
 {
     return GameScene::create(level);
 }
@@ -70,6 +70,8 @@ bool GameScene::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     Vec2 frameCenter = Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
+
+    using namespace airhockey;
 
     //////////////////////////////////////////////////
     // GAME LAYER
@@ -327,6 +329,8 @@ void GameScene::drawHUDString(int str_tag, const std::string& str)
 
 void GameScene::update(float dt)
 {
+    using namespace airhockey;
+
     // GAME LOGIC HERE
     m_paddle1->move(dt);
     m_paddle2->move(dt);

@@ -165,7 +165,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // create a scene. it's an autorelease object
     float level_width = designResolutionSize.width * 0.9;
     float level_height = level_width * 16 / 9;
-    GameLevel level = GameLevel(0, level_width, level_height);
+    airhockey::GameLevel level = airhockey::GameLevel(0, level_width, level_height);
     auto scene = GameScene::createScene(level);
 
     // run
