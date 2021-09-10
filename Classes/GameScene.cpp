@@ -89,38 +89,39 @@ bool GameScene::init()
     
     const int SIDE_WIDTH = 40;
     const int SIDE_HEIGHT = 40;
+    const float GAP = 10;
+    const Size LONG_PART_SIZE = Size(SIDE_WIDTH, GAMEFIELDRECT.size.height / 2 - 2 * GAP);
+    const Size SHORT_PART_SIZE = Size(GAMEFIELDRECT.size.width / 3 - 2 * GAP, SIDE_HEIGHT);
 
-    float gap = 10;
     GameFieldSidePtr left_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::UP);
-    Size long_part_size = Size(SIDE_WIDTH, GAMEFIELDRECT.size.height / 2 - 2*gap); 
-    left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(long_part_size, Color4F::GREEN), gap);
-    left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(long_part_size, Color4F::RED), 2*gap);
+    left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, Color4F::GREEN), GAP);
+    left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, Color4F::RED), 2 * GAP);
     builder.addSide(std::move(left_long_side));
 
     GameFieldSidePtr upper_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::RIGHT);
-    Size short_part_size = Size(GAMEFIELDRECT.size.width / 3 - 2*gap, SIDE_HEIGHT);
-    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(short_part_size, Color4F::YELLOW), gap);
-    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(short_part_size, Color4F::WHITE), short_part_size.width + 4*gap);
+    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::YELLOW), GAP);
+    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::WHITE), SHORT_PART_SIZE.width + 4 * GAP);
     builder.addSide(std::move(upper_short_side));
 
     GameFieldSidePtr right_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::DOWN);
-    right_long_side->addSidePart(std::make_unique<GameFieldSidePart>(long_part_size, Color4F::GREEN), gap);
-    right_long_side->addSidePart(std::make_unique<GameFieldSidePart>(long_part_size, Color4F::RED), 2*gap);
+    right_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, Color4F::GREEN), GAP);
+    right_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, Color4F::RED), 2 * GAP);
     builder.addSide(std::move(right_long_side));
 
     GameFieldSidePtr lower_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::LEFT);
-    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(short_part_size, Color4F::YELLOW), gap);
-    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(short_part_size, Color4F::WHITE), short_part_size.width + 4*gap);
+    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::YELLOW), GAP);
+    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::WHITE), SHORT_PART_SIZE.width + 4 * GAP);
     builder.addSide(std::move(lower_short_side));
     
-    Size corner_size = Size(SIDE_WIDTH*2, SIDE_WIDTH*2);
-    builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::BLACK), GameField::GameFieldPlayRectCornerType::BOTTOM_LEFT);
-    builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::WHITE), GameField::GameFieldPlayRectCornerType::TOP_LEFT);
-    builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::BLACK), GameField::GameFieldPlayRectCornerType::TOP_RIGHT);
-    builder.addCorner(std::make_unique<GameFieldSidePart>(corner_size, Color4F::WHITE), GameField::GameFieldPlayRectCornerType::BOTTOM_RIGHT);
+    const Size CORNER_SIZE = Size(SIDE_WIDTH * 2, SIDE_WIDTH * 2);
+    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::BLACK), GameField::GameFieldPlayRectCornerType::BOTTOM_LEFT);
+    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::WHITE), GameField::GameFieldPlayRectCornerType::TOP_LEFT);
+    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::BLACK), GameField::GameFieldPlayRectCornerType::TOP_RIGHT);
+    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::WHITE), GameField::GameFieldPlayRectCornerType::BOTTOM_RIGHT);
     
-    builder.addGoalGate(std::make_unique<GoalGate>(short_part_size, GoalGateLocationType::LOWER));
-    builder.addGoalGate(std::make_unique<GoalGate>(short_part_size, GoalGateLocationType::UPPER));
+    const Size GOAL_GATE_SIZE = Size(SHORT_PART_SIZE.width, 1000);  // do gate height large enough to catch puck even on high speed intersecting gate
+    builder.addGoalGate(std::make_unique<GoalGate>(GOAL_GATE_SIZE, GoalGateLocationType::LOWER));
+    builder.addGoalGate(std::make_unique<GoalGate>(GOAL_GATE_SIZE, GoalGateLocationType::UPPER));
 
     builder.addCentralCircleMarking(CentralCircleMarkingSettings(100, 3, Color4F::MAGENTA, Color4F::GRAY));
     //
