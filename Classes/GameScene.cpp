@@ -129,23 +129,14 @@ bool GameScene::init()
     //
     m_field = builder.getResult();
     m_field->setParent(game_layer);
-    
+
+    const float PADDLE_RADIUS = 50.0f;
 
     // human (lower)
-    Rect PLAYER1_FIELDRECT = Rect(frameCenter.x - m_currLevel.m_width / 2,
-        frameCenter.y - m_currLevel.m_height / 2,
-        m_currLevel.m_width, m_currLevel.m_height / 2);
-    auto field_draw_border1 = DrawNode::create(5);
-    field_draw_border1->drawRect(PLAYER1_FIELDRECT.origin, PLAYER1_FIELDRECT.origin + PLAYER1_FIELDRECT.size, Color4F::GREEN);
-    game_layer->addChild(field_draw_border1, 1);
+    Rect PLAYER1_FIELDRECT = Rect(GAMEFIELDRECT.getMinX(), GAMEFIELDRECT.getMinY(), GAMEFIELDRECT.size.width, PADDLE_RADIUS + GAMEFIELDRECT.size.height / 2);
 
     // AI (upper)
-    Rect PLAYER2_FIELDRECT = Rect(frameCenter.x - m_currLevel.m_width / 2,
-        frameCenter.y,
-        m_currLevel.m_width, m_currLevel.m_height / 2);
-    auto field_draw_border2 = DrawNode::create(5);
-    field_draw_border2->drawRect(PLAYER2_FIELDRECT.origin, PLAYER2_FIELDRECT.origin + PLAYER2_FIELDRECT.size, Color4F::BLACK);
-    game_layer->addChild(field_draw_border2, 1);
+    Rect PLAYER2_FIELDRECT = Rect(GAMEFIELDRECT.getMinX(), GAMEFIELDRECT.getMidY() - PADDLE_RADIUS, GAMEFIELDRECT.size.width, PADDLE_RADIUS + GAMEFIELDRECT.size.height / 2);
 
     _physicsWorld->setGravity(Vec2::ZERO);
 
@@ -158,15 +149,15 @@ bool GameScene::init()
     m_puck->setPosition(frameCenter.x, frameCenter.y - GAMEFIELDRECT.size.height / 4);
     game_layer->addChild(m_puck, 1);
 
-    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, 50, PLAYER1_FIELDRECT, game_layer,
-        this->getPhysicsWorld());
+    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, PADDLE_RADIUS, 
+        PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
 
     //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
 
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
 
-    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 1000, 1000, 50, PLAYER2_FIELDRECT, game_layer,
-        this->getPhysicsWorld());
+    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 1000, 1000, PADDLE_RADIUS, 
+        PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());
 
     //m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
     m_keyboardController = std::make_shared<KeyboardInputController>("KB2", m_paddle2);
