@@ -92,8 +92,10 @@ bool GameScene::init()
     const int SIDE_WIDTH = 40;
     const int SIDE_HEIGHT = 40;
     const float GAP = 10;
+    const float PUCK_RADIUS = 50;
+    const Size GOAL_GATE_SIZE = Size(8 * PUCK_RADIUS, 1000);  // do gate height large enough to catch puck even on high speed intersecting gate
     const Size LONG_PART_SIZE = Size(SIDE_WIDTH, GAMEFIELDRECT.size.height / 2 - 2 * GAP);
-    const Size SHORT_PART_SIZE = Size(GAMEFIELDRECT.size.width / 3 - 2 * GAP, SIDE_HEIGHT);
+    const Size SHORT_PART_SIZE = Size((GAMEFIELDRECT.size.width - GOAL_GATE_SIZE.width)/2 - GAP, SIDE_HEIGHT);
 
     GameFieldSidePtr left_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::UP);
     left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, Color4F::GREEN), GAP);
@@ -102,7 +104,7 @@ bool GameScene::init()
 
     GameFieldSidePtr upper_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::RIGHT);
     upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::YELLOW), GAP);
-    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::WHITE), SHORT_PART_SIZE.width + 4 * GAP);
+    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::WHITE), GOAL_GATE_SIZE.width);
     builder.addSide(std::move(upper_short_side));
 
     GameFieldSidePtr right_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::DOWN);
@@ -112,7 +114,7 @@ bool GameScene::init()
 
     GameFieldSidePtr lower_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::LEFT);
     lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::YELLOW), GAP);
-    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::WHITE), SHORT_PART_SIZE.width + 4 * GAP);
+    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::WHITE), GOAL_GATE_SIZE.width);
     builder.addSide(std::move(lower_short_side));
     
     const Size CORNER_SIZE = Size(SIDE_WIDTH * 2, SIDE_WIDTH * 2);
@@ -121,16 +123,24 @@ bool GameScene::init()
     builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::BLACK), GameField::GameFieldPlayRectCornerType::TOP_RIGHT);
     builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::WHITE), GameField::GameFieldPlayRectCornerType::BOTTOM_RIGHT);
     
-    const Size GOAL_GATE_SIZE = Size(SHORT_PART_SIZE.width, 1000);  // do gate height large enough to catch puck even on high speed intersecting gate
     builder.addGoalGate(std::make_unique<GoalGate>(GOAL_GATE_SIZE, GoalGateLocationType::LOWER));
     builder.addGoalGate(std::make_unique<GoalGate>(GOAL_GATE_SIZE, GoalGateLocationType::UPPER));
 
-    builder.addCentralCircleMarking(CentralCircleMarkingSettings(100, 3, Color4F::MAGENTA, Color4F::GRAY));
+    builder.addCentralCircleMarking(CentralCircleMarkingSettings(GOAL_GATE_SIZE.width / 2, 3, Color4F::MAGENTA, Color4F::GRAY));
     //
     m_field = builder.getResult();
     m_field->setParent(game_layer);
 
-    const float PADDLE_RADIUS = 50.0f;
+    // PUCK
+    m_puck = Sprite::create("puck.png");
+    PhysicsMaterial puck_material = PhysicsMaterial(0.1f, 1.0f, 0.2f);
+    auto puck_body = PhysicsBody::createCircle(m_puck->getBoundingBox().size.width / 2, puck_material);
+    puck_body->setName("puck_body");
+    m_puck->addComponent(puck_body);
+    m_puck->setPosition(m_field->getCenter());
+    game_layer->addChild(m_puck, 1);
+
+    const float PADDLE_RADIUS = 1.5 * PUCK_RADIUS;
 
     // human (lower)
     Rect PLAYER1_FIELDRECT = Rect(GAMEFIELDRECT.getMinX(), GAMEFIELDRECT.getMinY(), GAMEFIELDRECT.size.width, PADDLE_RADIUS + GAMEFIELDRECT.size.height / 2);
@@ -140,23 +150,16 @@ bool GameScene::init()
 
     _physicsWorld->setGravity(Vec2::ZERO);
 
-    // PUCK
-    m_puck = Sprite::create("puck.png");
-    PhysicsMaterial puck_material = PhysicsMaterial(0.1f, 1.0f, 0.2f);
-    auto puck_body = PhysicsBody::createCircle(m_puck->getBoundingBox().size.width / 2, puck_material);
-    puck_body->setName("puck_body");
-    m_puck->addComponent(puck_body);
-    m_puck->setPosition(frameCenter.x, frameCenter.y - GAMEFIELDRECT.size.height / 4);
-    game_layer->addChild(m_puck, 1);
+    const float PADDLE_START_Y_CENTER_OFFSET = m_field->getCentralCircleMarking().getSettings().radius + PADDLE_RADIUS * 6;
 
-    m_paddle1 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMinY() + 150, 1000, 1000, PADDLE_RADIUS, 
+    m_paddle1 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getCenter().y - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
 
     //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
 
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
 
-    m_paddle2 = std::make_shared<Paddle>("paddle.png", frameCenter.x, GAMEFIELDRECT.getMaxY() - 150, 1000, 1000, PADDLE_RADIUS, 
+    m_paddle2 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getCenter().y + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());
 
     //m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
@@ -329,20 +332,20 @@ void GameScene::update(float dt)
     // TODO: check X center of puck is within width of gate and Y is out of table bounds (avoid failing catching goal when puck has high vel) 
     auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
     // goal to Player1's gate (lower)
-    if (m_field->getGoalGate(GoalGateLocationType::LOWER)->getRect().containsPoint(m_puck->getPosition()))
+    if (m_field->getGoalGate(GoalGateLocationType::LOWER).getRect().containsPoint(m_puck->getPosition()))
     {
         ++m_score2;
-        m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y - m_field->getPlayRect().size.height / 4);
+        m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y - m_field->getCentralCircleMarking().getSettings().radius);
         puck_body->setVelocity(Vec2::ZERO);
         puck_body->setAngularVelocity(0.0f);
         m_paddle1->setPosition(m_paddle1->getStartPosition());
         m_paddle2->setPosition(m_paddle2->getStartPosition());
     }
     // goal to Player2's gate (upper)
-    else if (m_field->getGoalGate(GoalGateLocationType::UPPER)->getRect().containsPoint(m_puck->getPosition()))
+    else if (m_field->getGoalGate(GoalGateLocationType::UPPER).getRect().containsPoint(m_puck->getPosition()))
     {
         ++m_score1;
-        m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y + m_field->getPlayRect().size.height / 4);
+        m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y + m_field->getCentralCircleMarking().getSettings().radius);
         puck_body->setVelocity(Vec2::ZERO);
         puck_body->setAngularVelocity(0.0f);
         m_paddle1->setPosition(m_paddle1->getStartPosition());

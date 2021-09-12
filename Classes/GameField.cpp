@@ -212,12 +212,12 @@ namespace airhockey
 		}
 	}
 
-	GoalGate* GameField::getGoalGate(const GoalGateLocationType& location_type) const
+	const GoalGate& GameField::getGoalGate(const GoalGateLocationType& location_type) const
 	{
 		if (location_type == GoalGateLocationType::LOWER)
-			return m_gateLower.get();
+			return *m_gateLower.get();
 		else if (location_type == GoalGateLocationType::UPPER)
-			return m_gateUpper.get();
+			return *m_gateUpper.get();
 	}
 
 	/// <summary>

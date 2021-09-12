@@ -103,6 +103,7 @@ namespace airhockey
 		~CentralCircleMarking() {}
 		void setPosition(const cocos2d::Vec2& pos);  // v
 		void setParent(cocos2d::Node* parent);  // v
+		const CentralCircleMarkingSettings& getSettings() const { return m_settings; }
 
 	private:
 		CentralCircleMarkingSettings m_settings;
@@ -226,7 +227,8 @@ namespace airhockey
 		const cocos2d::Vec2& getCenter() const { return m_center; }  // v
 		cocos2d::Rect getPlayRect() const { return m_playRect; }  // v
 		void setParent(cocos2d::Node* parent);  // v
-		GoalGate* getGoalGate(const GoalGateLocationType& location_type) const;
+		const GoalGate& getGoalGate(const GoalGateLocationType& location_type) const;
+		const CentralCircleMarking& getCentralCircleMarking() const { return *m_centralCircleMarking; }
 
 	private:
 		std::vector<GameFieldSidePtr> m_sides;
