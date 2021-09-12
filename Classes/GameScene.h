@@ -9,6 +9,7 @@
 
 USING_NS_CC;
 
+
 class GameScene : public Scene
 {
 public:
@@ -63,6 +64,7 @@ protected:
     float m_timeElapsed = 0.0f;
 
     uint32_t m_score1 = 0, m_score2 = 0;
+
 };
 
 #endif // __GAMESCENE_H__

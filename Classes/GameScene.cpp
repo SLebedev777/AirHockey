@@ -24,7 +24,8 @@ enum GameLayerTags
 
 enum HUDLayerTags
 {
-    TAG_HUD_LAYER_SCORE_STRING = 1
+    TAG_HUD_LAYER_SCORE1_STRING = 1,
+    TAG_HUD_LAYER_SCORE2_STRING = 2
 };
 
 GameScene::GameScene(airhockey::GameLevel& level) :
@@ -176,13 +177,17 @@ bool GameScene::init()
     auto hud_layer = LayerColor::create(Color4B(0, 0, 0, 0));
     m_touchController->scheduleDebugOutput(hud_layer);
 
-    auto label_score = Label::createWithTTF("0 : 0", "fonts/arial.ttf", 72);
-    label_score->setAnchorPoint(Vec2(0.5f, 0.5f));
-    if (label_score)
-    {
-        label_score->setPosition(frameCenter);
-    }
-    hud_layer->addChild(label_score, 1, TAG_HUD_LAYER_SCORE_STRING);
+    auto label_score1 = Label::createWithTTF("0", "fonts/arial.ttf", 72);
+    label_score1->setRotation(-90.f);
+    label_score1->setAnchorPoint(Vec2(0.5f, 0.5f));
+    label_score1->setPosition(frameCenter - Vec2(0, PUCK_RADIUS));
+    hud_layer->addChild(label_score1, 1, TAG_HUD_LAYER_SCORE1_STRING);
+
+    auto label_score2 = Label::createWithTTF("0", "fonts/arial.ttf", 72);
+    label_score2->setRotation(-90.f);
+    label_score2->setAnchorPoint(Vec2(0.5f, 0.5f));
+    label_score2->setPosition(frameCenter + Vec2(0, PUCK_RADIUS));
+    hud_layer->addChild(label_score2, 1, TAG_HUD_LAYER_SCORE2_STRING);
 
 
     //////////////////////////////////////////////////
@@ -335,33 +340,78 @@ void GameScene::update(float dt)
 
     // TODO: check X center of puck is within width of gate and Y is out of table bounds (avoid failing catching goal when puck has high vel) 
     auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
+    
+    enum GoalHitBy
+    {
+        NONE = 0,
+        PLAYER1,
+        PLAYER2
+    };
+    GoalHitBy goal_hit_by = GoalHitBy::NONE;
+
     // goal to Player1's gate (lower)
     if (m_field->getGoalGate(GoalGateLocationType::LOWER).getRect().containsPoint(m_puck->getPosition()))
     {
+        goal_hit_by = GoalHitBy::PLAYER2;
         ++m_score2;
         m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y - m_field->getCentralCircleMarking().getSettings().radius);
-        puck_body->setVelocity(Vec2::ZERO);
-        puck_body->setAngularVelocity(0.0f);
-        m_paddle1->setPosition(m_paddle1->getStartPosition());
-        m_paddle2->setPosition(m_paddle2->getStartPosition());
     }
     // goal to Player2's gate (upper)
     else if (m_field->getGoalGate(GoalGateLocationType::UPPER).getRect().containsPoint(m_puck->getPosition()))
     {
+        goal_hit_by = GoalHitBy::PLAYER1;
         ++m_score1;
         m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y + m_field->getCentralCircleMarking().getSettings().radius);
+    }
+
+    if (goal_hit_by != GoalHitBy::NONE)
+    {
         puck_body->setVelocity(Vec2::ZERO);
         puck_body->setAngularVelocity(0.0f);
         m_paddle1->setPosition(m_paddle1->getStartPosition());
         m_paddle2->setPosition(m_paddle2->getStartPosition());
+
+        auto hud_layer = this->getChildByTag(TAG_HUD_LAYER);
+        auto label_score1 = static_cast<cocos2d::Label*> (hud_layer->getChildByTag(TAG_HUD_LAYER_SCORE1_STRING));
+        auto label_score2 = static_cast<cocos2d::Label*> (hud_layer->getChildByTag(TAG_HUD_LAYER_SCORE2_STRING));
+
+        auto label_score_action = [this](Vec2 start_pos, float y_offset, bool heartbeat) {
+            auto move2center = cocos2d::MoveTo::create(0.5f, this->m_field->getCenter() + Vec2(0, y_offset));
+            const float SCALE = 5.0f;
+            auto scale_up = cocos2d::ScaleTo::create(0.5f, SCALE);
+            cocos2d::Action* central_action = nullptr;
+            if (heartbeat)
+            {
+                auto bouncer = cocos2d::ScaleTo::create(0.25f, 1.2f * SCALE);
+                auto unbouncer = cocos2d::ScaleTo::create(0.25f, 0.8f * SCALE);
+                central_action = cocos2d::Sequence::create(bouncer, unbouncer, bouncer, unbouncer, nullptr);
+            }
+            else
+            {
+                central_action = cocos2d::DelayTime::create(1);
+            }
+            auto move_back = cocos2d::MoveTo::create(0.5f, start_pos);
+            auto scale_down = cocos2d::ScaleTo::create(0.5f, 1);
+
+            auto spawn_forward = cocos2d::Spawn::createWithTwoActions(move2center, scale_up);
+            auto spawn_backward = cocos2d::Spawn::createWithTwoActions(move_back, scale_down);
+
+            auto seq = cocos2d::Sequence::create(spawn_forward, central_action, spawn_backward, nullptr);
+            return seq;
+        };
+        float y_offset = this->m_field->getPlayRect().size.height / 4;
+        label_score1->runAction(label_score_action(label_score1->getPosition(), -y_offset, goal_hit_by == GoalHitBy::PLAYER1));
+        label_score2->runAction(label_score_action(label_score2->getPosition(), y_offset, goal_hit_by == GoalHitBy::PLAYER2));
+        goal_hit_by = GoalHitBy::NONE;
     }
-    
+
     const int MAX_SCORE = 7;
     if (m_score1 >= MAX_SCORE || m_score2 >= MAX_SCORE)
     {
         onGameEndMenuOpen(nullptr);
     }
 
-    drawHUDString(TAG_HUD_LAYER_SCORE_STRING, std::to_string(m_score1) + " : " + std::to_string(m_score2));
+    drawHUDString(TAG_HUD_LAYER_SCORE1_STRING, std::to_string(m_score1));
+    drawHUDString(TAG_HUD_LAYER_SCORE2_STRING, std::to_string(m_score2));
 
 }
