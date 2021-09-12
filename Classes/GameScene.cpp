@@ -127,6 +127,10 @@ bool GameScene::init()
     builder.addGoalGate(std::make_unique<GoalGate>(GOAL_GATE_SIZE, GoalGateLocationType::UPPER));
 
     builder.addCentralCircleMarking(CentralCircleMarkingSettings(GOAL_GATE_SIZE.width / 2, 3, Color4F::MAGENTA, Color4F::GRAY));
+
+    builder.addGoalGateMarking(GoalGateMarkingSettings(GOAL_GATE_SIZE.width, 3, Color4F::MAGENTA, Color4F::GRAY, 
+        GoalGateMarkingSettings::GoalGateMarkingShapeType::RECTANGLE), Vec2::ZERO);
+    
     //
     m_field = builder.getResult();
     m_field->setParent(game_layer);
@@ -150,20 +154,20 @@ bool GameScene::init()
 
     _physicsWorld->setGravity(Vec2::ZERO);
 
-    const float PADDLE_START_Y_CENTER_OFFSET = m_field->getCentralCircleMarking().getSettings().radius + PADDLE_RADIUS * 6;
+    const float PADDLE_START_Y_CENTER_OFFSET = GOAL_GATE_SIZE.width / 2;
 
-    m_paddle1 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getCenter().y - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
+    m_paddle1 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMinY() + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
 
     //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
 
-    m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
-
-    m_paddle2 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getCenter().y + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
+    m_paddle2 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());
 
+    m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
+
     //m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
-    m_keyboardController = std::make_shared<KeyboardInputController>("KB2", m_paddle2);
+    m_keyboardController = std::make_shared<KeyboardInputController>("KB2", m_paddle1);
 
     //////////////////////////////////////////////////
     // HUD LAYER
@@ -352,7 +356,7 @@ void GameScene::update(float dt)
         m_paddle2->setPosition(m_paddle2->getStartPosition());
     }
     
-    const int MAX_SCORE = 3;
+    const int MAX_SCORE = 7;
     if (m_score1 >= MAX_SCORE || m_score2 >= MAX_SCORE)
     {
         onGameEndMenuOpen(nullptr);

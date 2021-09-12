@@ -26,6 +26,62 @@ namespace airhockey
 	}
 
 	/// <summary>
+	/// GoalGateMarking
+	/// </summary>
+
+	GoalGateMarking::GoalGateMarking(const GoalGateMarkingSettings& settings, const GoalGateLocationType& location) :
+		m_settings(settings),
+		m_location(location),
+		m_drawNode(DrawNode::create())
+	{
+		if (m_settings.goalGateMarkingShapeType == GoalGateMarkingSettings::GoalGateMarkingShapeType::HALF_CIRCLE)
+		{
+			throw std::invalid_argument("Not implemented!");
+		}
+		else
+		{
+			Vec2* vertices = nullptr;
+			if (m_location == GoalGateLocationType::LOWER)
+			{
+				Vec2 vert[] = {
+					Vec2(-m_settings.gateWidth / 2, 0),
+					Vec2(-m_settings.gateWidth / 2, m_settings.gateWidth / 2),
+					Vec2(m_settings.gateWidth / 2, settings.gateWidth / 2),
+					Vec2(settings.gateWidth / 2, 0)
+				};
+				vertices = vert;
+			}
+			else if (m_location == GoalGateLocationType::UPPER)
+			{
+				Vec2 vert[] = {
+					Vec2(-m_settings.gateWidth / 2, 0),
+					Vec2(-m_settings.gateWidth / 2, -m_settings.gateWidth / 2),
+					Vec2(m_settings.gateWidth / 2, -settings.gateWidth / 2),
+					Vec2(settings.gateWidth / 2, 0)
+				};
+				vertices = vert;
+			}
+			else
+				throw;
+
+			m_drawNode->setAnchorPoint(Vec2(0.0, 0.0));
+			m_drawNode->setLineWidth(m_settings.lineWidth);
+			m_drawNode->drawPoly(vertices, 4, false, m_settings.lineColor);
+			m_drawNode->setAnchorPoint(Vec2(0.5, 0.0));
+		}
+	}
+
+	void GoalGateMarking::setPosition(const cocos2d::Vec2& pos)
+	{
+		m_drawNode->setPosition(pos);
+	}
+
+	void GoalGateMarking::setParent(Node* parent)
+	{
+		parent->addChild(m_drawNode, 1);
+	}
+
+	/// <summary>
 	/// GameFieldSidePart
 	/// </summary>
 
@@ -311,6 +367,18 @@ namespace airhockey
 			gate->setPosition(Vec2(m_field->m_playRect.getMidX(), m_field->m_playRect.getMaxY() + gate->getRect().size.height / 2));
 			m_field->m_gateUpper = std::move(gate);
 		}
+	}
+
+	void GameFieldBuilder::addGoalGateMarking(const GoalGateMarkingSettings& settings, const cocos2d::Vec2& pos)
+	{
+		m_field->m_gateLowerMarking = std::make_unique<GoalGateMarking>(settings, GoalGateLocationType::LOWER);
+		m_field->m_gateLowerMarking->setPosition(Vec2(m_field->getPlayRect().getMidX(), m_field->getPlayRect().getMinY()));
+		m_field->m_gateLowerMarking->setParent(m_field->m_ccGameFieldNode);
+
+		m_field->m_gateUpperMarking = std::make_unique<GoalGateMarking>(settings, GoalGateLocationType::UPPER);
+		m_field->m_gateUpperMarking->setPosition(Vec2(m_field->getPlayRect().getMidX(), m_field->getPlayRect().getMaxY()));
+		m_field->m_gateUpperMarking->setParent(m_field->m_ccGameFieldNode);
+
 	}
 
 	void GameFieldBuilder::addCentralCircleMarking(const CentralCircleMarkingSettings& settings)

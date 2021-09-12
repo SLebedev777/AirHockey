@@ -65,13 +65,16 @@ namespace airhockey
 	class GoalGateMarking
 	{
 	public:
-		GoalGateMarking(const GoalGateMarkingSettings& settings) :
-			m_settings(settings)
-		{}
+		GoalGateMarking(const GoalGateMarkingSettings& settings, const GoalGateLocationType& location);
 		~GoalGateMarking() {}
+
+		void setPosition(const cocos2d::Vec2& pos);  // v
+		void setParent(cocos2d::Node* parent);  // v
+		const GoalGateMarkingSettings& getSettings() const { return m_settings; }
 
 	private:
 		GoalGateMarkingSettings m_settings;
+		GoalGateLocationType m_location;
 		cocos2d::DrawNode* m_drawNode = nullptr;
 		cocos2d::Sprite* m_sprite = nullptr;
 	};
@@ -240,6 +243,8 @@ namespace airhockey
 		cocos2d::Node* m_ccGameFieldNode = nullptr;
 		cocos2d::Node* m_ccParent = nullptr;
 		CentralCircleMarkingPtr m_centralCircleMarking = nullptr;
+		GoalGateMarkingPtr m_gateLowerMarking = nullptr;
+		GoalGateMarkingPtr m_gateUpperMarking = nullptr;
 	};
 
 	typedef std::unique_ptr<GameField> GameFieldPtr;
