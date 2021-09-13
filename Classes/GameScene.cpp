@@ -338,10 +338,9 @@ void GameScene::update(float dt)
     m_paddle1->move(dt);
     m_paddle2->move(dt);
 
-    // TODO: check X center of puck is within width of gate and Y is out of table bounds (avoid failing catching goal when puck has high vel) 
     auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
     
-    enum GoalHitBy
+    enum class GoalHitBy
     {
         NONE = 0,
         PLAYER1,
@@ -349,25 +348,45 @@ void GameScene::update(float dt)
     };
     GoalHitBy goal_hit_by = GoalHitBy::NONE;
 
-    // goal to Player1's gate (lower)
-    if (m_field->getGoalGate(GoalGateLocationType::LOWER).getRect().containsPoint(m_puck->getPosition()))
+    if (!m_isPuckPlayable && !this->getChildByName("WaitNode")->getActionByTag(12345))
     {
-        goal_hit_by = GoalHitBy::PLAYER2;
-        ++m_score2;
-        m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y - m_field->getCentralCircleMarking().getSettings().radius);
+        m_isPuckPlayable = true;
+        puck_body->setEnabled(true);
+        puck_body->setVelocity(Vec2::ZERO);
+        puck_body->setAngularVelocity(0.0f);
     }
-    // goal to Player2's gate (upper)
-    else if (m_field->getGoalGate(GoalGateLocationType::UPPER).getRect().containsPoint(m_puck->getPosition()))
+
+    float puck_y_offset = m_field->getCentralCircleMarking().getSettings().radius;
+    // goal to Player1's gate (lower)
+    if (m_isPuckPlayable)
     {
-        goal_hit_by = GoalHitBy::PLAYER1;
-        ++m_score1;
-        m_puck->setPosition(m_field->getCenter().x, m_field->getCenter().y + m_field->getCentralCircleMarking().getSettings().radius);
+        // goal to Player1's gate (lower)
+        if (m_field->getGoalGate(GoalGateLocationType::LOWER).getRect().containsPoint(m_puck->getPosition()))
+        {
+            goal_hit_by = GoalHitBy::PLAYER2;
+            ++m_score2;
+            puck_y_offset = -puck_y_offset;
+        }
+        // goal to Player2's gate (upper)
+        else if (m_field->getGoalGate(GoalGateLocationType::UPPER).getRect().containsPoint(m_puck->getPosition()))
+        {
+            goal_hit_by = GoalHitBy::PLAYER1;
+            ++m_score1;
+        }
     }
 
     if (goal_hit_by != GoalHitBy::NONE)
     {
+        m_isPuckPlayable = false;
+        auto wait_action = DelayTime::create(2.0f);
+        wait_action->setTag(12345);
+        auto wait_node = Node::create();
+        wait_node->runAction(wait_action);
+        this->addChild(wait_node, 2, "WaitNode");
+
         puck_body->setVelocity(Vec2::ZERO);
         puck_body->setAngularVelocity(0.0f);
+        puck_body->setEnabled(false);
         m_paddle1->setPosition(m_paddle1->getStartPosition());
         m_paddle2->setPosition(m_paddle2->getStartPosition());
 
@@ -403,6 +422,19 @@ void GameScene::update(float dt)
         label_score1->runAction(label_score_action(label_score1->getPosition(), -y_offset, goal_hit_by == GoalHitBy::PLAYER1));
         label_score2->runAction(label_score_action(label_score2->getPosition(), y_offset, goal_hit_by == GoalHitBy::PLAYER2));
         goal_hit_by = GoalHitBy::NONE;
+
+        auto puck_restart_action = [this, &puck_y_offset]() {
+            auto hide = cocos2d::Hide::create();
+            auto delay = cocos2d::DelayTime::create(2.0f);
+            auto return_to_circle = cocos2d::MoveTo::create(0.0f, this->m_field->getCenter() + Vec2(0, puck_y_offset));
+            auto scale_up = cocos2d::ScaleTo::create(0.0, 5);
+            auto show = cocos2d::Show::create();
+            auto scale_down = cocos2d::ScaleTo::create(1.0, 1);
+
+            auto seq = cocos2d::Sequence::create(hide, return_to_circle, delay, scale_up, show, scale_down, nullptr);
+            return seq;
+        };
+        m_puck->runAction(puck_restart_action());
     }
 
     const int MAX_SCORE = 7;

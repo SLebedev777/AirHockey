@@ -64,6 +64,7 @@ protected:
     float m_timeElapsed = 0.0f;
 
     uint32_t m_score1 = 0, m_score2 = 0;
+    bool m_isPuckPlayable = true;  // false during period from a goal occured till puck is set at the edge of central circle and ready to continue game
 
 };
 
