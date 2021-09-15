@@ -32,6 +32,7 @@ namespace airhockey
 		void setNormalizedVelocity(const cocos2d::Vec2& nvel) { m_velXnorm = nvel.x; m_velYnorm = nvel.y; }
 		void setStartPosition(const cocos2d::Vec2& pos) { m_startPos = pos; }
 		const cocos2d::Vec2& getStartPosition() const { return m_startPos; }
+		cocos2d::PhysicsBody* getPhysicsBody() const { return static_cast<cocos2d::PhysicsBody*>(m_ccsSprite->getComponent(m_physicsBodyName)); }
 
 	private:
 		cocos2d::Rect m_fieldRect;
@@ -51,6 +52,7 @@ namespace airhockey
 		cocos2d::PhysicsWorld* m_ccPhysicsWorld = nullptr;
 		cocos2d::Node* m_ccnParent = nullptr;
 		cocos2d::Node* m_ccnStick = nullptr;
+		const char* m_physicsBodyName = "paddle_body";
 
 		cocos2d::Vec2 m_startPos = cocos2d::Vec2::ZERO;
 	};
