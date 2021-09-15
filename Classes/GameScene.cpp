@@ -390,6 +390,21 @@ void GameScene::update(float dt)
         m_paddle1->setPosition(m_paddle1->getStartPosition());
         m_paddle2->setPosition(m_paddle2->getStartPosition());
 
+        auto puck_restart_action = [this, &puck_y_offset]() {
+            auto hide = cocos2d::Hide::create();
+            auto move_to_zero = cocos2d::MoveTo::create(0.0f, Vec2::ZERO);
+            auto delay = cocos2d::DelayTime::create(2.0f);
+            auto return_to_circle = cocos2d::MoveTo::create(0.0f, this->m_field->getCenter() + Vec2(0, puck_y_offset));
+            auto scale_up = cocos2d::ScaleTo::create(0.0, 5);
+            auto show = cocos2d::Show::create();
+            auto scale_down = cocos2d::ScaleTo::create(1.0, 1);
+
+            auto seq = cocos2d::Sequence::create(hide, move_to_zero, delay, return_to_circle, scale_up, show, scale_down, nullptr);
+            return seq;
+        };
+        m_puck->runAction(puck_restart_action());
+
+
         auto hud_layer = this->getChildByTag(TAG_HUD_LAYER);
         auto label_score1 = static_cast<cocos2d::Label*> (hud_layer->getChildByTag(TAG_HUD_LAYER_SCORE1_STRING));
         auto label_score2 = static_cast<cocos2d::Label*> (hud_layer->getChildByTag(TAG_HUD_LAYER_SCORE2_STRING));
@@ -423,18 +438,6 @@ void GameScene::update(float dt)
         label_score2->runAction(label_score_action(label_score2->getPosition(), y_offset, goal_hit_by == GoalHitBy::PLAYER2));
         goal_hit_by = GoalHitBy::NONE;
 
-        auto puck_restart_action = [this, &puck_y_offset]() {
-            auto hide = cocos2d::Hide::create();
-            auto delay = cocos2d::DelayTime::create(2.0f);
-            auto return_to_circle = cocos2d::MoveTo::create(0.0f, this->m_field->getCenter() + Vec2(0, puck_y_offset));
-            auto scale_up = cocos2d::ScaleTo::create(0.0, 5);
-            auto show = cocos2d::Show::create();
-            auto scale_down = cocos2d::ScaleTo::create(1.0, 1);
-
-            auto seq = cocos2d::Sequence::create(hide, return_to_circle, delay, scale_up, show, scale_down, nullptr);
-            return seq;
-        };
-        m_puck->runAction(puck_restart_action());
     }
 
     const int MAX_SCORE = 7;
