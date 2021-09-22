@@ -5,6 +5,7 @@
 #include "TouchInputController.h"
 #include "GameMenuLayer.h"
 #include "GameEndLayer.h"
+#include "AIIdleState.h"
 
 USING_NS_CC;
 
@@ -160,22 +161,24 @@ bool GameScene::init()
     m_paddle1 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMinY() + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
 
-    //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
+    m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
 
     m_paddle2 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());
 
-    m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
+    //m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
 
     //m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
-    m_keyboardController = std::make_shared<KeyboardInputController>("KB2", m_paddle1);
-
+    
+    m_AIIdleState = std::make_unique<AIIdleState>(m_field.get(), m_paddle2, m_puck);
+    m_AI = std::make_shared<FSMContext>(std::move(m_AIIdleState));
+ 
     //////////////////////////////////////////////////
     // HUD LAYER
     // non-interactive elements over main game process
     
     auto hud_layer = LayerColor::create(Color4B(0, 0, 0, 0));
-    m_touchController->scheduleDebugOutput(hud_layer);
+    //m_touchController->scheduleDebugOutput(hud_layer);
 
     auto label_score1 = Label::createWithTTF("0", "fonts/arial.ttf", 72);
     label_score1->setRotation(-90.f);
@@ -336,6 +339,9 @@ void GameScene::update(float dt)
 
     // GAME LOGIC HERE
     m_paddle1->move(dt);
+
+    m_AI->update();
+
     m_paddle2->move(dt);
 
     auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));

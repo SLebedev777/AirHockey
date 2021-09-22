@@ -6,6 +6,8 @@
 #include "Paddle.h"
 #include "PlayerInputController.h"
 #include "GameField.h"
+#include "FSMContext.h"
+#include "IFSMState.h"
 
 USING_NS_CC;
 
@@ -66,6 +68,8 @@ protected:
     uint32_t m_score1 = 0, m_score2 = 0;
     bool m_isPuckPlayable = true;  // false during period from a goal occured till puck is set at the edge of central circle and ready to continue game
 
+    airhockey::FSMContextPtr m_AI;
+    airhockey::IFSMStatePtr m_AIIdleState = nullptr;
 };
 
 #endif // __GAMESCENE_H__
