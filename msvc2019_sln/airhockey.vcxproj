@@ -801,9 +801,12 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Classes\AIIdleState.h" />
+    <ClInclude Include="..\Classes\FSMContext.h" />
     <ClInclude Include="..\Classes\GameEndLayer.h" />
     <ClInclude Include="..\Classes\GameField.h" />
     <ClInclude Include="..\Classes\GameMenuLayer.h" />
+    <ClInclude Include="..\Classes\IFSMState.h" />
     <ClInclude Include="..\Classes\UIButtonMenu.h" />
     <ClInclude Include="..\Classes\UISettings.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.h" />
@@ -818,6 +821,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameLevel.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\resource.h" />
+    <ClCompile Include="..\Classes\AIIdleState.cpp" />
+    <ClCompile Include="..\Classes\FSMContext.cpp" />
     <ClCompile Include="..\Classes\GameEndLayer.cpp" />
     <ClCompile Include="..\Classes\GameField.cpp" />
     <ClCompile Include="..\Classes\GameMenuLayer.cpp" />

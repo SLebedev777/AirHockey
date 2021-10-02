@@ -342,7 +342,10 @@ void GameScene::update(float dt)
 
     m_AI->update();
 
-    m_paddle2->move(dt);
+    if (!m_AI)
+    {
+        m_paddle2->move(dt);
+    }
 
     auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
     

@@ -33,6 +33,7 @@ namespace airhockey
 		void setStartPosition(const cocos2d::Vec2& pos) { m_startPos = pos; }
 		const cocos2d::Vec2& getStartPosition() const { return m_startPos; }
 		cocos2d::PhysicsBody* getPhysicsBody() const { return static_cast<cocos2d::PhysicsBody*>(m_ccsSprite->getComponent(m_physicsBodyName)); }
+		cocos2d::Node* getStick() const { return m_ccnStick; }
 
 	private:
 		cocos2d::Rect m_fieldRect;
