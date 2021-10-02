@@ -22,10 +22,11 @@ namespace airhockey
 		virtual void onExit() {}
 		virtual void update() {}
 
-		const FSMContext& getContext() const { return *m_context; }
+		FSMContext* getContext() const { return m_context; }
+		void setContext(FSMContext* context) { m_context = context; }
 
 	protected:
-		FSMContextPtr m_context = nullptr;
+		FSMContext* m_context = nullptr;
 	};
 
 	typedef std::unique_ptr<IFSMState> IFSMStatePtr;
