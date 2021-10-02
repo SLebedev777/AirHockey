@@ -1,4 +1,6 @@
 #include "AIIdleState.h"
+#include "AIAttackState.h"
+#include "FSMContext.h"
 
 namespace airhockey
 {
@@ -28,6 +30,14 @@ namespace airhockey
 	void AIIdleState::onExit()
 	{
 		m_aiPaddle->getStick()->stopAllActions();
+	}
+
+	void AIIdleState::handleTransitions()
+	{
+		if (m_puck->getPosition().y > m_field->getCenter().y)
+		{
+			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck));
+		}
 	}
 
 }

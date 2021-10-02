@@ -18,6 +18,7 @@ namespace airhockey
 		IFSMState(const IFSMState& other) = default;
 		virtual ~IFSMState() {}
 
+		virtual void handleTransitions() {}
 		virtual void onEnter() {}
 		virtual void onExit() {}
 		virtual void update() {}

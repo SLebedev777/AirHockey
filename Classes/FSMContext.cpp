@@ -45,6 +45,7 @@ namespace airhockey
 		if (m_states.empty())
 			return;
 
+		m_states.top()->handleTransitions();
 		m_states.top()->update();
 	}
 }

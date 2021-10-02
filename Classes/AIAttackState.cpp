@@ -1,4 +1,5 @@
 #include "AIAttackState.h"
+#include "FSMContext.h"
 
 namespace airhockey
 {
@@ -15,7 +16,7 @@ namespace airhockey
 	void AIAttackState::onEnter()
 	{
 		auto ai_attack_action = [this]() {
-			auto move_push_puck = cocos2d::MoveBy::create(1.0f, m_puck->getPosition());
+			auto move_push_puck = cocos2d::MoveTo::create(1.0f, m_puck->getPosition());
 			return move_push_puck;
 		};
 		m_aiPaddle->getStick()->runAction(ai_attack_action());
@@ -26,4 +27,15 @@ namespace airhockey
 		m_aiPaddle->getStick()->stopAllActions();
 	}
 
+
+	void AIAttackState::handleTransitions()
+	{
+		if (m_puck->getPosition().y < m_field->getCenter().y)
+		{
+			if (m_context->getCurrentState())
+			{
+				m_context->popState();
+			}
+		}
+	}
 }
