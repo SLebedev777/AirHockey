@@ -25,4 +25,9 @@ namespace airhockey
 		m_aiPaddle->getStick()->runAction(ai_idle_action());
 	}
 
+	void AIIdleState::onExit()
+	{
+		m_aiPaddle->getStick()->stopAllActions();
+	}
+
 }

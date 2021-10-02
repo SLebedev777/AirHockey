@@ -1,5 +1,5 @@
-#ifndef __AIRHOCKEY_AIIDLESTATE_H__
-#define __AIRHOCKEY_AIIDLESTATE_H__
+#ifndef __AIRHOCKEY_AIATTACKSTATE_H__
+#define __AIRHOCKEY_AIATTACKSTATE_H__
 
 #include "IFSMState.h"
 #include "cocos2d.h"
@@ -12,13 +12,13 @@ namespace airhockey
 	class FSMContext;
 	typedef std::shared_ptr<FSMContext> FSMContextPtr;
 
-	/* AI Idle state */
+	/* AI Attack state */
 
-	class AIIdleState: public IFSMState
+	class AIAttackState: public IFSMState
 	{
 	public:
-		AIIdleState(GameField* game_field, PaddlePtr ai_paddle, cocos2d::Sprite* puck);
-		~AIIdleState();
+		AIAttackState(GameField* game_field, PaddlePtr ai_paddle, cocos2d::Sprite* puck);
+		~AIAttackState();
 
 		void onEnter() override;
 		void onExit() override;
@@ -32,4 +32,4 @@ namespace airhockey
 
 }
 
-#endif // __AIRHOCKEY_AIIDLESTATE_H
+#endif // __AIRHOCKEY_AIATTACKSTATE_H
