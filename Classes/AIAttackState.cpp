@@ -1,4 +1,5 @@
 #include "AIAttackState.h"
+#include "AIDefenseState.h"
 #include "FSMContext.h"
 
 namespace airhockey
@@ -32,10 +33,13 @@ namespace airhockey
 	{
 		if (m_puck->getPosition().y < m_field->getCenter().y)
 		{
+			m_context->pushState(std::make_unique<AIDefenseState>(m_field, m_aiPaddle, m_puck));
+			/*
 			if (m_context->getCurrentState())
 			{
 				m_context->popState();
 			}
+			*/
 		}
 	}
 }
