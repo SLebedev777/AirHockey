@@ -4,11 +4,12 @@
 
 namespace airhockey
 {
-	AIIdleState::AIIdleState(GameField* game_field, PaddlePtr ai_paddle, cocos2d::Sprite* puck) :
+	AIIdleState::AIIdleState(GameField* game_field, PaddlePtr ai_paddle, cocos2d::Sprite* puck, float attack_radius) :
 		IFSMState(),
 		m_field(game_field),
 		m_aiPaddle(ai_paddle),
-		m_puck(puck)
+		m_puck(puck),
+		m_attackRadius(attack_radius)
 	{}
 
 	AIIdleState::~AIIdleState()
@@ -17,7 +18,7 @@ namespace airhockey
 	void AIIdleState::onEnter()
 	{
 		auto ai_idle_action = [this]() {
-			const float SHIFT_X = 100;
+			const float SHIFT_X = m_aiPaddle->getRadius();
 			auto move_left = cocos2d::MoveBy::create(2.0f, cocos2d::Vec2(-2*SHIFT_X, 0));
 			auto move_right = cocos2d::MoveBy::create(1.0f, cocos2d::Vec2(SHIFT_X, 0));
 			auto delay = cocos2d::DelayTime::create(1.0f);
@@ -34,9 +35,9 @@ namespace airhockey
 
 	void AIIdleState::handleTransitions()
 	{
-		if (m_puck->getPosition().y > m_field->getCenter().y)
+		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadius)
 		{
-			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck));
+			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck, m_attackRadius));
 		}
 	}
 

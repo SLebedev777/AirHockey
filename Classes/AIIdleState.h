@@ -17,7 +17,7 @@ namespace airhockey
 	class AIIdleState: public IFSMState
 	{
 	public:
-		AIIdleState(GameField* game_field, PaddlePtr ai_paddle, cocos2d::Sprite* puck);
+		AIIdleState(GameField* game_field, PaddlePtr ai_paddle, cocos2d::Sprite* puck, float attack_radius);
 		~AIIdleState();
 
 		void onEnter() override;
@@ -29,6 +29,7 @@ namespace airhockey
 		GameField* m_field = nullptr;
 		PaddlePtr m_aiPaddle = nullptr;
 		cocos2d::Sprite* m_puck = nullptr;
+		float m_attackRadius;
 	};
 
 }

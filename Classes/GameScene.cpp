@@ -169,8 +169,8 @@ bool GameScene::init()
     //m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
 
     //m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
-    
-    m_AIIdleState = std::make_unique<AIIdleState>(m_field.get(), m_paddle2, m_puck);
+    const float ATTACK_RADIUS = abs(m_paddle2->getStartPosition().y - m_field->getCenter().y) + PUCK_RADIUS;
+    m_AIIdleState = std::make_unique<AIIdleState>(m_field.get(), m_paddle2, m_puck, ATTACK_RADIUS);
     m_AI = std::make_shared<FSMContext>(std::move(m_AIIdleState));
  
     //////////////////////////////////////////////////
@@ -366,6 +366,7 @@ void GameScene::update(float dt)
 
         m_paddle1->getPhysicsBody()->setEnabled(true);
         m_paddle2->getPhysicsBody()->setEnabled(true);
+        m_AI->reset();
     }
 
     float puck_y_offset = m_field->getCentralCircleMarking().getSettings().radius;

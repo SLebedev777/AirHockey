@@ -40,6 +40,18 @@ namespace airhockey
 		return top;
 	}
 
+	void FSMContext::reset()
+	{
+		if (m_states.empty())
+			return;
+
+		while (m_states.size() > 1)
+		{
+			m_states.pop();
+		}
+		m_states.top()->onEnter();
+	}
+
 	void FSMContext::update()
 	{
 		if (m_states.empty())
