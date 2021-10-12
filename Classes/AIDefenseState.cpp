@@ -36,7 +36,7 @@ namespace airhockey
 	{
 		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadius)
 		{
-			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck, 2 * m_puck->getContentSize().width));
+			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck, 4 * m_puck->getContentSize().width));
 		}
 	}
 }
