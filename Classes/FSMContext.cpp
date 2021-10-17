@@ -23,6 +23,18 @@ namespace airhockey
 		m_states.top()->onEnter();
 	}
 
+	void FSMContext::replaceState(IFSMStatePtr state)
+	{
+		if (!m_states.empty())
+		{
+			m_states.top()->onExit();
+			m_states.pop();
+		}
+		m_states.push(std::move(state));
+		m_states.top()->setContext(this);
+		m_states.top()->onEnter();
+	}
+
 	IFSMStatePtr FSMContext::popState()
 	{
 		if (m_states.empty())

@@ -18,6 +18,7 @@ namespace airhockey
 
 		void pushState(IFSMStatePtr state);
 		IFSMStatePtr popState();
+		void replaceState(IFSMStatePtr state);
 		IFSMState* getCurrentState() const { return !m_states.empty() ? m_states.top().get() : nullptr; };
 		void reset();  // erase all states in stack except the base.
 
