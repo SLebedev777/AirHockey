@@ -38,16 +38,31 @@ namespace airhockey
 		Vec2 dx0 = x0_paddle - x0_puck;
 		float v_paddle_scalar = 500.0f;
 		float alpha = 0.0f;
-		if (dx0.y == 0.0f)
-			return;
-		float C = dx0.x / dx0.y;
-		float Cpow2 = C * C;
-		float A = (v_puck.x - C * v_puck.y) / v_paddle_scalar;
-		float D = 4 * Cpow2 * (Cpow2 + 1 - A * A);  // discriminant of sqr equation
-		if (D < 0.0f)
-			return;
-		float z1 = (-A - C * sqrt(D)) / (1.0f + Cpow2);
-		float z2 = (-A + C * sqrt(D)) / (1.0f + Cpow2);
+		float z1, z2;
+		if (dx0.x < dx0.y)
+		{
+			float C = dx0.x / dx0.y;
+			float Cpow2 = C * C;
+			float A = (v_puck.x - C * v_puck.y) / v_paddle_scalar;
+			float E = Cpow2 + 1 - A * A;
+			float D = 4 * Cpow2 * E;  // discriminant of sqr equation
+			if (D < 0.0f)
+				return;
+			z1 = (-A - C * sqrt(E)) / (1.0f + Cpow2);
+			z2 = (-A + C * sqrt(E)) / (1.0f + Cpow2);
+		}
+		else
+		{
+			float C = dx0.y / dx0.x;
+			float Cpow2 = C * C;
+			float A = (v_puck.y - C * v_puck.x) / v_paddle_scalar;
+			float E = Cpow2 + 1 - A * A;
+			float D = 4 * E;  // discriminant of sqr equation
+			if (D < 0.0f)
+				return;
+			z1 = (C * A - sqrt(E)) / (1.0f + Cpow2);
+			z2 = (C * A + sqrt(E)) / (1.0f + Cpow2);
+		}
 		// substitution: z = sin(alpha)
 		if (z1 > 1.0f || z1 < -1.0f)
 			return;
@@ -55,8 +70,11 @@ namespace airhockey
 			return;
 		float alpha1 = asin(z1);
 		float alpha2 = asin(z2);
-		alpha1 += M_PI;
-		alpha2 += M_PI;
+		if (x0_paddle.y > x0_puck.y)
+		{
+			alpha1 += M_PI;
+			alpha2 += M_PI;
+		}
 		float alpha1_deg = CC_RADIANS_TO_DEGREES(alpha1);
 		float alpha2_deg = CC_RADIANS_TO_DEGREES(alpha2);
 		alpha = 0.5f * (alpha1 + alpha2);  // here should be more correct way of choosing the right alpha
