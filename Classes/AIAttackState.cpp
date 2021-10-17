@@ -26,36 +26,53 @@ namespace airhockey
 			auto move_push_puck = cocos2d::MoveTo::create(attack_duration, m_puck->getPosition() + puck_future_offset);
 			return move_push_puck;
 		};
-		//m_aiPaddle->getStick()->runAction(ai_attack_action());
 		
-		 Vec2 x0_puck = m_puck->getPosition();
-		 Vec2 x0_paddle = m_aiPaddle->getPosition();
-		 Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
-		 Vec2 dx0 = x0_paddle - x0_puck;
-		 float v_paddle_scalar = 500.0f;
-		 float alpha = 0.0f;
-		 if (dx0.y == 0.0f)
-			 return;
-		 float C = dx0.x / dx0.y;
-		 float Cpow2 = C * C;
-		 float A = (v_puck.x - C * v_puck.y) / v_paddle_scalar;
-		 float D = 4 * Cpow2 * (Cpow2 + 1 - A * A);  // discriminant of sqr equation
-		 if (D < 0.0f)
-			 return;
-		 float z1 = (A - C * sqrt(D)) / (1.0f + Cpow2);
-		 float z2 = (A + C * sqrt(D)) / (1.0f + Cpow2);
-		 // z = sin(alpha)
-		 if (z1 > 1.0f || z1 < -1.0f)
-			 return;
-		 if (z2 > 1.0f || z2 < -1.0f)
-			 return;
-		 float alpha1 = asin(z1);
-		 float alpha2 = asin(z2);
-		 alpha = alpha2;  // here should be more correct way of choosing the right alpha
-		 alpha = alpha + M_PI;
-		 Vec2 v_paddle = Vec2(v_paddle_scalar * sin(alpha), v_paddle_scalar * cos(alpha));
+		Vec2 x0_puck = m_puck->getPosition();
+		Vec2 x0_paddle = m_aiPaddle->getPosition();
+		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
+		if (v_puck.fuzzyEquals(Vec2::ZERO, 5))
+		{
+			m_aiPaddle->getStick()->runAction(ai_attack_action());
+			return;
+		}
+		Vec2 dx0 = x0_paddle - x0_puck;
+		float v_paddle_scalar = 500.0f;
+		float alpha = 0.0f;
+		if (dx0.y == 0.0f)
+			return;
+		float C = dx0.x / dx0.y;
+		float Cpow2 = C * C;
+		float A = (v_puck.x - C * v_puck.y) / v_paddle_scalar;
+		float D = 4 * Cpow2 * (Cpow2 + 1 - A * A);  // discriminant of sqr equation
+		if (D < 0.0f)
+			return;
+		float z1 = (-A - C * sqrt(D)) / (1.0f + Cpow2);
+		float z2 = (-A + C * sqrt(D)) / (1.0f + Cpow2);
+		// substitution: z = sin(alpha)
+		if (z1 > 1.0f || z1 < -1.0f)
+			return;
+		if (z2 > 1.0f || z2 < -1.0f)
+			return;
+		float alpha1 = asin(z1);
+		float alpha2 = asin(z2);
+		alpha1 += M_PI;
+		alpha2 += M_PI;
+		float alpha1_deg = CC_RADIANS_TO_DEGREES(alpha1);
+		float alpha2_deg = CC_RADIANS_TO_DEGREES(alpha2);
+		alpha = 0.5f * (alpha1 + alpha2);  // here should be more correct way of choosing the right alpha
+		Vec2 v_paddle = Vec2(v_paddle_scalar * sin(alpha), v_paddle_scalar * cos(alpha)); // alpha grows counterclockwise from 0 at y axis
 
-		 m_aiPaddle->getStick()->getPhysicsBody()->setVelocity(v_paddle);
+		Vec2 dv = v_paddle - v_puck;
+		float tx = dx0.x / (-dv.x);
+		float ty = dx0.y / (-dv.y);
+		float t = (tx > ty) ? tx : ty;
+		Vec2 x_new_puck = x0_puck + v_puck * t;
+		Vec2 x_new_paddle = x0_paddle + v_paddle * t;
+		if (!m_field->getPlayRect().containsPoint(x_new_paddle))
+			return;
+
+		m_aiPaddle->getStick()->getPhysicsBody()->setVelocity(v_paddle);
+
 	}
 
 	void AIAttackState::onExit()
@@ -67,9 +84,12 @@ namespace airhockey
 
 	void AIAttackState::handleTransitions()
 	{
-		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) > m_attackRadius)
+		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) > m_attackRadius ||
+			m_puck->getPosition().y > m_aiPaddle->getPosition().y ||
+			m_aiPaddle->getPosition().y <= m_field->getCenter().y)
 		{
-			m_context->pushState(std::make_unique<AIDefenseState>(m_field, m_aiPaddle, m_puck, m_attackRadius));
+			// back to defense state
+			m_context->popState();
 		}
 	}
 }
