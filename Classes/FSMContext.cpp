@@ -14,6 +14,9 @@ namespace airhockey
 
 	void FSMContext::pushState(IFSMStatePtr state)
 	{
+		if (!m_isEnabled)
+			return;
+
 		if (!m_states.empty())
 		{
 			m_states.top()->onExit();
@@ -25,6 +28,9 @@ namespace airhockey
 
 	void FSMContext::replaceState(IFSMStatePtr state)
 	{
+		if (!m_isEnabled)
+			return;
+
 		if (!m_states.empty())
 		{
 			m_states.top()->onExit();
@@ -37,6 +43,9 @@ namespace airhockey
 
 	IFSMStatePtr FSMContext::popState()
 	{
+		if (!m_isEnabled)
+			return nullptr;
+
 		if (m_states.empty())
 			return nullptr;
 
@@ -69,6 +78,9 @@ namespace airhockey
 		if (m_states.empty())
 			return;
 
+		if (!m_isEnabled)
+			return;
+
 		m_states.top()->handleTransitions();
 		m_states.top()->update();
 	}
@@ -81,6 +93,23 @@ namespace airhockey
 		if (!m_states.top()->onEnter())
 		{
 			popState();
+		}
+	}
+
+	void FSMContext::setEnabled(bool is_enabled)
+	{
+		if (m_states.empty())
+			return;
+		
+		if (!is_enabled && m_isEnabled)
+		{
+			m_isEnabled = false;
+			m_states.top()->pause();
+		}
+		else if (is_enabled && !m_isEnabled)
+		{
+			m_isEnabled = true;
+			m_states.top()->resume();
 		}
 	}
 }

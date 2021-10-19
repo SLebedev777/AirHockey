@@ -366,7 +366,11 @@ void GameScene::update(float dt)
 
         m_paddle1->getPhysicsBody()->setEnabled(true);
         m_paddle2->getPhysicsBody()->setEnabled(true);
-        m_AI->reset();
+        if (m_AI)
+        {
+            m_AI->setEnabled(true);
+            m_AI->reset();
+        }
     }
 
     float puck_y_offset = m_field->getCentralCircleMarking().getSettings().radius;
@@ -401,10 +405,15 @@ void GameScene::update(float dt)
         puck_body->setAngularVelocity(0.0f);
         puck_body->setEnabled(false);
         
+        if (m_AI)
+        {
+            m_AI->reset();
+            m_AI->setEnabled(false);
+        }
         m_paddle1->getPhysicsBody()->setEnabled(false);
         m_paddle2->getPhysicsBody()->setEnabled(false);
         m_paddle1->setPosition(m_paddle1->getStartPosition());
-        m_paddle2->setPosition(m_paddle2->getStartPosition());
+        //m_paddle2->setPosition(m_paddle2->getStartPosition());   <--- причина уезжания ракетки AI за экран!!!
 
         auto puck_restart_action = [this, &puck_y_offset]() {
             auto hide = cocos2d::Hide::create();

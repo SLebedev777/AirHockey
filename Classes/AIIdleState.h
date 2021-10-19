@@ -24,6 +24,8 @@ namespace airhockey
 		void onExit() override;
 		//void update() override {};
 		void handleTransitions() override;
+		void pause() override;
+		void resume() override;
 
 	private:
 		GameField* m_field = nullptr;

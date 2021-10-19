@@ -28,6 +28,9 @@ namespace airhockey
 		};
 		
 		Vec2 x0_puck = m_puck->getPosition();
+		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x0_puck))
+			return false;
+
 		Vec2 x0_paddle = m_aiPaddle->getPosition();
 		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
 		if (v_puck.fuzzyEquals(Vec2::ZERO, 5))
@@ -36,7 +39,7 @@ namespace airhockey
 			return true;
 		}
 		Vec2 dx0 = x0_paddle - x0_puck;
-		float v_paddle_scalar = 500.0f;
+		float v_paddle_scalar = 1000.0f;
 		float alpha = 0.0f;
 		float z1, z2;
 		if (dx0.x < dx0.y)
@@ -79,7 +82,7 @@ namespace airhockey
 		}
 		else
 		{
-			v_paddle_x = -v_paddle_scalar * sin(alpha);
+			return false;
 		}
 		float alpha_deg = CC_RADIANS_TO_DEGREES(alpha);
 		v_paddle_y = v_paddle_scalar * cos(alpha);
@@ -105,7 +108,6 @@ namespace airhockey
 		m_aiPaddle->getStick()->stopAllActions();
 	}
 
-
 	void AIAttackState::handleTransitions()
 	{
 		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) > m_attackRadius ||
@@ -116,4 +118,18 @@ namespace airhockey
 			m_context->popState();
 		}
 	}
+
+	void AIAttackState::pause()
+	{
+		m_aiPaddle->getStick()->getPhysicsBody()->setVelocity(cocos2d::Vec2::ZERO);
+		m_aiPaddle->getStick()->pause();
+		m_aiPaddle->getSprite()->pause();
+	}
+
+	void AIAttackState::resume()
+	{
+		m_aiPaddle->getStick()->resume();
+		m_aiPaddle->getSprite()->resume();
+	}
+
 }

@@ -44,4 +44,13 @@ namespace airhockey
 		}
 	}
 
+	void AIIdleState::pause()
+	{
+		m_aiPaddle->getStick()->pause();
+	}
+
+	void AIIdleState::resume()
+	{
+		m_aiPaddle->getStick()->resume();
+	}
 }

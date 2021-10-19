@@ -24,9 +24,11 @@ namespace airhockey
 		void onEnterCurrentState();
 
 		void update();
+		void setEnabled(bool is_enabled = true);
 
 	private:
 		std::stack<IFSMStatePtr> m_states;
+		bool m_isEnabled = true;
 	};
 
 }

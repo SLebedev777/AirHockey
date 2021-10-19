@@ -35,9 +35,21 @@ namespace airhockey
 
 	void AIDefenseState::handleTransitions()
 	{
-		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadius)
+		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadius &&
+			m_puck->getPosition().y < m_aiPaddle->getPosition().y)
 		{
 			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck, m_attackRadius));
 		}
 	}
+
+	void AIDefenseState::pause()
+	{
+		m_aiPaddle->getStick()->pause();
+	}
+
+	void AIDefenseState::resume()
+	{
+		m_aiPaddle->getStick()->resume();
+	}
+
 }

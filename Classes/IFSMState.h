@@ -22,6 +22,8 @@ namespace airhockey
 		virtual bool onEnter() { return true; }
 		virtual void onExit() {}
 		virtual void update() {}
+		virtual void pause() {}
+		virtual void resume() {}
 
 		FSMContext* getContext() const { return m_context; }
 		void setContext(FSMContext* context) { m_context = context; }
