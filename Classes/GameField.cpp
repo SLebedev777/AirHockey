@@ -276,6 +276,15 @@ namespace airhockey
 			return *m_gateUpper.get();
 	}
 
+	cocos2d::Rect GameField::getPlayRect(const GoalGateLocationType& location_type) const
+	{
+		Rect rect = getPlayRect();
+		if (location_type == GoalGateLocationType::LOWER)
+			return Rect(rect.getMinX(), rect.getMinY(), rect.size.width, rect.size.height / 2);
+		else if (location_type == GoalGateLocationType::UPPER)
+			return Rect(rect.getMinX(), rect.getMidY(), rect.size.width, rect.size.height / 2);
+	}
+
 	/// <summary>
 	/// GameFieldBuilder
 	/// </summary>

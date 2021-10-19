@@ -229,6 +229,7 @@ namespace airhockey
 		cocos2d::Vec2 getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type) const;  // v
 		const cocos2d::Vec2& getCenter() const { return m_center; }  // v
 		cocos2d::Rect getPlayRect() const { return m_playRect; }  // v
+		cocos2d::Rect getPlayRect(const GoalGateLocationType& location_type) const;  // get play rect for each player
 		void setParent(cocos2d::Node* parent);  // v
 		const GoalGate& getGoalGate(const GoalGateLocationType& location_type) const;
 		const CentralCircleMarking& getCentralCircleMarking() const { return *m_centralCircleMarking; }
