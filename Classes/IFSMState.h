@@ -19,7 +19,7 @@ namespace airhockey
 		virtual ~IFSMState() {}
 
 		virtual void handleTransitions() {}
-		virtual void onEnter() {}
+		virtual bool onEnter() { return true; }
 		virtual void onExit() {}
 		virtual void update() {}
 

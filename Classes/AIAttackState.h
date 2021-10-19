@@ -20,7 +20,7 @@ namespace airhockey
 		AIAttackState(GameField* game_field, PaddlePtr ai_paddle, cocos2d::Sprite* puck, float attack_radius);
 		~AIAttackState();
 
-		void onEnter() override;
+		bool onEnter() override;
 		void onExit() override;
 		//void update() override;
 		void handleTransitions() override;

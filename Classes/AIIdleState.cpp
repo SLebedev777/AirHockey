@@ -16,7 +16,7 @@ namespace airhockey
 	AIIdleState::~AIIdleState()
 	{}
 
-	void AIIdleState::onEnter()
+	bool AIIdleState::onEnter()
 	{
 		auto ai_idle_action = [this]() {
 			const float SHIFT_X = m_aiPaddle->getRadius();
@@ -27,6 +27,7 @@ namespace airhockey
 			return move_cycle;
 		};
 		m_aiPaddle->getStick()->runAction(ai_idle_action());
+		return true;
 	}
 
 	void AIIdleState::onExit()

@@ -16,7 +16,7 @@ namespace airhockey
 	AIAttackState::~AIAttackState()
 	{}
 
-	void AIAttackState::onEnter()
+	bool AIAttackState::onEnter()
 	{
 		using namespace cocos2d;
 
@@ -33,7 +33,7 @@ namespace airhockey
 		if (v_puck.fuzzyEquals(Vec2::ZERO, 5))
 		{
 			m_aiPaddle->getStick()->runAction(ai_attack_action());
-			return;
+			return true;
 		}
 		Vec2 dx0 = x0_paddle - x0_puck;
 		float v_paddle_scalar = 500.0f;
@@ -47,7 +47,7 @@ namespace airhockey
 			float E = Cpow2 + 1 - A * A;
 			float D = 4 * Cpow2 * E;  // discriminant of sqr equation
 			if (D < 0.0f)
-				return;
+				return false;
 			z1 = (-A - C * sqrt(E)) / (1.0f + Cpow2);
 			z2 = (-A + C * sqrt(E)) / (1.0f + Cpow2);
 		}
@@ -59,26 +59,31 @@ namespace airhockey
 			float E = Cpow2 + 1 - A * A;
 			float D = 4 * E;  // discriminant of sqr equation
 			if (D < 0.0f)
-				return;
+				return false;
 			z1 = (C * A - sqrt(E)) / (1.0f + Cpow2);
 			z2 = (C * A + sqrt(E)) / (1.0f + Cpow2);
 		}
 		// substitution: z = sin(alpha)
 		if (z1 > 1.0f || z1 < -1.0f)
-			return;
+			return false;
 		if (z2 > 1.0f || z2 < -1.0f)
-			return;
+			return false;
 		float alpha1 = asin(z1);
 		float alpha2 = asin(z2);
+		alpha = 0.5f * (alpha1 + alpha2);  // here should be more correct way of choosing the right alpha
+		float v_paddle_x, v_paddle_y;
 		if (x0_paddle.y > x0_puck.y)
 		{
-			alpha1 += M_PI;
-			alpha2 += M_PI;
+			alpha += M_PI;
+			v_paddle_x = v_paddle_scalar * sin(alpha);
 		}
-		float alpha1_deg = CC_RADIANS_TO_DEGREES(alpha1);
-		float alpha2_deg = CC_RADIANS_TO_DEGREES(alpha2);
-		alpha = 0.5f * (alpha1 + alpha2);  // here should be more correct way of choosing the right alpha
-		Vec2 v_paddle = Vec2(v_paddle_scalar * sin(alpha), v_paddle_scalar * cos(alpha)); // alpha grows counterclockwise from 0 at y axis
+		else
+		{
+			v_paddle_x = -v_paddle_scalar * sin(alpha);
+		}
+		float alpha_deg = CC_RADIANS_TO_DEGREES(alpha);
+		v_paddle_y = v_paddle_scalar * cos(alpha);
+		Vec2 v_paddle = Vec2(v_paddle_x, v_paddle_y); // alpha grows counterclockwise from 0 at y axis
 
 		Vec2 dv = v_paddle - v_puck;
 		float tx = dx0.x / (-dv.x);
@@ -86,11 +91,12 @@ namespace airhockey
 		float t = (tx > ty) ? tx : ty;
 		Vec2 x_new_puck = x0_puck + v_puck * t;
 		Vec2 x_new_paddle = x0_paddle + v_paddle * t;
-		if (!m_field->getPlayRect().containsPoint(x_new_paddle))
-			return;
+		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x_new_paddle))
+			return false;
 
-		m_aiPaddle->getStick()->getPhysicsBody()->setVelocity(v_paddle);
-
+		//m_aiPaddle->getStick()->getPhysicsBody()->setVelocity(v_paddle);
+		m_aiPaddle->getStick()->runAction(MoveTo::create(t, x_new_paddle));
+		return true;
 	}
 
 	void AIAttackState::onExit()

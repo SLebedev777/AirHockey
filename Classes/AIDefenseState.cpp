@@ -16,7 +16,7 @@ namespace airhockey
 	AIDefenseState::~AIDefenseState()
 	{}
 
-	void AIDefenseState::onEnter()
+	bool AIDefenseState::onEnter()
 	{
 		auto ai_defense_action = [this]() {
 			cocos2d::Rect gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::UPPER).getRect();
@@ -24,6 +24,7 @@ namespace airhockey
 			return move_back_to_gate;
 		};
 		m_aiPaddle->getStick()->runAction(ai_defense_action());
+		return true;
 	}
 
 	void AIDefenseState::onExit()

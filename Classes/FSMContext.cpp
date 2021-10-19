@@ -6,7 +6,7 @@ namespace airhockey
 	{
 		m_states.push(std::move(start_state));
 		m_states.top()->setContext(this);
-		m_states.top()->onEnter();
+		onEnterCurrentState();
 	}
 
 	FSMContext::~FSMContext()
@@ -20,7 +20,7 @@ namespace airhockey
 		}
 		m_states.push(std::move(state));
 		m_states.top()->setContext(this);
-		m_states.top()->onEnter();
+		onEnterCurrentState();
 	}
 
 	void FSMContext::replaceState(IFSMStatePtr state)
@@ -32,7 +32,7 @@ namespace airhockey
 		}
 		m_states.push(std::move(state));
 		m_states.top()->setContext(this);
-		m_states.top()->onEnter();
+		onEnterCurrentState();
 	}
 
 	IFSMStatePtr FSMContext::popState()
@@ -46,7 +46,7 @@ namespace airhockey
 		top->setContext(nullptr);
 		if (!m_states.empty())
 		{
-			m_states.top()->onEnter();
+			onEnterCurrentState();
 		}
 
 		return top;
@@ -61,7 +61,7 @@ namespace airhockey
 		{
 			m_states.pop();
 		}
-		m_states.top()->onEnter();
+		onEnterCurrentState();
 	}
 
 	void FSMContext::update()
@@ -71,5 +71,16 @@ namespace airhockey
 
 		m_states.top()->handleTransitions();
 		m_states.top()->update();
+	}
+
+	void FSMContext::onEnterCurrentState()
+	{
+		if (m_states.empty())
+			return;
+		
+		if (!m_states.top()->onEnter())
+		{
+			popState();
+		}
 	}
 }
