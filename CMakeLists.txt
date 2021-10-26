@@ -23,7 +23,7 @@
 # THE SOFTWARE.
 # ****************************************************************************/
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.10)
 
 set(APP_NAME airhockey)
 
@@ -42,6 +42,13 @@ if(NOT DEFINED BUILD_ENGINE_DONE) # to test airhockey into root project
     include(CocosBuildSet)
     add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 endif()
+
+set(CMAKE_CXX_STANDARD 14)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX11_STANDARD_COMPILE_OPTION "-std=c++14")
+set(CMAKE_CXX11_EXTENSION_COMPILE_OPTION "-std=c++14")
+set(CMAKE_CXX14_STANDARD_COMPILE_OPTION "-std=c++14")
+set(CMAKE_CXX14_EXTENSION_COMPILE_OPTION "-std=c++14")
 
 # record sources, headers, resources...
 set(GAME_SOURCE)
@@ -65,6 +72,14 @@ list(APPEND GAME_SOURCE
      Classes/MouseInputController.cpp
      Classes/TouchInputController.cpp
      Classes/AIInputController.cpp
+     Classes/AIAttackState.cpp
+     Classes/AIDefenseState.cpp
+     Classes/AIIdleState.cpp
+     Classes/FSMContext.cpp
+     Classes/GameEndLayer.cpp
+     Classes/GameField.cpp
+     Classes/GameMenuLayer.cpp
+     Classes/UIButtonMenu.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -77,6 +92,16 @@ list(APPEND GAME_HEADER
      Classes/TouchInputController.h
      Classes/AIInputController.h
      Classes/GameLevel.h
+     Classes/AIAttackState.h
+     Classes/AIDefenseState.h
+     Classes/AIIdleState.h
+     Classes/FSMContext.h
+     Classes/GameEndLayer.h
+     Classes/GameField.h
+     Classes/GameMenuLayer.h
+     Classes/IFSMState.h
+     Classes/UIButtonMenu.h
+     Classes/UISettings.h
      )
 
 if(ANDROID)

@@ -6,6 +6,7 @@
 #include "GameMenuLayer.h"
 #include "GameEndLayer.h"
 #include "AIIdleState.h"
+#include <memory>
 
 USING_NS_CC;
 
@@ -161,7 +162,8 @@ bool GameScene::init()
     m_paddle1 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMinY() + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
 
-    m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
+    //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
+    m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
 
     m_paddle2 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());
@@ -413,7 +415,7 @@ void GameScene::update(float dt)
         m_paddle1->getPhysicsBody()->setEnabled(false);
         m_paddle2->getPhysicsBody()->setEnabled(false);
         m_paddle1->setPosition(m_paddle1->getStartPosition());
-        //m_paddle2->setPosition(m_paddle2->getStartPosition());   <--- причина уезжания ракетки AI за экран!!!
+        //m_paddle2->setPosition(m_paddle2->getStartPosition());   <--- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ AI пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ!!!
 
         auto puck_restart_action = [this, &puck_y_offset]() {
             auto hide = cocos2d::Hide::create();
