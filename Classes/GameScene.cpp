@@ -320,6 +320,28 @@ void GameScene::onGameEndMenuClose(Event* event)
     m_score2 = 0;
 }
 
+void GameScene::onNewGameStart()
+{
+    m_score1 = 0;
+    m_score2 = 0;
+    m_puck->setPosition(m_field->getCenter());
+
+
+}
+
+void GameScene::startDelay(float duration, std::string& wait_node_name, int action_tag)
+{
+    auto wait_action = DelayTime::create(duration);
+    wait_action->setTag(action_tag);
+    auto wait_node = Node::create();
+    wait_node->runAction(wait_action);
+    this->addChild(wait_node, 2, wait_node_name);
+}
+
+bool GameScene::isDelayOver(std::string& wait_node_name, int action_tag) const
+{
+    return !this->getChildByName(wait_node_name)->getActionByTag(action_tag);
+}
 
 void GameScene::updateTimer(float dt)
 {
@@ -359,7 +381,7 @@ void GameScene::update(float dt)
     };
     GoalHitBy goal_hit_by = GoalHitBy::NONE;
 
-    if (!m_isPuckPlayable && !this->getChildByName("WaitNode")->getActionByTag(12345))
+    if (!m_isPuckPlayable && isDelayOver())
     {
         m_isPuckPlayable = true;
         puck_body->setEnabled(true);
@@ -397,11 +419,7 @@ void GameScene::update(float dt)
     if (goal_hit_by != GoalHitBy::NONE)
     {
         m_isPuckPlayable = false;
-        auto wait_action = DelayTime::create(3.0f);
-        wait_action->setTag(12345);
-        auto wait_node = Node::create();
-        wait_node->runAction(wait_action);
-        this->addChild(wait_node, 2, "WaitNode");
+        startDelay(3.0f);
 
         puck_body->setVelocity(Vec2::ZERO);
         puck_body->setAngularVelocity(0.0f);
@@ -415,7 +433,7 @@ void GameScene::update(float dt)
         m_paddle1->getPhysicsBody()->setEnabled(false);
         m_paddle2->getPhysicsBody()->setEnabled(false);
         m_paddle1->setPosition(m_paddle1->getStartPosition());
-        //m_paddle2->setPosition(m_paddle2->getStartPosition());   <--- ������� �������� ������� AI �� �����!!!
+        //m_paddle2->setPosition(m_paddle2->getStartPosition());   <---  причина уезжания ракетки AI за экран!!!
 
         auto puck_restart_action = [this, &puck_y_offset]() {
             auto hide = cocos2d::Hide::create();

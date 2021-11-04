@@ -37,10 +37,16 @@ public:
     void onGameEndMenuOpen(Ref* sender);
     void onGameEndMenuClose(Event* event);
 
+    void onNewGameStart();
+
     void updateTimer(float dt);
     void drawHUDString(int str_tag, const std::string& str);
 
     void update(float dt) override;
+
+private:
+    void startDelay(float duration, std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345);
+    bool isDelayOver(std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345) const;
 
 protected:
     airhockey::GameLevel m_currLevel;
