@@ -37,6 +37,7 @@ public:
     void onGameEndMenuOpen(Ref* sender);
     void onGameEndMenuClose(Event* event);
 
+    void rethrowPuck(cocos2d::Vec2& puck_throw_pos);
     void onNewGameStart();
 
     void updateTimer(float dt);

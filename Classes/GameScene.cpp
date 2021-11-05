@@ -320,6 +320,48 @@ void GameScene::onGameEndMenuClose(Event* event)
     m_score2 = 0;
 }
 
+void GameScene::rethrowPuck(cocos2d::Vec2& puck_rethrow_pos)
+{
+    m_isPuckPlayable = false;
+    startDelay(3.0f);
+
+    auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
+
+    puck_body->setVelocity(Vec2::ZERO);
+    puck_body->setAngularVelocity(0.0f);
+    puck_body->setEnabled(false);
+
+    auto puck_restart_action = [](cocos2d::Vec2& puck_rethrow_pos) {
+        auto hide = cocos2d::Hide::create();
+        auto move_to_zero = cocos2d::MoveTo::create(0.0f, Vec2::ZERO);
+        auto delay = cocos2d::DelayTime::create(3.0f);
+        auto move_to_circle = cocos2d::MoveTo::create(0.0f, puck_rethrow_pos);
+        auto rotate_to_zero = cocos2d::RotateTo::create(0.0f, 0.0f);
+        auto show = cocos2d::Show::create();
+
+        auto seq = cocos2d::Sequence::create(hide, move_to_zero, delay, move_to_circle, rotate_to_zero, show, nullptr);
+        return seq;
+    };
+    m_puck->runAction(puck_restart_action(puck_rethrow_pos));
+
+    auto puck_clone = Sprite::create("puck.png");
+    this->getChildByTag(TAG_GAME_LAYER)->addChild(puck_clone, 1);
+    auto puck_throw_down_effect_action = [](cocos2d::Vec2& puck_rethrow_pos) {
+        auto hide = cocos2d::Hide::create();
+        auto delay = cocos2d::DelayTime::create(2.0f);
+        auto move_to_circle = cocos2d::MoveTo::create(0.0f, puck_rethrow_pos);
+        auto scale_up = cocos2d::ScaleTo::create(0.0, 5);
+        auto show = cocos2d::Show::create();
+        auto scale_down = cocos2d::ScaleTo::create(1.0, 1);
+        auto remove = cocos2d::RemoveSelf::create();
+
+        auto seq = cocos2d::Sequence::create(hide, delay, move_to_circle, scale_up, show, scale_down, remove, nullptr);
+        return seq;
+    };
+    puck_clone->runAction(puck_throw_down_effect_action(puck_rethrow_pos));
+
+}
+
 void GameScene::onNewGameStart()
 {
     m_score1 = 0;
@@ -464,34 +506,8 @@ void GameScene::update(float dt)
         m_paddle1->setPosition(m_paddle1->getStartPosition());
         //m_paddle2->setPosition(m_paddle2->getStartPosition());   <---  причина уезжания ракетки AI за экран!!!
 
-        auto puck_restart_action = [this, &puck_y_offset]() {
-            auto hide = cocos2d::Hide::create();
-            auto move_to_zero = cocos2d::MoveTo::create(0.0f, Vec2::ZERO);
-            auto delay = cocos2d::DelayTime::create(3.0f);
-            auto move_to_circle = cocos2d::MoveTo::create(0.0f, this->m_field->getCenter() + Vec2(0, puck_y_offset));
-            auto rotate_to_zero = cocos2d::RotateTo::create(0.0f, 0.0f);
-            auto show = cocos2d::Show::create();
-
-            auto seq = cocos2d::Sequence::create(hide, move_to_zero, delay, move_to_circle, rotate_to_zero, show, nullptr);
-            return seq;
-        };
-        m_puck->runAction(puck_restart_action());
-
-        auto puck_clone = Sprite::create("puck.png");
-        this->getChildByTag(TAG_GAME_LAYER)->addChild(puck_clone, 1);
-        auto puck_throw_down_effect_action = [this, &puck_y_offset]() {
-            auto hide = cocos2d::Hide::create();
-            auto delay = cocos2d::DelayTime::create(2.0f);
-            auto move_to_circle = cocos2d::MoveTo::create(0.0f, this->m_field->getCenter() + Vec2(0, puck_y_offset));
-            auto scale_up = cocos2d::ScaleTo::create(0.0, 5);
-            auto show = cocos2d::Show::create();
-            auto scale_down = cocos2d::ScaleTo::create(1.0, 1);
-            auto remove = cocos2d::RemoveSelf::create();
-
-            auto seq = cocos2d::Sequence::create(hide, delay, move_to_circle, scale_up, show, scale_down, remove, nullptr);
-            return seq;
-        };
-        puck_clone->runAction(puck_throw_down_effect_action());
+        Vec2 puck_rethrow_pos = this->m_field->getCenter() + Vec2(0, puck_y_offset);
+        rethrowPuck(puck_rethrow_pos);
 
         onScoreChanged();
 
