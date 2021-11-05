@@ -238,6 +238,8 @@ bool GameScene::init()
 
     scheduleUpdate();
 
+    onNewGameStart();
+
     return true;
 }
 
@@ -316,14 +318,12 @@ void GameScene::onGameEndMenuClose(Event* event)
         this->removeChildByTag(TAG_GAME_END_MENU_LAYER);
     }
 
-    m_score1 = 0;
-    m_score2 = 0;
+    onNewGameStart();
 }
 
 void GameScene::rethrowPuck(cocos2d::Vec2& puck_rethrow_pos)
 {
     m_isPuckPlayable = false;
-    startDelay(3.0f);
 
     auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
 
@@ -366,8 +366,16 @@ void GameScene::onNewGameStart()
 {
     m_score1 = 0;
     m_score2 = 0;
-    m_puck->setPosition(m_field->getCenter());
 
+    startDelay(3.0f);
+
+    Vec2 puck_rethrow_pos = this->m_field->getCenter();
+    rethrowPuck(puck_rethrow_pos);
+
+    onScoreChanged();
+
+    m_paddle1->setPosition(m_paddle1->getStartPosition());
+    //m_paddle2->setPosition(m_paddle2->getStartPosition());
 
 }
 
@@ -434,6 +442,7 @@ void GameScene::onScoreChanged()
     label_score2->runAction(label_score_action(label_score2->getPosition(), y_offset, m_goalHitBy == GoalHitBy::PLAYER2));
 }
 
+
 void GameScene::update(float dt)
 {
     using namespace airhockey;
@@ -492,10 +501,6 @@ void GameScene::update(float dt)
         m_isPuckPlayable = false;
         startDelay(3.0f);
 
-        puck_body->setVelocity(Vec2::ZERO);
-        puck_body->setAngularVelocity(0.0f);
-        puck_body->setEnabled(false);
-        
         if (m_AI)
         {
             m_AI->reset();
@@ -506,16 +511,17 @@ void GameScene::update(float dt)
         m_paddle1->setPosition(m_paddle1->getStartPosition());
         //m_paddle2->setPosition(m_paddle2->getStartPosition());   <---  причина уезжания ракетки AI за экран!!!
 
-        Vec2 puck_rethrow_pos = this->m_field->getCenter() + Vec2(0, puck_y_offset);
-        rethrowPuck(puck_rethrow_pos);
+        if (m_score1 < MAX_SCORE && m_score2 < MAX_SCORE)
+        {
+            Vec2 puck_rethrow_pos = this->m_field->getCenter() + Vec2(0, puck_y_offset);
+            rethrowPuck(puck_rethrow_pos);
+        }
 
         onScoreChanged();
 
         m_goalHitBy = GoalHitBy::NONE;
-
     }
 
-    const int MAX_SCORE = 7;
     if (m_score1 >= MAX_SCORE || m_score2 >= MAX_SCORE)
     {
         onGameEndMenuOpen(nullptr);
