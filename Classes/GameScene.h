@@ -41,6 +41,7 @@ public:
 
     void updateTimer(float dt);
     void drawHUDString(int str_tag, const std::string& str);
+    void onScoreChanged();
 
     void update(float dt) override;
 
@@ -49,6 +50,13 @@ private:
     bool isDelayOver(std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345) const;
 
 protected:
+    enum class GoalHitBy
+    {
+        NONE = 0,
+        PLAYER1,
+        PLAYER2
+    };
+
     airhockey::GameLevel m_currLevel;
 
     airhockey::GameFieldPtr m_field;
@@ -73,6 +81,7 @@ protected:
 
     uint32_t m_score1 = 0, m_score2 = 0;
     bool m_isPuckPlayable = true;  // false during period from a goal occured till puck is set at the edge of central circle and ready to continue game
+    GoalHitBy m_goalHitBy = GoalHitBy::NONE;
 
     airhockey::FSMContextPtr m_AI = nullptr;
     airhockey::IFSMStatePtr m_AIIdleState = nullptr;
