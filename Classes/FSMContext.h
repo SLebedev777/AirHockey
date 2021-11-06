@@ -2,6 +2,7 @@
 #define __AIRHOCKEY_FSMCONTEXT_H__
 
 #include "IFSMState.h"
+#include "DebugLogger.h"
 #include <stack>
 
 namespace airhockey
@@ -26,9 +27,13 @@ namespace airhockey
 		void update();
 		void setEnabled(bool is_enabled = true);
 
+		DebugLogger* getLogger() const { return m_logger.get(); }
+		void setLogger(DebugLoggerPtr logger) { m_logger = logger; }
+
 	private:
 		std::stack<IFSMStatePtr> m_states;
 		bool m_isEnabled = true;
+		DebugLoggerPtr m_logger = nullptr;
 	};
 
 }

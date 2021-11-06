@@ -18,6 +18,8 @@ namespace airhockey
 
 	bool AIAttackState::onEnter()
 	{
+		getContext()->getLogger()->log("AIAttackState::onEnter(): enter");
+
 		using namespace cocos2d;
 
 		auto ai_attack_action = [this]() {
@@ -29,12 +31,17 @@ namespace airhockey
 		
 		Vec2 x0_puck = m_puck->getPosition();
 		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x0_puck))
+		{
+			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, puck is outside AI play rect");
 			return false;
+		}
 
 		Vec2 x0_paddle = m_aiPaddle->getPosition();
 		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
 		if (v_puck.fuzzyEquals(Vec2::ZERO, 5))
 		{
+			getContext()->getLogger()->log("AIAttackState::onEnter(): runAction(ai_attack_action) because puck is not moving");
+
 			m_aiPaddle->getStick()->runAction(ai_attack_action());
 			return true;
 		}
@@ -50,7 +57,10 @@ namespace airhockey
 			float E = Cpow2 + 1 - A * A;
 			float D = 4 * Cpow2 * E;  // discriminant of sqr equation
 			if (D < 0.0f)
+			{
+				getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, D < 0");
 				return false;
+			}
 			z1 = (-A - C * sqrt(E)) / (1.0f + Cpow2);
 			z2 = (-A + C * sqrt(E)) / (1.0f + Cpow2);
 		}
@@ -62,7 +72,10 @@ namespace airhockey
 			float E = Cpow2 + 1 - A * A;
 			float D = 4 * E;  // discriminant of sqr equation
 			if (D < 0.0f)
+			{
+				getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, D < 0");
 				return false;
+			}
 			z1 = (C * A - sqrt(E)) / (1.0f + Cpow2);
 			z2 = (C * A + sqrt(E)) / (1.0f + Cpow2);
 		}
@@ -95,7 +108,10 @@ namespace airhockey
 		Vec2 x_new_puck = x0_puck + v_puck * t;
 		Vec2 x_new_paddle = x0_paddle + v_paddle * t;
 		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x_new_paddle))
+		{
+			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, predicted paddle coords outside of AI play rect");
 			return false;
+		}
 
 		//m_aiPaddle->getStick()->getPhysicsBody()->setVelocity(v_paddle);
 		m_aiPaddle->getStick()->runAction(MoveTo::create(t, x_new_paddle));
@@ -104,6 +120,8 @@ namespace airhockey
 
 	void AIAttackState::onExit()
 	{
+		getContext()->getLogger()->log("AIAttackState::onExit()");
+
 		m_aiPaddle->getStick()->getPhysicsBody()->setVelocity(cocos2d::Vec2::ZERO);
 		m_aiPaddle->getStick()->stopAllActions();
 	}
@@ -115,6 +133,7 @@ namespace airhockey
 			m_aiPaddle->getPosition().y <= m_field->getCenter().y)
 		{
 			// back to defense state
+			getContext()->getLogger()->log("AIAttackState::handleTransitions(): back to defense state");
 			m_context->popState();
 		}
 	}

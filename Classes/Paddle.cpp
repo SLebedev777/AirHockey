@@ -35,11 +35,12 @@ namespace airhockey
 
 		auto stick_physics_body = PhysicsBody::create(PHYSICS_INFINITY, PHYSICS_INFINITY);
 		stick_physics_body->setDynamic(false);
+		stick_physics_body->setName(m_physicsStickBodyName);
 		m_ccnStick->addComponent(stick_physics_body);
 		m_ccnStick->setPosition(location);
-		auto joint = PhysicsJointFixed::construct(stick_physics_body, paddle_physics_body, location);
-		joint->setMaxForce(50000.0f * paddle_physics_body->getMass());  // TODO: define a constant
-		m_ccPhysicsWorld->addJoint(joint);
+		m_joint = PhysicsJointFixed::construct(stick_physics_body, paddle_physics_body, location);
+		m_joint->setMaxForce(50000.0f * paddle_physics_body->getMass());  // TODO: define a constant
+		m_ccPhysicsWorld->addJoint(m_joint);
 
 		m_ccnParent->addChild(m_ccsSprite, 1);
 		m_ccnParent->addChild(m_ccnStick, 1);
@@ -131,4 +132,12 @@ namespace airhockey
 		m_ccnStick->setPosition(Vec2(m_centerX, m_centerY));
 	}
 
+	void Paddle::setPositionImmideately(Vec2 pos)
+	{
+		Vec2 bound_pos = boundToFieldRect(pos);
+		m_centerX = bound_pos.x;
+		m_centerY = bound_pos.y;
+		m_ccnStick->stopAllActions();
+		m_ccnStick->runAction(MoveTo::create(0.0f, bound_pos));
+	}
 }

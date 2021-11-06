@@ -18,6 +18,8 @@ namespace airhockey
 
 	bool AIIdleState::onEnter()
 	{
+		getContext()->getLogger()->log("AIIdleState::onEnter(): enter");
+
 		auto ai_idle_action = [this]() {
 			const float SHIFT_X = m_aiPaddle->getRadius();
 			auto move_left = cocos2d::MoveBy::create(2.0f, cocos2d::Vec2(-2*SHIFT_X, 0));
@@ -32,6 +34,8 @@ namespace airhockey
 
 	void AIIdleState::onExit()
 	{
+		getContext()->getLogger()->log("AIIdleState::onExit()");
+
 		m_aiPaddle->getStick()->stopAllActions();
 	}
 
@@ -39,6 +43,8 @@ namespace airhockey
 	{
 		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadius)
 		{
+			getContext()->getLogger()->log("AIIdleState::handleTransitions(): add DefenseState ans AttackState to stack");
+
 			m_context->pushState(std::make_unique<AIDefenseState>(m_field, m_aiPaddle, m_puck, m_attackRadius));
 			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck, m_attackRadius));
 		}

@@ -18,6 +18,8 @@ namespace airhockey
 
 	bool AIDefenseState::onEnter()
 	{
+		getContext()->getLogger()->log("AIDefenseState::onEnter(): enter");
+
 		auto ai_defense_action = [this]() {
 			cocos2d::Rect gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::UPPER).getRect();
 			auto move_back_to_gate = cocos2d::MoveTo::create(1.0f, cocos2d::Vec2(gate_rect.getMidX(), gate_rect.getMinY()));
@@ -29,6 +31,8 @@ namespace airhockey
 
 	void AIDefenseState::onExit()
 	{
+		getContext()->getLogger()->log("AIDefenseState::onExit()");
+
 		m_aiPaddle->getStick()->stopAllActions();
 	}
 
@@ -38,6 +42,8 @@ namespace airhockey
 		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadius &&
 			m_puck->getPosition().y < m_aiPaddle->getPosition().y)
 		{
+			getContext()->getLogger()->log("AIDefenseState::handleTransitions(): making transition to Attack State");
+
 			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck, m_attackRadius));
 		}
 	}

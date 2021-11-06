@@ -6,6 +6,8 @@
 #include "GameMenuLayer.h"
 #include "GameEndLayer.h"
 #include "AIIdleState.h"
+#include "AINullState.h"
+#include "CCHelpers.h"
 #include <memory>
 
 USING_NS_CC;
@@ -75,6 +77,9 @@ bool GameScene::init()
     Vec2 frameCenter = Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
 
     using namespace airhockey;
+
+    m_logger = std::make_shared<DebugLogger>("log.txt");
+    m_logger->log("start");
 
     //////////////////////////////////////////////////
     // GAME LAYER
@@ -170,11 +175,16 @@ bool GameScene::init()
 
     //m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
 
-    //m_AIController = std::make_shared<AIInputController>("AI", m_paddle2);
     const float ATTACK_RADIUS = abs(m_paddle2->getStartPosition().y - m_field->getCenter().y) + PUCK_RADIUS;
     m_AIIdleState = std::make_unique<AIIdleState>(m_field.get(), m_paddle2, m_puck, ATTACK_RADIUS);
-    m_AI = std::make_shared<FSMContext>(std::move(m_AIIdleState));
- 
+    //m_AI = std::make_shared<FSMContext>(std::move(m_AIIdleState));
+    m_AI = std::make_shared<FSMContext>();
+    m_AI->setLogger(m_logger);
+    m_AI->getLogger()->log("test log from AI");
+    m_AI->pushState(std::move(m_AIIdleState));
+
+    //m_AI = std::make_shared<FSMContext>(std::make_unique<AINullState>());
+
     //////////////////////////////////////////////////
     // HUD LAYER
     // non-interactive elements over main game process
@@ -302,6 +312,8 @@ void GameScene::onGameMenuClose(Event* event)
 
 void GameScene::onGameEndMenuOpen(Ref* sender)
 {
+    m_logger->log("GameScene::onGameEndMenuOpen() enter");
+
     Director::getInstance()->getScheduler()->pauseTarget(this);
 
     auto game_end_menu_layer = GameEndMenuLayer::create(this);
@@ -310,6 +322,8 @@ void GameScene::onGameEndMenuOpen(Ref* sender)
 
 void GameScene::onGameEndMenuClose(Event* event)
 {
+    m_logger->log("GameScene::onGameEndMenuClose() enter");
+
     Director::getInstance()->getScheduler()->resumeTarget(this);
 
     auto game_end_menu_layer = this->getChildByTag(TAG_GAME_END_MENU_LAYER);
@@ -323,6 +337,8 @@ void GameScene::onGameEndMenuClose(Event* event)
 
 void GameScene::rethrowPuck(cocos2d::Vec2& puck_rethrow_pos)
 {
+    m_logger->log("GameScene::rethrowPuck()");
+
     m_isPuckPlayable = false;
 
     auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
@@ -364,8 +380,16 @@ void GameScene::rethrowPuck(cocos2d::Vec2& puck_rethrow_pos)
 
 void GameScene::onNewGameStart()
 {
+    m_logger->log("GameScene::onNewGameStart() enter");
+
     m_score1 = 0;
     m_score2 = 0;
+
+    if (m_AI)
+    {
+        m_AI->reset();
+        m_AI->setEnabled(false);
+    }
 
     startDelay(3.0f);
 
@@ -374,13 +398,22 @@ void GameScene::onNewGameStart()
 
     onScoreChanged();
 
-    m_paddle1->setPosition(m_paddle1->getStartPosition());
-    //m_paddle2->setPosition(m_paddle2->getStartPosition());
+    Vec2 p1_pos = m_paddle1->getStartPosition();
+    std::string p1_pos_str = "(" + std::to_string(p1_pos.x) + ", " + std::to_string(p1_pos.y) + ")";
+    m_logger->log("GameScene::onNewGameStart(): setting paddle1 position immideately to " + p1_pos_str);
+    m_paddle1->setPositionImmideately(p1_pos);
+
+    Vec2 p2_pos = m_paddle2->getStartPosition();
+    std::string p2_pos_str = "(" + std::to_string(p2_pos.x) + ", " + std::to_string(p2_pos.y) + ")";
+    m_logger->log("GameScene::onNewGameStart(): setting paddle2 position immideately to " + p2_pos_str);
+    m_paddle2->setPositionImmideately(p2_pos);
 
 }
 
 void GameScene::startDelay(float duration, std::string& wait_node_name, int action_tag)
 {
+    m_logger->log("GameScene:: delay started");
+
     auto wait_action = DelayTime::create(duration);
     wait_action->setTag(action_tag);
     auto wait_node = Node::create();
@@ -463,6 +496,8 @@ void GameScene::update(float dt)
 
     if (!m_isPuckPlayable && isDelayOver())
     {
+        m_logger->log("GameScene::update(): delay is over, enabling puck and paddles");
+
         m_isPuckPlayable = true;
         puck_body->setEnabled(true);
         puck_body->setVelocity(Vec2::ZERO);
@@ -484,6 +519,8 @@ void GameScene::update(float dt)
         // goal to Player1's gate (lower)
         if (m_field->getGoalGate(GoalGateLocationType::LOWER).getRect().containsPoint(m_puck->getPosition()))
         {
+            m_logger->log("GameScene::update(): goal by Player 2 into Player 1's gate");
+
             m_goalHitBy = GoalHitBy::PLAYER2;
             ++m_score2;
             puck_y_offset = -puck_y_offset;
@@ -491,6 +528,8 @@ void GameScene::update(float dt)
         // goal to Player2's gate (upper)
         else if (m_field->getGoalGate(GoalGateLocationType::UPPER).getRect().containsPoint(m_puck->getPosition()))
         {
+            m_logger->log("GameScene::update(): goal by Player 1 into Player 2's gate");
+
             m_goalHitBy = GoalHitBy::PLAYER1;
             ++m_score1;
         }
@@ -507,9 +546,12 @@ void GameScene::update(float dt)
             m_AI->setEnabled(false);
         }
         m_paddle1->getPhysicsBody()->setEnabled(false);
-        m_paddle2->getPhysicsBody()->setEnabled(false);
         m_paddle1->setPosition(m_paddle1->getStartPosition());
-        //m_paddle2->setPosition(m_paddle2->getStartPosition());   <---  причина уезжания ракетки AI за экран!!!
+        
+        m_paddle2->getPhysicsBody()->setVelocity(Vec2::ZERO);
+        m_paddle2->getPhysicsBody()->setAngularVelocity(0.0f);
+        m_paddle2->getPhysicsBody()->setEnabled(false);
+        m_paddle2->setPositionImmideately(m_paddle2->getStartPosition());   // <---  причина уезжания ракетки AI за экран!!!
 
         if (m_score1 < MAX_SCORE && m_score2 < MAX_SCORE)
         {
@@ -520,14 +562,28 @@ void GameScene::update(float dt)
         onScoreChanged();
 
         m_goalHitBy = GoalHitBy::NONE;
+
+        m_logger->log("Score1: " + std::to_string(m_score1) + "  Score2: " + std::to_string(m_score2));
     }
 
     if (m_score1 >= MAX_SCORE || m_score2 >= MAX_SCORE)
     {
+        if (m_AI)
+        {
+            m_AI->reset();
+            m_AI->setEnabled(false);
+        }
+
         onGameEndMenuOpen(nullptr);
     }
 
     drawHUDString(TAG_HUD_LAYER_SCORE1_STRING, std::to_string(m_score1));
     drawHUDString(TAG_HUD_LAYER_SCORE2_STRING, std::to_string(m_score2));
+
+    auto p2_p = CCHelpers::Vec2Str(m_paddle2->getSprite()->getPosition());
+    auto p2_v = CCHelpers::Vec2Str(m_paddle2->getPhysicsBody()->getVelocity());
+    auto p2_s_p = CCHelpers::Vec2Str(m_paddle2->getStick()->getPosition());
+    auto p2_s_v = CCHelpers::Vec2Str(m_paddle2->getStickPhysicsBody()->getVelocity());
+    m_logger->log("Paddle2 pos = " + p2_p + "  vel = " + p2_v + "  stick_pos = " + p2_s_p + "  stick_vel = " + p2_s_v);
 
 }

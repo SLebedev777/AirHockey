@@ -8,6 +8,7 @@
 #include "GameField.h"
 #include "FSMContext.h"
 #include "IFSMState.h"
+#include "DebugLogger.h"
 
 USING_NS_CC;
 
@@ -87,6 +88,8 @@ protected:
 
     airhockey::FSMContextPtr m_AI = nullptr;
     airhockey::IFSMStatePtr m_AIIdleState = nullptr;
+
+    DebugLoggerPtr m_logger = nullptr;
 };
 
 #endif // __GAMESCENE_H__
