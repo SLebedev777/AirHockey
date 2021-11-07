@@ -14,7 +14,11 @@ public:
 	DebugLogger(const std::string& filename);
 	~DebugLogger();
 
+#ifdef COCOS2D_DEBUG
 	void log(const std::string& msg);
+#else
+	inline void log(const std::string& msg) {}
+#endif
 	const std::string& getFilename() const;
 
 private:

@@ -26,6 +26,7 @@ DebugLogger::~DebugLogger()
 		m_fileStream.close();
 }
 
+#ifdef COCOS2D_DEBUG
 void DebugLogger::log(const std::string& msg)
 {
 	if (!m_fileStream.is_open())
@@ -33,6 +34,7 @@ void DebugLogger::log(const std::string& msg)
 
 	m_fileStream << msg << std::endl;
 }
+#endif
 
 const std::string& DebugLogger::getFilename() const
 {
