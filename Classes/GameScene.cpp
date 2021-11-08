@@ -195,13 +195,15 @@ bool GameScene::init()
     auto label_score1 = Label::createWithTTF("0", "fonts/arial.ttf", 72);
     label_score1->setRotation(-90.f);
     label_score1->setAnchorPoint(Vec2(0.5f, 0.5f));
-    label_score1->setPosition(frameCenter - Vec2(0, PUCK_RADIUS));
+    m_labelScore1StartPos = frameCenter - Vec2(0, PUCK_RADIUS);
+    label_score1->setPosition(m_labelScore1StartPos);
     hud_layer->addChild(label_score1, 1, TAG_HUD_LAYER_SCORE1_STRING);
 
     auto label_score2 = Label::createWithTTF("0", "fonts/arial.ttf", 72);
     label_score2->setRotation(-90.f);
     label_score2->setAnchorPoint(Vec2(0.5f, 0.5f));
-    label_score2->setPosition(frameCenter + Vec2(0, PUCK_RADIUS));
+    m_labelScore2StartPos = frameCenter + Vec2(0, PUCK_RADIUS);
+    label_score2->setPosition(m_labelScore2StartPos);
     hud_layer->addChild(label_score2, 1, TAG_HUD_LAYER_SCORE2_STRING);
 
 
@@ -276,6 +278,10 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
         if (this->getChildByTag(TAG_GAME_MENU_LAYER))
         {
             onGameMenuClose(event);
+        }
+        else if (auto layer = this->getChildByTag(TAG_GAME_END_MENU_LAYER))
+        {
+            static_cast<GameEndMenuLayer*>(layer)->menuBackToMainMenuCallback(nullptr);
         }
         else
         {
@@ -399,13 +405,11 @@ void GameScene::onNewGameStart()
     onScoreChanged();
 
     Vec2 p1_pos = m_paddle1->getStartPosition();
-    std::string p1_pos_str = "(" + std::to_string(p1_pos.x) + ", " + std::to_string(p1_pos.y) + ")";
-    m_logger->log("GameScene::onNewGameStart(): setting paddle1 position immideately to " + p1_pos_str);
+    m_logger->log("GameScene::onNewGameStart(): setting paddle1 position immideately to " + CCHelpers::Vec2Str(p1_pos));
     m_paddle1->setPositionImmideately(p1_pos);
 
     Vec2 p2_pos = m_paddle2->getStartPosition();
-    std::string p2_pos_str = "(" + std::to_string(p2_pos.x) + ", " + std::to_string(p2_pos.y) + ")";
-    m_logger->log("GameScene::onNewGameStart(): setting paddle2 position immideately to " + p2_pos_str);
+    m_logger->log("GameScene::onNewGameStart(): setting paddle2 position immideately to " + CCHelpers::Vec2Str(p2_pos));
     m_paddle2->setPositionImmideately(p2_pos);
 
 }
@@ -445,6 +449,11 @@ void GameScene::onScoreChanged()
     auto hud_layer = this->getChildByTag(TAG_HUD_LAYER);
     auto label_score1 = static_cast<cocos2d::Label*> (hud_layer->getChildByTag(TAG_HUD_LAYER_SCORE1_STRING));
     auto label_score2 = static_cast<cocos2d::Label*> (hud_layer->getChildByTag(TAG_HUD_LAYER_SCORE2_STRING));
+
+    label_score1->stopAllActions();
+    label_score2->stopAllActions();
+    label_score1->setPosition(m_labelScore1StartPos);
+    label_score2->setPosition(m_labelScore2StartPos);
 
     auto label_score_action = [this](Vec2 start_pos, float y_offset, bool heartbeat) {
         auto move2center = cocos2d::MoveTo::create(0.5f, this->m_field->getCenter() + Vec2(0, y_offset));
