@@ -298,6 +298,7 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 void GameScene::onGameMenuOpen(Ref* sender)
 {
     Director::getInstance()->getScheduler()->pauseTarget(this);
+    this->getPhysicsWorld()->setAutoStep(false);
 
     auto game_menu_layer = GameMenuLayer::create(this);
     this->addChild(game_menu_layer, 255, TAG_GAME_MENU_LAYER);
@@ -306,6 +307,7 @@ void GameScene::onGameMenuOpen(Ref* sender)
 void GameScene::onGameMenuClose(Event* event)
 {
     Director::getInstance()->getScheduler()->resumeTarget(this);
+    this->getPhysicsWorld()->setAutoStep(true);
 
     auto game_menu_layer = this->getChildByTag(TAG_GAME_MENU_LAYER);
     if (game_menu_layer)
@@ -321,6 +323,7 @@ void GameScene::onGameEndMenuOpen(Ref* sender)
     m_logger->log("GameScene::onGameEndMenuOpen() enter");
 
     Director::getInstance()->getScheduler()->pauseTarget(this);
+    this->getPhysicsWorld()->setAutoStep(false);
 
     auto game_end_menu_layer = GameEndMenuLayer::create(this);
     this->addChild(game_end_menu_layer, 255, TAG_GAME_END_MENU_LAYER);
@@ -331,6 +334,7 @@ void GameScene::onGameEndMenuClose(Event* event)
     m_logger->log("GameScene::onGameEndMenuClose() enter");
 
     Director::getInstance()->getScheduler()->resumeTarget(this);
+    this->getPhysicsWorld()->setAutoStep(true);
 
     auto game_end_menu_layer = this->getChildByTag(TAG_GAME_END_MENU_LAYER);
     if (game_end_menu_layer)
