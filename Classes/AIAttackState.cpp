@@ -1,10 +1,50 @@
 #include "AIAttackState.h"
 #include "AIDefenseState.h"
 #include "FSMContext.h"
+#include "CCHelpers.h"
 #include <math.h>
+#include <tuple>
 
 namespace airhockey
 {
+	namespace
+	{
+		using namespace cocos2d;
+
+		Vec2 AzimuthVector(float alpha, float length=1.0f)
+		{
+			// alpha grows counterclockwise from 0 at y axis
+			return Vec2(length * sin(alpha), length * cos(alpha));
+		}
+
+		std::tuple<float, float, float> CalcEncounterTime(const Vec2& dx0, const Vec2& dv)
+		{
+			/*
+			* Input parameters:
+			dx0 = x0_paddle - x0_puck
+			dv = v_paddle - v_puck
+			*/
+			const float WRONG_TIME = -1.0f;
+			const float MIN_THRES = 0.0f;
+			const float MAX_THRES = 1.0f;
+			const float DELTA_THRES = 0.01f;
+
+			float tx = dx0.x / (-dv.x);
+			float ty = dx0.y / (-dv.y);
+			float t = WRONG_TIME;
+
+			if (tx <= MIN_THRES || ty <= MIN_THRES ||
+				tx >= MAX_THRES || ty >= MAX_THRES ||
+				abs(tx - ty) > DELTA_THRES)
+			{
+				return std::make_tuple(tx, ty, WRONG_TIME);
+			}
+			t = 0.5f * (tx + ty);
+
+			return std::make_tuple(tx, ty, t);
+		}
+	}
+
 	AIAttackState::AIAttackState(GameField* game_field, PaddlePtr ai_paddle, cocos2d::Sprite* puck, float attack_radius) :
 		IFSMState(),
 		m_field(game_field),
@@ -55,14 +95,16 @@ namespace airhockey
 			float Cpow2 = C * C;
 			float A = (v_puck.x - C * v_puck.y) / v_paddle_scalar;
 			float E = Cpow2 + 1 - A * A;
+			float sqrtE = sqrt(E);
 			float D = 4 * Cpow2 * E;  // discriminant of sqr equation
 			if (D < 0.0f)
 			{
 				getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, D < 0");
 				return false;
 			}
-			z1 = (-A - C * sqrt(E)) / (1.0f + Cpow2);
-			z2 = (-A + C * sqrt(E)) / (1.0f + Cpow2);
+			z1 = (-A - C * sqrtE) / (1.0f + Cpow2);
+			z2 = (-A + C * sqrtE) / (1.0f + Cpow2);
+			getContext()->getLogger()->log("dx0.x < dx0.y");
 		}
 		else
 		{
@@ -70,14 +112,16 @@ namespace airhockey
 			float Cpow2 = C * C;
 			float A = (v_puck.y - C * v_puck.x) / v_paddle_scalar;
 			float E = Cpow2 + 1 - A * A;
+			float sqrtE = sqrt(E);
 			float D = 4 * E;  // discriminant of sqr equation
 			if (D < 0.0f)
 			{
 				getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, D < 0");
 				return false;
 			}
-			z1 = (C * A - sqrt(E)) / (1.0f + Cpow2);
-			z2 = (C * A + sqrt(E)) / (1.0f + Cpow2);
+			z1 = (C * A - sqrtE) / (1.0f + Cpow2);
+			z2 = (C * A + sqrtE) / (1.0f + Cpow2);
+			getContext()->getLogger()->log("dx0.x >= dx0.y");
 		}
 		// substitution: z = sin(alpha)
 		if (z1 > 1.0f || z1 < -1.0f)
@@ -86,34 +130,50 @@ namespace airhockey
 			return false;
 		float alpha1 = asin(z1);
 		float alpha2 = asin(z2);
-		alpha = 0.5f * (alpha1 + alpha2);  // here should be more correct way of choosing the right alpha
-		float v_paddle_x, v_paddle_y;
-		if (x0_paddle.y > x0_puck.y)
+		alpha1 += M_PI;
+		alpha2 += M_PI;
+		float alpha1_deg = alpha1 * (180.0f / M_PI);
+		float alpha2_deg = alpha2 * (180.0f / M_PI);
+		Vec2 v_paddle1 = AzimuthVector(alpha1, v_paddle_scalar);
+		Vec2 v_paddle2 = AzimuthVector(alpha2, v_paddle_scalar);
+		
+		float t1x, t1y, t1;
+		float t2x, t2y, t2;
+		std::tie(t1x, t1y, t1) = CalcEncounterTime(dx0, v_paddle1 - v_puck);
+		std::tie(t2x, t2y, t2) = CalcEncounterTime(dx0, v_paddle2 - v_puck);
+		if (t1 < 0.0f && t2 < 0.0f)
 		{
-			alpha += M_PI;
-			v_paddle_x = v_paddle_scalar * sin(alpha);
-		}
-		else
-		{
+			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, both predicted times t1 and t2 < 0");
 			return false;
 		}
-		float alpha_deg = CC_RADIANS_TO_DEGREES(alpha);
-		v_paddle_y = v_paddle_scalar * cos(alpha);
-		Vec2 v_paddle = Vec2(v_paddle_x, v_paddle_y); // alpha grows counterclockwise from 0 at y axis
+		float t = t2;
+		Vec2 v_paddle = v_paddle2;
 
-		Vec2 dv = v_paddle - v_puck;
-		float tx = dx0.x / (-dv.x);
-		float ty = dx0.y / (-dv.y);
-		float t = (tx > ty) ? tx : ty;
-		Vec2 x_new_puck = x0_puck + v_puck * t;
+		Vec2 x_new_paddle1 = x0_paddle + v_paddle1 * t1;
+		Vec2 x_new_paddle2 = x0_paddle + v_paddle2 * t2;
 		Vec2 x_new_paddle = x0_paddle + v_paddle * t;
+
+		Vec2 x_new_puck1 = x0_puck + v_puck * t1;
+		Vec2 x_new_puck2 = x0_puck + v_puck * t2;
+		Vec2 x_new_puck = x0_puck + v_puck * t;
+
+		using namespace CCHelpers;
+		getContext()->getLogger()->log("-----------------------------");
+		getContext()->getLogger()->log("Paddle position prediction");
+		getContext()->getLogger()->log("alpha1(deg) =" + std::to_string(alpha1_deg) + ",  " + "alpha2(deg) =" + std::to_string(alpha2_deg));
+		getContext()->getLogger()->log("v_paddle1 = " + Vec2Str(v_paddle1) + ", " + "v_paddle2 = " + Vec2Str(v_paddle2));
+		getContext()->getLogger()->log("t1x =" + std::to_string(t1x) + ",  " + "t1y =" + std::to_string(t1y) + ",  " + "t1 =" + std::to_string(t1));
+		getContext()->getLogger()->log("t2x =" + std::to_string(t2x) + ",  " + "t2y =" + std::to_string(t2y) + ",  " + "t2 =" + std::to_string(t2));
+		getContext()->getLogger()->log("x_new_paddle1 = " + Vec2Str(x_new_paddle1) + ", " + "x_new_paddle2 = " + Vec2Str(x_new_paddle2));
+		getContext()->getLogger()->log("x_new_puck1 = " + Vec2Str(x_new_puck1) + ", " + "x_new_puck2 = " + Vec2Str(x_new_puck2));
+		getContext()->getLogger()->log("-----------------------------");
+
 		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x_new_paddle))
 		{
 			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, predicted paddle coords outside of AI play rect");
 			return false;
 		}
 
-		//m_aiPaddle->getStick()->getPhysicsBody()->setVelocity(v_paddle);
 		m_aiPaddle->getStick()->runAction(MoveTo::create(t, x_new_paddle));
 		return true;
 	}
