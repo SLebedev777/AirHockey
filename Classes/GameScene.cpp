@@ -168,7 +168,7 @@ bool GameScene::init()
         PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
 
     //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
-    m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1);
+    m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1, /*touch_margin*/PUCK_RADIUS);
 
     m_paddle2 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());

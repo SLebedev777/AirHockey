@@ -8,13 +8,15 @@ namespace airhockey
 	class MouseInputController : public IPlayerInputController
 	{
 	public:
-		MouseInputController(const std::string& name, PaddlePtr my_paddle) :
-			IPlayerInputController(name, my_paddle)
+		MouseInputController(const std::string& name, PaddlePtr my_paddle, float touch_margin = 0.0f) :
+			IPlayerInputController(name, my_paddle),
+			m_touchMargin((touch_margin >= 0.0f) ? touch_margin : 0.0f)
 		{
 			bindInputListeners();
 		}
 		MouseInputController(MouseInputController& other) :
-			IPlayerInputController(other.m_name, other.m_myPaddle)
+			IPlayerInputController(other.m_name, other.m_myPaddle),
+			m_touchMargin(other.getTouchMargin())
 		{
 			bindInputListeners();
 		}
@@ -32,9 +34,14 @@ namespace airhockey
 
 		void scheduleDebugOutput(cocos2d::Node* layer);
 
+		void setTouchMargin(float touch_margin) { m_touchMargin = (touch_margin >= 0.0f) ? touch_margin : 0.0f; }
+		float getTouchMargin() const { return m_touchMargin; }
+
 	private:
 		bool m_isMyPaddleGrabbed = false;
 		cocos2d::Node* m_HUDLayer = nullptr;
+		float m_touchMargin = 0.0f;  // addition to paddle radius when calculating is touch within paddle. Earned to ease grabbing paddle.
+
 	};
 
 }

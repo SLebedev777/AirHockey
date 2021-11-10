@@ -30,7 +30,7 @@ namespace airhockey
         // check that touch position is within paddle's circle
         Vec2 touch_pos = Director::getInstance()->convertToGL(touch->getLocationInView());
         Vec2 paddle_pos = m_myPaddle->getPosition();
-        return (touch_pos.getDistance(paddle_pos) < m_myPaddle->getRadius());
+        return (touch_pos.getDistance(paddle_pos) < m_myPaddle->getRadius() + m_touchMargin);
     }
 
     void TouchInputController::onTouchBegan(cocos2d::Touch* touch, Event* event)

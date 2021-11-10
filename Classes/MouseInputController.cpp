@@ -28,7 +28,7 @@ namespace airhockey
     {
         // check that mouse cursor is within paddle's circle
         Vec2 mouse_pos = Director::getInstance()->convertToUI(em->getLocation());
-        return (mouse_pos.getDistance(m_myPaddle->getPosition()) < m_myPaddle->getRadius());
+        return (mouse_pos.getDistance(m_myPaddle->getPosition()) < m_myPaddle->getRadius() + m_touchMargin);
     }
 
     void MouseInputController::onMouseDown(Event* event)
