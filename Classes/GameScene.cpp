@@ -8,6 +8,7 @@
 #include "AIIdleState.h"
 #include "AINullState.h"
 #include "CCHelpers.h"
+#include "ui/CocosGUI.h"
 #include <memory>
 
 USING_NS_CC;
@@ -211,7 +212,14 @@ bool GameScene::init()
     // interactive elements over main game process
 
     auto hud_control_layer = LayerColor::create(Color4B(0, 0, 0, 0));
-    
+ 
+    auto button_pause = ui::Button::create("pause.png", "pause_pressed.png");
+    button_pause->setPosition(m_field->getCenter() + Vec2(m_field->getPlayRect().size.width/2 - button_pause->getBoundingBox().size.width*0.75, 0));
+    button_pause->addClickEventListener([=](Ref* sender) {
+        onGameMenuOpen(sender);
+        });
+    hud_control_layer->addChild(button_pause);
+
     //////////////////////////////////////////////////
 
     // construct game scene from layers
