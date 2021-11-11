@@ -148,6 +148,8 @@ bool GameScene::init()
     m_puck = Sprite::create("puck.png");
     PhysicsMaterial puck_material = PhysicsMaterial(0.1f, 1.0f, 0.2f);
     auto puck_body = PhysicsBody::createCircle(m_puck->getBoundingBox().size.width / 2, puck_material);
+    puck_body->setLinearDamping(0.2f); // simulate friction when puck glides on table surface, to prevent endless motion
+    puck_body->setAngularDamping(0.2f);
     puck_body->setName("puck_body");
     m_puck->addComponent(puck_body);
     m_puck->setPosition(m_field->getCenter());
