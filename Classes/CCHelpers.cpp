@@ -1,4 +1,5 @@
 #include "CCHelpers.h"
+#include "cocos2d.h"
 
 namespace CCHelpers
 {
@@ -20,5 +21,23 @@ namespace CCHelpers
 	{
 		std::string str = "(" + std::to_string(v.x) + ", " + std::to_string(v.y) + ")";
 		return str;
+	}
+
+	void startDelay(cocos2d::Node* parent, float duration, const std::string& wait_node_name, int action_tag)
+	{
+		if (!parent)
+			return;
+		auto wait_action = cocos2d::DelayTime::create(duration);
+		wait_action->setTag(action_tag);
+		auto wait_node = cocos2d::Node::create();
+		wait_node->runAction(wait_action);
+		parent->addChild(wait_node, 2, wait_node_name);
+	}
+
+	bool isDelayOver(cocos2d::Node* parent, const std::string& wait_node_name, int action_tag)
+	{
+		if (!parent)
+			return true;
+		return !parent->getChildByName(wait_node_name)->getActionByTag(action_tag);
 	}
 }

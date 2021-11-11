@@ -430,17 +430,14 @@ void GameScene::onNewGameStart()
 void GameScene::startDelay(float duration, std::string& wait_node_name, int action_tag)
 {
     m_logger->log("GameScene:: delay started");
-
-    auto wait_action = DelayTime::create(duration);
-    wait_action->setTag(action_tag);
-    auto wait_node = Node::create();
-    wait_node->runAction(wait_action);
-    this->addChild(wait_node, 2, wait_node_name);
+    CCHelpers::startDelay(this, duration, wait_node_name, action_tag);
 }
 
-bool GameScene::isDelayOver(std::string& wait_node_name, int action_tag) const
+bool GameScene::isDelayOver(std::string& wait_node_name, int action_tag)
 {
-    return !this->getChildByName(wait_node_name)->getActionByTag(action_tag);
+    bool result = CCHelpers::isDelayOver(this, wait_node_name, action_tag);
+    result ? m_logger->log("GameScene:: delay is over") : m_logger->log("GameScene:: delay is NOT over");
+    return result;
 }
 
 void GameScene::updateTimer(float dt)

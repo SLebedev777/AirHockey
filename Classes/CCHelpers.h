@@ -10,4 +10,7 @@ namespace CCHelpers
 	void CallCCNodeMethodRecursively(cocos2d::Node* node, std::function<void(cocos2d::Node*)> func);
 
 	std::string Vec2Str(const cocos2d::Vec2& v);
+
+	void startDelay(cocos2d::Node* parent, float duration, const std::string& wait_node_name, int action_tag);
+	bool isDelayOver(cocos2d::Node* parent, const std::string& wait_node_name, int action_tag);
 }
