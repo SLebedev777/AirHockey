@@ -2,6 +2,7 @@
 #include "AIAttackState.h"
 #include "AIIdleState.h"
 #include "FSMContext.h"
+#include "cocos2d.h"
 
 namespace airhockey
 {
@@ -22,7 +23,19 @@ namespace airhockey
 
 		auto ai_defense_action = [this]() {
 			cocos2d::Rect gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::UPPER).getRect();
-			auto move_back_to_gate = cocos2d::MoveTo::create(1.0f, cocos2d::Vec2(gate_rect.getMidX(), gate_rect.getMinY()));
+			float puck_x_offset = m_puck->getPosition().x - m_field->getCenter().x;
+			float puck_width = m_puck->getBoundingBox().size.width;
+			float paddle_x_offset = 0.0f;
+			float puck_x_offset_thres = puck_width * 2;
+			if (puck_x_offset < -puck_x_offset_thres)
+			{
+				paddle_x_offset = -gate_rect.size.width / 4;
+			}
+			else if (puck_x_offset > puck_x_offset_thres)
+			{
+				paddle_x_offset = gate_rect.size.width / 4;
+			}
+			auto move_back_to_gate = cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(gate_rect.getMidX() + paddle_x_offset, gate_rect.getMinY()));
 			return move_back_to_gate;
 		};
 		m_aiPaddle->getStick()->runAction(ai_defense_action());
@@ -45,6 +58,24 @@ namespace airhockey
 			getContext()->getLogger()->log("AIDefenseState::handleTransitions(): making transition to Attack State");
 
 			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck, m_attackRadius));
+		}
+	}
+
+	void AIDefenseState::update()
+	{
+		using namespace cocos2d;
+		static float puck_old_x = 0.0f;
+		float puck_dx = (puck_old_x != 0.0f) ? (m_puck->getPosition().x - puck_old_x) : 0.0f;
+		puck_old_x = m_puck->getPosition().x;
+		float puck_x_center_offset = m_puck->getPosition().x - m_field->getCenter().x;
+		float shift = 2;
+		if (puck_x_center_offset < 0 && puck_dx < 0)
+		{
+			m_aiPaddle->getStick()->runAction(MoveBy::create(0, Vec2(-shift, 0)));
+		}
+		else if (puck_x_center_offset > 0 && puck_dx > 0)
+		{
+			m_aiPaddle->getStick()->runAction(MoveBy::create(0, Vec2(shift, 0)));
 		}
 	}
 
