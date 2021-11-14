@@ -35,7 +35,8 @@ namespace airhockey
 			{
 				paddle_x_offset = gate_rect.size.width / 4;
 			}
-			auto move_back_to_gate = cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(gate_rect.getMidX() + paddle_x_offset, gate_rect.getMinY()));
+			float paddle_radius = m_aiPaddle->getRadius();
+			auto move_back_to_gate = cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(gate_rect.getMidX() + paddle_x_offset, gate_rect.getMinY() - paddle_radius));
 			return move_back_to_gate;
 		};
 		m_aiPaddle->getStick()->runAction(ai_defense_action());

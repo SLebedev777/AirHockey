@@ -97,6 +97,7 @@ namespace airhockey
 			const float attack_duration = 0.5f;  // in sec
 			cocos2d::Vec2 puck_future_offset = attack_duration * m_puck->getPhysicsBody()->getVelocity();
 			auto move_push_puck = cocos2d::MoveTo::create(attack_duration, m_puck->getPosition() + puck_future_offset);
+			move_push_puck->setTag(m_attackActionTag);
 			return move_push_puck;
 		};
 		
@@ -219,7 +220,9 @@ namespace airhockey
 			return false;
 		}
 
-		m_aiPaddle->getStick()->runAction(MoveTo::create(t, x_new_paddle_correct));
+		auto attack_action = MoveTo::create(t, x_new_paddle_correct);
+		attack_action->setTag(m_attackActionTag);
+		m_aiPaddle->getStick()->runAction(attack_action);
 		return true;
 	}
 
@@ -235,7 +238,8 @@ namespace airhockey
 	{
 		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) > m_attackRadius ||
 			m_puck->getPosition().y > m_aiPaddle->getPosition().y ||
-			m_aiPaddle->getPosition().y <= m_field->getCenter().y)
+			m_aiPaddle->getPosition().y <= m_field->getCenter().y ||
+			!m_aiPaddle->getStick()->getActionByTag(m_attackActionTag))
 		{
 			// back to defense state
 			getContext()->getLogger()->log("AIAttackState::handleTransitions(): back to defense state");
