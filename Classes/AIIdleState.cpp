@@ -2,6 +2,7 @@
 #include "AIAttackState.h"
 #include "AIDefenseState.h"
 #include "FSMContext.h"
+#include "CCHelpers.h"
 
 namespace airhockey
 {

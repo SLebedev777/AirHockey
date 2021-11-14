@@ -11,13 +11,22 @@ namespace airhockey
 	{
 		using namespace cocos2d;
 
-		Vec2 AzimuthVector(float alpha, float length=1.0f)
+		Vec2 azimuthVector(float alpha, float length=1.0f)
 		{
 			// alpha grows counterclockwise from 0 at y axis
 			return Vec2(length * sin(alpha), length * cos(alpha));
 		}
 
-		std::tuple<float, float, float> CalcEncounterTime(const Vec2& dx0, const Vec2& dv)
+		Vec2 directionVector(const Vec2& direction, float length)
+		{
+			// internally, angle grows counterclockwise from 0 at y axis
+			float c = direction.length();
+			float sin_a = direction.x / c;
+			float cos_a = direction.y / c;
+			return Vec2(length * sin_a, length * cos_a);
+		}
+
+		std::tuple<float, float, float> calcEncounterTime(const Vec2& dx0, const Vec2& dv)
 		{
 			/*
 			* Input parameters:
@@ -42,6 +51,28 @@ namespace airhockey
 			t = 0.5f * (tx + ty);
 
 			return std::make_tuple(tx, ty, t);
+		}
+
+		Vec2 correctXnewPaddle(const Vec2& encounter, const Vec2& target, const Vec2& x0_paddle, 
+			float puck_radius, float paddle_radius, float dx_threshold, DebugLogger* logger)
+		{
+			logger->log("Correcting X_new paddle to hit target " + CCHelpers::Vec2Str(target));
+
+			Vec2 d = encounter - target;
+			float R = puck_radius + paddle_radius;
+			Vec2 corr;
+			if (abs(d.x) < dx_threshold)
+			{
+				logger->log("dx < dx_threshold: " + std::to_string(d.x) + " < " + std::to_string(dx_threshold));
+				return encounter;
+			}
+			else
+			{
+				corr = encounter + directionVector(d, R);
+				Vec2 paddle_direction = corr - x0_paddle;
+				Vec2 corr2 = corr + directionVector(paddle_direction, R);
+				return corr2;
+			}
 		}
 	}
 
@@ -76,7 +107,7 @@ namespace airhockey
 			return false;
 		}
 
-		Vec2 x0_paddle = m_aiPaddle->getPosition();
+		Vec2 x0_paddle = m_aiPaddle->getSprite()->getPosition();
 		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
 		if (v_puck.fuzzyEquals(Vec2::ZERO, 5))
 		{
@@ -134,13 +165,13 @@ namespace airhockey
 		alpha2 += M_PI;
 		float alpha1_deg = alpha1 * (180.0f / M_PI);
 		float alpha2_deg = alpha2 * (180.0f / M_PI);
-		Vec2 v_paddle1 = AzimuthVector(alpha1, v_paddle_scalar);
-		Vec2 v_paddle2 = AzimuthVector(alpha2, v_paddle_scalar);
+		Vec2 v_paddle1 = azimuthVector(alpha1, v_paddle_scalar);
+		Vec2 v_paddle2 = azimuthVector(alpha2, v_paddle_scalar);
 		
 		float t1x, t1y, t1;
 		float t2x, t2y, t2;
-		std::tie(t1x, t1y, t1) = CalcEncounterTime(dx0, v_paddle1 - v_puck);
-		std::tie(t2x, t2y, t2) = CalcEncounterTime(dx0, v_paddle2 - v_puck);
+		std::tie(t1x, t1y, t1) = calcEncounterTime(dx0, v_paddle1 - v_puck);
+		std::tie(t2x, t2y, t2) = calcEncounterTime(dx0, v_paddle2 - v_puck);
 		if (t1 < 0.0f && t2 < 0.0f)
 		{
 			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, both predicted times t1 and t2 < 0");
@@ -174,7 +205,21 @@ namespace airhockey
 			return false;
 		}
 
-		m_aiPaddle->getStick()->runAction(MoveTo::create(t, x_new_paddle));
+		cocos2d::Rect lower_gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::LOWER).getRect();
+		Vec2 target(lower_gate_rect.getMidX(), lower_gate_rect.getMaxY());
+		float puck_radius = 50;  // !!!
+		float paddle_radius = m_aiPaddle->getRadius();
+		Vec2 x_new_paddle_correct = correctXnewPaddle(x_new_paddle, target, x0_paddle,
+			puck_radius, m_aiPaddle->getRadius(), /*dx_threshold*/puck_radius/2,
+			getContext()->getLogger());
+
+		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x_new_paddle_correct))
+		{
+			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, predicted correct paddle coords outside of AI play rect");
+			return false;
+		}
+
+		m_aiPaddle->getStick()->runAction(MoveTo::create(t, x_new_paddle_correct));
 		return true;
 	}
 
