@@ -220,7 +220,49 @@ namespace airhockey
 			return false;
 		}
 
-		auto attack_action = MoveTo::create(t, x_new_paddle_correct);
+		/*
+		choice of attack strategy
+			strategy 1 - move horizontally along puck's vector and then make straight attack to the gate
+			strategy 2 - straight attack to the gate
+		*/
+
+		cocos2d::Action* attack_action = nullptr;
+		
+		auto attack_action_strategy1 = [=](float prepare_y_offset) {
+			const float KICK_TIME_FRAC = 0.25f;
+			Vec2 prepare_dir_vector = directionVector(x_new_puck - target, prepare_y_offset);
+			Vec2 x_paddle_prepare_to_kick = x_new_puck + prepare_dir_vector;
+			Vec2 x_paddle_kick = x_new_puck - 0.5*prepare_dir_vector;
+			auto move_to_prepare_point = MoveTo::create(t * (1.0f - KICK_TIME_FRAC), x_paddle_prepare_to_kick);
+			auto kick = MoveTo::create(t * KICK_TIME_FRAC, x_paddle_kick);
+			auto seq = Sequence::create(move_to_prepare_point, kick, nullptr);
+			return seq;
+		};
+
+		auto attack_action_strategy2 = MoveTo::create(t, x_new_paddle_correct);
+
+		const float V_PUCK_THRESHOLD_SQR = pow(puck_radius * 30, 2);
+		const float CORRIDOR_WIDTH = m_field->getPlayRect().size.width / 2;
+		const float MIN_CORRIDOR_X = m_field->getCenter().x - CORRIDOR_WIDTH / 2;
+		const float MAX_CORRIDOR_X = m_field->getCenter().x + CORRIDOR_WIDTH / 2;
+		const float PADDLE_PREDICTED_PATH_LENGTH_X_THRESHOLD = m_field->getPlayRect().size.width / 2;
+		const float PREPARE_Y_OFFSET = paddle_radius * 4;
+		if (v_puck.lengthSquared() < V_PUCK_THRESHOLD_SQR &&
+			x_new_puck.x > MIN_CORRIDOR_X && x_new_puck.x < MAX_CORRIDOR_X  &&
+			(x_new_puck - x0_paddle).x <= PADDLE_PREDICTED_PATH_LENGTH_X_THRESHOLD)
+		{
+			getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 1 (move along puck then straight attack)");
+			attack_action = attack_action_strategy1(PREPARE_Y_OFFSET);
+		}
+		else
+		{
+			getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 2 (straight attack)");
+			attack_action = attack_action_strategy2;
+		}
+
+		if (!attack_action)
+			return false;
+
 		attack_action->setTag(m_attackActionTag);
 		m_aiPaddle->getStick()->runAction(attack_action);
 		return true;
