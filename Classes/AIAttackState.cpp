@@ -12,28 +12,40 @@ namespace airhockey
 	{
 		using namespace cocos2d;
 
+		/*
+		Calculates vector starting at origin (0, 0) with given length and angle alpha.
+		alpha grows counterclockwise from 0 at y axis.
+		*/
 		Vec2 azimuthVector(float alpha, float length=1.0f)
 		{
-			// alpha grows counterclockwise from 0 at y axis
 			return Vec2(length * sin(alpha), length * cos(alpha));
 		}
 
+		/*
+		Calculates vector starting at origin (0, 0) with given length along given direction.
+		Angle of direction grows counterclockwise from 0 at y axis.
+		*/
 		Vec2 directionVector(const Vec2& direction, float length)
 		{
-			// internally, angle grows counterclockwise from 0 at y axis
 			float c = direction.length();
 			float sin_a = direction.x / c;
 			float cos_a = direction.y / c;
 			return Vec2(length * sin_a, length * cos_a);
 		}
 
-		std::tuple<float, float, float> calcEncounterTime(const Vec2& dx0, const Vec2& dv)
-		{
-			/*
-			* Input parameters:
+		/*
+		Calculates time when paddle and puck meet each other at the same point.
+		Input parameters:
 			dx0 = x0_paddle - x0_puck
 			dv = v_paddle - v_puck
-			*/
+		Returns:
+			std::tuple<float, float, float>(tx, ty, t), where
+			tx - time calculated using x axis
+			ty - time calculated using y axis
+			t - final calculated time
+		*/
+		std::tuple<float, float, float> calcEncounterTime(const Vec2& dx0, const Vec2& dv)
+		{
 			const float WRONG_TIME = -1.0f;
 			const float MIN_THRES = 0.0f;
 			const float MAX_THRES = 1.0f;
@@ -54,6 +66,20 @@ namespace airhockey
 			return std::make_tuple(tx, ty, t);
 		}
 
+		/*
+		Make correction of predicted paddle attack position in such a way that after paddle hits the puck,
+		the puck will change its direction right towards the target point.
+		Input parameters:
+			encounter - predicted point where paddle and puck will meet each other
+			target - target point (for ex., center of enemy's gate)
+			x0_paddle - AI paddle position before making an attack motion
+			puck_radius
+			paddle_radius
+			dx_threshold - threshold to consider no correction is needed
+			logger
+		Returns:
+			Vec2 - corrected paddle attack position
+		*/
 		Vec2 correctXnewPaddle(const Vec2& encounter, const Vec2& target, const Vec2& x0_paddle, 
 			float puck_radius, float paddle_radius, float dx_threshold, DebugLogger* logger)
 		{
@@ -76,6 +102,9 @@ namespace airhockey
 			}
 		}
 
+		/*
+		Given 2 1d intervals (margins) [a1;a2] and [b1;b2], do they overlap?
+		*/
 		bool isMarginsOverlap(float a1, float a2, float b1, float b2)
 		{
 			assert(a1 < a2);
@@ -89,6 +118,17 @@ namespace airhockey
 			return true;
 		}
 
+		/*
+		Calculate if there is the clear way from starting point puck_pos to target point if enemy paddle can be on the way?
+		Input parameters:
+			target - target point where we want the puck to be
+			puck_pos - starting puck pos before attacking kick
+			puck_radius
+			player_paddle_pos - position of other player (human) paddle that can close the way to the target
+			player_paddle_radius
+			dx_threshold
+
+		*/
 		bool isTargetClear(const Vec2& target, const Vec2& puck_pos, float puck_radius,
 			const Vec2& player_paddle_pos, float player_paddle_radius, float dx_threshold)
 		{
@@ -293,7 +333,6 @@ namespace airhockey
 		{
 			getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 1 (move along puck then straight attack)");
 			
-			// TODO 
 			auto player_paddle_pos = m_playerPaddle->getSprite()->getPosition();
 			float player_paddle_radius = m_playerPaddle->getRadius();
 			Vec2 final_target;
