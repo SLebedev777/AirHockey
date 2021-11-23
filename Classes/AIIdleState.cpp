@@ -6,10 +6,11 @@
 
 namespace airhockey
 {
-	AIIdleState::AIIdleState(GameField* game_field, PaddlePtr ai_paddle, cocos2d::Sprite* puck, float attack_radius) :
+	AIIdleState::AIIdleState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius) :
 		IFSMState(),
 		m_field(game_field),
 		m_aiPaddle(ai_paddle),
+		m_playerPaddle(player_paddle),
 		m_puck(puck),
 		m_attackRadius(attack_radius)
 	{}
@@ -46,8 +47,8 @@ namespace airhockey
 		{
 			getContext()->getLogger()->log("AIIdleState::handleTransitions(): add DefenseState ans AttackState to stack");
 
-			m_context->pushState(std::make_unique<AIDefenseState>(m_field, m_aiPaddle, m_puck, m_attackRadius));
-			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_puck, m_attackRadius));
+			m_context->pushState(std::make_unique<AIDefenseState>(m_field, m_aiPaddle, m_playerPaddle, m_puck, m_attackRadius));
+			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_playerPaddle, m_puck, m_attackRadius));
 		}
 	}
 

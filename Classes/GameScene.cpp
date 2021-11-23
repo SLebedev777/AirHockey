@@ -179,7 +179,7 @@ bool GameScene::init()
     //m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
 
     const float ATTACK_RADIUS = abs(m_paddle2->getStartPosition().y - m_field->getCenter().y) + PUCK_RADIUS;
-    m_AIIdleState = std::make_unique<AIIdleState>(m_field.get(), m_paddle2, m_puck, ATTACK_RADIUS);
+    m_AIIdleState = std::make_unique<AIIdleState>(m_field.get(), m_paddle2, m_paddle1, m_puck, ATTACK_RADIUS);
     m_AI = std::make_shared<FSMContext>();
     m_AI->setLogger(m_logger);
     m_AI->getLogger()->log("test log from AI");
