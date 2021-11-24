@@ -38,13 +38,15 @@ namespace airhockey
 		Input parameters:
 			dx0 = x0_paddle - x0_puck
 			dv = v_paddle - v_puck
+			dx_threshold - threshold for considering dx0 coords to be 0
+			dv_threshold - threshold for considering dv coords to be 0
 		Returns:
 			std::tuple<float, float, float>(tx, ty, t), where
 			tx - time calculated using x axis
 			ty - time calculated using y axis
 			t - final calculated time
 		*/
-		std::tuple<float, float, float> calcEncounterTime(const Vec2& dx0, const Vec2& dv)
+		std::tuple<float, float, float> calcEncounterTime(const Vec2& dx0, const Vec2& dv, float dx_threshold=0.0f, float dv_threshold = 0.0f)
 		{
 			const float WRONG_TIME = -1.0f;
 			const float MIN_THRES = 0.0f;
@@ -55,8 +57,19 @@ namespace airhockey
 			float ty = dx0.y / (-dv.y);
 			float t = WRONG_TIME;
 
-			if (tx <= MIN_THRES || ty <= MIN_THRES ||
-				tx >= MAX_THRES || ty >= MAX_THRES ||
+			// paddle and puck are aligned vertically and move only vertically
+			if (abs(dx0.x) <= dx_threshold && abs(dv.x) <= dv_threshold && ty > MIN_THRES && ty < MAX_THRES)
+			{
+				return std::make_tuple(0.0f, ty, ty);
+			}
+			// paddle and puck are aligned horizontally and move only horizontally
+			if (abs(dx0.y) <= dx_threshold && abs(dv.y) <= dv_threshold && tx > MIN_THRES && tx < MAX_THRES)
+			{
+				return std::make_tuple(tx, 0.0f, tx);
+			}
+
+			if (tx < MIN_THRES || ty < MIN_THRES ||
+				tx > MAX_THRES || ty > MAX_THRES ||
 				abs(tx - ty) > DELTA_THRES)
 			{
 				return std::make_tuple(tx, ty, WRONG_TIME);
@@ -141,9 +154,9 @@ namespace airhockey
 				dx2 = tan * d2.y;
 			}
 			Vec2 puck_margin_center(target.x + dx2, player_paddle_pos.y);
-			Vec2 puck_margin(puck_margin_center.x - puck_radius, puck_margin_center.x + puck_radius);
+			Vec2 puck_margin(puck_margin_center.x - 2*puck_radius, puck_margin_center.x + 2*puck_radius);
 			Vec2 player_paddle_margin(player_paddle_pos.x - player_paddle_radius, player_paddle_pos.x + player_paddle_radius);
-			bool result = isMarginsOverlap(player_paddle_margin.x, player_paddle_margin.y, puck_margin.x, puck_margin.y);
+			bool result = ! isMarginsOverlap(player_paddle_margin.x, player_paddle_margin.y, puck_margin.x, puck_margin.y);
 
 			return result;
 		}
@@ -184,7 +197,7 @@ namespace airhockey
 
 		Vec2 x0_paddle = m_aiPaddle->getSprite()->getPosition();
 		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
-		if (v_puck.fuzzyEquals(Vec2::ZERO, 5))
+		if (v_puck.fuzzyEquals(Vec2::ZERO, 50))
 		{
 			getContext()->getLogger()->log("AIAttackState::onEnter(): runAction(ai_attack_action) because puck is not moving");
 
@@ -242,11 +255,16 @@ namespace airhockey
 		float alpha2_deg = alpha2 * (180.0f / M_PI);
 		Vec2 v_paddle1 = azimuthVector(alpha1, v_paddle_scalar);
 		Vec2 v_paddle2 = azimuthVector(alpha2, v_paddle_scalar);
-		
+
+		float puck_radius = 50;  // !!!
+		float paddle_radius = m_aiPaddle->getRadius();
+
 		float t1x, t1y, t1;
 		float t2x, t2y, t2;
-		std::tie(t1x, t1y, t1) = calcEncounterTime(dx0, v_paddle1 - v_puck);
-		std::tie(t2x, t2y, t2) = calcEncounterTime(dx0, v_paddle2 - v_puck);
+		float dx_threshold = paddle_radius;
+		float dv_threshold = 5.0f;
+		std::tie(t1x, t1y, t1) = calcEncounterTime(dx0, v_paddle1 - v_puck, dx_threshold, dv_threshold);
+		std::tie(t2x, t2y, t2) = calcEncounterTime(dx0, v_paddle2 - v_puck, dx_threshold, dv_threshold);
 		if (t1 < 0.0f && t2 < 0.0f)
 		{
 			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, both predicted times t1 and t2 < 0");
@@ -280,9 +298,6 @@ namespace airhockey
 			return false;
 		}
 
-		float puck_radius = 50;  // !!!
-		float paddle_radius = m_aiPaddle->getRadius();
-
 		cocos2d::Rect lower_gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::LOWER).getRect();
 
 		Vec2 target_center(lower_gate_rect.getMidX(), lower_gate_rect.getMaxY());
@@ -307,13 +322,13 @@ namespace airhockey
 
 		cocos2d::Action* attack_action = nullptr;
 		
-		auto attack_action_strategy1 = [=](const Vec2& target, float prepare_y_offset) {
+		auto attack_action_strategy1 = [](const Vec2& x_new_puck, const Vec2& target, float time, float prepare_y_offset) {
 			const float KICK_TIME_FRAC = 0.25f;
 			Vec2 prepare_dir_vector = directionVector(x_new_puck - target, prepare_y_offset);
 			Vec2 x_paddle_prepare_to_kick = x_new_puck + prepare_dir_vector;
 			Vec2 x_paddle_kick = x_new_puck - 0.5*prepare_dir_vector;
-			auto move_to_prepare_point = MoveTo::create(t * (1.0f - KICK_TIME_FRAC), x_paddle_prepare_to_kick);
-			auto kick = MoveTo::create(t * KICK_TIME_FRAC, x_paddle_kick);
+			auto move_to_prepare_point = MoveTo::create(time * (1.0f - KICK_TIME_FRAC), x_paddle_prepare_to_kick);
+			auto kick = MoveTo::create(time * KICK_TIME_FRAC, x_paddle_kick);
 			auto seq = Sequence::create(move_to_prepare_point, kick, nullptr);
 			return seq;
 		};
@@ -336,23 +351,34 @@ namespace airhockey
 			auto player_paddle_pos = m_playerPaddle->getSprite()->getPosition();
 			float player_paddle_radius = m_playerPaddle->getRadius();
 			Vec2 final_target;
-			if (isTargetClear(target_center, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f*puck_radius))
+			if ((m_field->getPlayRect().getMinY() + m_field->getPlayRect().size.height / 4) < player_paddle_pos.y &&
+				player_paddle_pos.x > MIN_CORRIDOR_X && player_paddle_pos.x < MAX_CORRIDOR_X)
 			{
-				final_target = target_center;
-			}
-			else if (isTargetClear(target_left_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f*puck_radius))
-			{
-				final_target = target_left_corner;
-			}
-			else if (isTargetClear(target_right_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f*puck_radius))
-			{
-				final_target = target_right_corner;
+				float side_target_x = (player_paddle_pos.x < m_field->getCenter().x) ?
+					m_field->getPlayRect().getMaxX() :
+					m_field->getPlayRect().getMinX();
+				final_target = Vec2(side_target_x, 2 * puck_radius + m_field->getPlayRect().getMinY() + m_field->getPlayRect().size.height / 4);
 			}
 			else
 			{
-				return false;
+				if (isTargetClear(target_center, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+				{
+					final_target = target_center;
+				}
+				else if (isTargetClear(target_left_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+				{
+					final_target = target_left_corner;
+				}
+				else if (isTargetClear(target_right_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+				{
+					final_target = target_right_corner;
+				}
+				else
+				{
+					return false;
+				}
 			}
-			attack_action = attack_action_strategy1(final_target, PREPARE_Y_OFFSET);
+			attack_action = attack_action_strategy1(x_new_puck, final_target, t, PREPARE_Y_OFFSET);
 		}
 		else
 		{
