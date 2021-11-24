@@ -185,14 +185,11 @@ bool GameScene::init()
     m_AI->getLogger()->log("test log from AI");
     m_AI->pushState(std::move(m_AIIdleState));
     
-    //m_AI = std::make_shared<FSMContext>(std::make_unique<AINullState>());
-
     //////////////////////////////////////////////////
     // HUD LAYER
     // non-interactive elements over main game process
     
     auto hud_layer = LayerColor::create(Color4B(0, 0, 0, 0));
-    //m_touchController->scheduleDebugOutput(hud_layer);
 
     auto label_score1 = Label::createWithTTF("0", "fonts/arial.ttf", 72);
     label_score1->setRotation(-90.f);
@@ -306,6 +303,9 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 
 void GameScene::onGameMenuOpen(Ref* sender)
 {
+    if (this->getChildByTag(TAG_GAME_MENU_LAYER))
+        return;
+
     Director::getInstance()->getScheduler()->pauseTarget(this);
     this->getPhysicsWorld()->setAutoStep(false);
 
@@ -329,6 +329,9 @@ void GameScene::onGameMenuClose(Event* event)
 
 void GameScene::onGameEndMenuOpen(Ref* sender)
 {
+    if (this->getChildByTag(TAG_GAME_END_MENU_LAYER))
+        return;
+
     m_logger->log("GameScene::onGameEndMenuOpen() enter");
 
     Director::getInstance()->getScheduler()->pauseTarget(this);
