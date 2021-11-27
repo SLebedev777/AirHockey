@@ -197,13 +197,7 @@ namespace airhockey
 
 		Vec2 x0_paddle = m_aiPaddle->getSprite()->getPosition();
 		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
-		if (v_puck.fuzzyEquals(Vec2::ZERO, 50))
-		{
-			getContext()->getLogger()->log("AIAttackState::onEnter(): runAction(ai_attack_action) because puck is not moving");
 
-			m_aiPaddle->getStick()->runAction(ai_attack_action());
-			return true;
-		}
 		Vec2 dx0 = x0_paddle - x0_puck;
 		float v_paddle_scalar = 1000.0f;
 		float alpha = 0.0f;
