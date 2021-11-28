@@ -2,6 +2,7 @@
 #include "AIAttackState.h"
 #include "AIIdleState.h"
 #include "FSMContext.h"
+#include "AIPlayer.h"
 #include "cocos2d.h"
 
 namespace airhockey
@@ -59,7 +60,8 @@ namespace airhockey
 		{
 			getContext()->getLogger()->log("AIDefenseState::handleTransitions(): making transition to Attack State");
 
-			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_playerPaddle, m_puck, m_attackRadius));
+			auto ai_player = static_cast<AIPlayer*>(m_context);
+			ai_player->pushState(std::move(ai_player->createAttackState()));
 		}
 	}
 

@@ -24,13 +24,13 @@ namespace airhockey
 		void reset();  // erase all states in stack except the base.
 		void onEnterCurrentState();
 
-		void update();
+		virtual void update();
 		void setEnabled(bool is_enabled = true);
 
 		DebugLogger* getLogger() const { return m_logger.get(); }
 		void setLogger(DebugLoggerPtr logger) { m_logger = logger; }
 
-	private:
+	protected:
 		std::stack<IFSMStatePtr> m_states;
 		bool m_isEnabled = true;
 		DebugLoggerPtr m_logger = nullptr;

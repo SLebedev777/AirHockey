@@ -2,6 +2,7 @@
 #include "AIAttackState.h"
 #include "AIDefenseState.h"
 #include "FSMContext.h"
+#include "AIPlayer.h"
 #include "CCHelpers.h"
 
 namespace airhockey
@@ -47,8 +48,9 @@ namespace airhockey
 		{
 			getContext()->getLogger()->log("AIIdleState::handleTransitions(): add DefenseState ans AttackState to stack");
 
-			m_context->pushState(std::make_unique<AIDefenseState>(m_field, m_aiPaddle, m_playerPaddle, m_puck, m_attackRadius));
-			m_context->pushState(std::make_unique<AIAttackState>(m_field, m_aiPaddle, m_playerPaddle, m_puck, m_attackRadius));
+			auto ai_player = static_cast<AIPlayer*>(m_context);
+			ai_player->pushState(std::move(ai_player->createDefenseState()));
+			ai_player->pushState(std::move(ai_player->createAttackState()));
 		}
 	}
 

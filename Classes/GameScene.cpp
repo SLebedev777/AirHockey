@@ -7,6 +7,7 @@
 #include "GameEndLayer.h"
 #include "AIIdleState.h"
 #include "AINullState.h"
+#include "AIPlayer.h"
 #include "CCHelpers.h"
 #include "ui/CocosGUI.h"
 #include <memory>
@@ -179,8 +180,15 @@ bool GameScene::init()
     //m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
 
     const float ATTACK_RADIUS = abs(m_paddle2->getStartPosition().y - m_field->getCenter().y) + PUCK_RADIUS;
-    m_AIIdleState = std::make_unique<AIIdleState>(m_field.get(), m_paddle2, m_paddle1, m_puck, ATTACK_RADIUS);
-    m_AI = std::make_shared<FSMContext>();
+    
+    Rect ai_gate_rect = m_field->getGoalGate(GoalGateLocationType::UPPER).getRect();
+    Vec2 ai_pyramid_top(m_field->getCenter().x, ai_gate_rect.getMinY() - 8 * PADDLE_RADIUS);
+    Vec2 ai_pyramid_left(m_field->getCenter().x - 0.5 * GOAL_GATE_SIZE.width, ai_gate_rect.getMinY() - 4 * PADDLE_RADIUS);
+    Vec2 ai_pyramid_right(ai_pyramid_left + Vec2(GOAL_GATE_SIZE.width, 0));
+
+    AIPlayerSettings ai_settings(ai_pyramid_top, ai_pyramid_left, ai_pyramid_right, ATTACK_RADIUS);
+    m_AI = std::make_shared<AIPlayer>(m_field.get(), m_paddle2, m_paddle1, m_puck, ai_settings);
+    m_AIIdleState = static_cast<AIPlayer*>(m_AI.get())->createIdleState();
     m_AI->setLogger(m_logger);
     m_AI->getLogger()->log("test log from AI");
     m_AI->pushState(std::move(m_AIIdleState));

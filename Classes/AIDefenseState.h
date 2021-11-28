@@ -33,6 +33,7 @@ namespace airhockey
 		PaddlePtr m_playerPaddle = nullptr;
 		cocos2d::Sprite* m_puck = nullptr;
 		float m_attackRadius;
+
 	};
 
 }
