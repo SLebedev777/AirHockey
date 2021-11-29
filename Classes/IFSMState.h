@@ -7,7 +7,7 @@ namespace airhockey
 {
 	// fwd
 	class FSMContext;
-	typedef std::shared_ptr<FSMContext> FSMContextPtr;
+	
 
 	/* Finite State Machine state interface */
 

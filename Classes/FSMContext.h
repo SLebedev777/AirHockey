@@ -36,6 +36,8 @@ namespace airhockey
 		DebugLoggerPtr m_logger = nullptr;
 	};
 
+	typedef std::shared_ptr<FSMContext> FSMContextPtr;
+
 }
 
 #endif // __AIRHOCKEY_FSMCONTEXT_H__

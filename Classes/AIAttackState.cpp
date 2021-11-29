@@ -2,6 +2,8 @@
 #include "AIDefenseState.h"
 #include "FSMContext.h"
 #include "CCHelpers.h"
+#include "GameField.h"
+#include "Paddle.h"
 #include <math.h>
 #include <tuple>
 #include <cassert>

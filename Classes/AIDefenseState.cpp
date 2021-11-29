@@ -3,6 +3,8 @@
 #include "AIIdleState.h"
 #include "FSMContext.h"
 #include "AIPlayer.h"
+#include "GameField.h"
+#include "Paddle.h"
 #include "cocos2d.h"
 
 namespace airhockey

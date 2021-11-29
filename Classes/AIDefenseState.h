@@ -3,15 +3,11 @@
 
 #include "IFSMState.h"
 #include "cocos2d.h"
-#include "GameField.h"  // TODO: refactor to fwd decl
-#include "Paddle.h"
+#include "AirHockey_fwd.h"
+
 
 namespace airhockey
 {
-	// fwd
-	class FSMContext;
-	typedef std::shared_ptr<FSMContext> FSMContextPtr;
-
 	/* AI Defense state */
 
 	class AIDefenseState: public IFSMState

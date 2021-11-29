@@ -4,6 +4,8 @@
 #include "FSMContext.h"
 #include "AIPlayer.h"
 #include "CCHelpers.h"
+#include "GameField.h"
+#include "Paddle.h"
 
 namespace airhockey
 {

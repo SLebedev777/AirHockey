@@ -180,6 +180,9 @@
     <ClInclude Include="..\Classes\AIPlayer.h">
       <Filter>Source Files\Classes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\AirHockey_fwd.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\semen\games\cocos2d-x_projects\airhockey\CMakeLists.txt" />

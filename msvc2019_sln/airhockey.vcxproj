@@ -809,6 +809,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\Classes\AIPlayer.h" />
     <ClInclude Include="..\Classes\CCHelpers.h" />
     <ClInclude Include="..\Classes\DebugLogger.h" />
+    <ClInclude Include="..\Classes\AirHockey_fwd.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene.h" />

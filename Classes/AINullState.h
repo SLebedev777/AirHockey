@@ -2,14 +2,11 @@
 #define __AIRHOCKEY_AINULLSTATE_H__
 
 #include "IFSMState.h"
+#include "AirHockey_fwd.h"
 
 namespace airhockey
 {
-	// fwd
-	class FSMContext;
-	typedef std::shared_ptr<FSMContext> FSMContextPtr;
-
-	/* AI Idle state */
+	/* AI Null state */
 
 	class AINullState: public IFSMState
 	{

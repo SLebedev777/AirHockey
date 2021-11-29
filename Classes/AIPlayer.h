@@ -1,25 +1,33 @@
 #ifndef __AIRHOCKEY_AIPLAYER_H__
 #define __AIRHOCKEY_AIPLAYER_H__
 
-#include "FSMContext.h"
-#include "IFSMState.h"
 #include "cocos2d.h"
-#include "GameField.h"  // TODO: refactor to fwd decl
-#include "Paddle.h"
+#include "AirHockey_fwd.h"
+#include "FSMContext.h"
+
 
 namespace airhockey
 {
 	using namespace cocos2d;
 
-	struct AIPlayerSettings
+	struct Pyramid
 	{
-		explicit AIPlayerSettings(const Vec2& p_top, const Vec2& p_left, const Vec2& p_right, float attack_radius) :
+		explicit Pyramid(const Vec2& p_top, const Vec2& p_left, const Vec2& p_right):
 			pyramidTop(p_top),
 			pyramidLeft(p_left),
-			pyramidRight(p_right),
+			pyramidRight(p_right)
+		{}
+
+		Vec2 pyramidTop, pyramidLeft, pyramidRight;
+	};
+
+	struct AIPlayerSettings
+	{
+		explicit AIPlayerSettings(const Pyramid& pyramid, float attack_radius) :
+			pyramid(pyramid),
 			attackRadius(attack_radius)
 		{}
-		Vec2 pyramidTop, pyramidLeft, pyramidRight;
+		Pyramid pyramid;
 		float attackRadius;
 	};
 
