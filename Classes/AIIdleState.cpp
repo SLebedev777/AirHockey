@@ -9,12 +9,14 @@
 
 namespace airhockey
 {
-	AIIdleState::AIIdleState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius) :
+	AIIdleState::AIIdleState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius,
+		const Pyramid& pyramid) :
 		IFSMState(),
 		m_field(game_field),
 		m_aiPaddle(ai_paddle),
 		m_playerPaddle(player_paddle),
 		m_puck(puck),
+		m_pyramid(pyramid),
 		m_attackRadius(attack_radius)
 	{}
 
@@ -23,14 +25,18 @@ namespace airhockey
 
 	bool AIIdleState::onEnter()
 	{
+		using namespace cocos2d;
+
 		getContext()->getLogger()->log("AIIdleState::onEnter(): enter");
 
 		auto ai_idle_action = [this]() {
 			const float SHIFT_X = m_aiPaddle->getRadius();
-			auto move_left = cocos2d::MoveBy::create(2.0f, cocos2d::Vec2(-2*SHIFT_X, 0));
-			auto move_right = cocos2d::MoveBy::create(1.0f, cocos2d::Vec2(SHIFT_X, 0));
-			auto delay = cocos2d::DelayTime::create(1.0f);
-			auto move_cycle = cocos2d::RepeatForever::create(cocos2d::Sequence::create(move_right, move_left, move_right, delay, nullptr));
+			auto move_to_top = MoveTo::create(1.0f, m_pyramid.pyramidTop);
+			auto move_to_base  = MoveTo::create(1.0f, Vec2(m_pyramid.pyramidTop.x, m_pyramid.pyramidLeft.y));
+			auto move_left = MoveBy::create(2.0f, Vec2(-2*SHIFT_X, 0));
+			auto move_right = MoveBy::create(1.0f, Vec2(SHIFT_X, 0));
+			auto delay = DelayTime::create(1.0f);
+			auto move_cycle = RepeatForever::create(Sequence::create(move_to_top, move_to_base, delay, nullptr));
 			return move_cycle;
 		};
 		m_aiPaddle->getStick()->runAction(ai_idle_action());
@@ -52,7 +58,6 @@ namespace airhockey
 
 			auto ai_player = static_cast<AIPlayer*>(m_context);
 			ai_player->pushState(std::move(ai_player->createDefenseState()));
-			ai_player->pushState(std::move(ai_player->createAttackState()));
 		}
 	}
 

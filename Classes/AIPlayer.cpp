@@ -15,12 +15,12 @@ namespace airhockey
 
 	IFSMStatePtr AIPlayer::createIdleState()
 	{
-		return std::make_unique<AIIdleState>(m_field, m_aiPaddle, m_enemyPaddle, m_puck, m_settings.attackRadius);
+		return std::make_unique<AIIdleState>(m_field, m_aiPaddle, m_enemyPaddle, m_puck, m_settings.attackRadius, m_settings.pyramid);
 	}
 
 	IFSMStatePtr AIPlayer::createDefenseState()
 	{
-		return std::make_unique<AIDefenseState>(m_field, m_aiPaddle, m_enemyPaddle, m_puck, m_settings.attackRadius);
+		return std::make_unique<AIDefenseState>(m_field, m_aiPaddle, m_enemyPaddle, m_puck, m_settings.attackRadius, m_settings.pyramid);
 	}
 
 	IFSMStatePtr AIPlayer::createAttackState()

@@ -182,9 +182,9 @@ bool GameScene::init()
     const float ATTACK_RADIUS = abs(m_paddle2->getStartPosition().y - m_field->getCenter().y) + PUCK_RADIUS;
     
     Rect ai_gate_rect = m_field->getGoalGate(GoalGateLocationType::UPPER).getRect();
-    Vec2 ai_pyramid_top(m_field->getCenter().x, ai_gate_rect.getMinY() - 8 * PADDLE_RADIUS);
-    Vec2 ai_pyramid_left(m_field->getCenter().x - 0.5 * GOAL_GATE_SIZE.width, ai_gate_rect.getMinY() - 4 * PADDLE_RADIUS);
+    Vec2 ai_pyramid_left(m_field->getCenter().x - 0.5 * GOAL_GATE_SIZE.width, ai_gate_rect.getMinY() - 0.5 * GOAL_GATE_SIZE.width);
     Vec2 ai_pyramid_right(ai_pyramid_left + Vec2(GOAL_GATE_SIZE.width, 0));
+    Vec2 ai_pyramid_top(m_field->getCenter().x, ai_pyramid_left.y - 4 * PADDLE_RADIUS);
     Pyramid pyramid(ai_pyramid_top, ai_pyramid_left, ai_pyramid_right);
 
     AIPlayerSettings ai_settings(pyramid, ATTACK_RADIUS);

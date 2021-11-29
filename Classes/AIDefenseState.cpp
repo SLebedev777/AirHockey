@@ -9,12 +9,14 @@
 
 namespace airhockey
 {
-	AIDefenseState::AIDefenseState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius) :
+	AIDefenseState::AIDefenseState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius,
+		const Pyramid& pyramid) :
 		IFSMState(),
 		m_field(game_field),
 		m_aiPaddle(ai_paddle),
 		m_playerPaddle(player_paddle),
 		m_puck(puck),
+		m_pyramid(pyramid),
 		m_attackRadius(attack_radius)
 	{}
 
@@ -31,17 +33,22 @@ namespace airhockey
 			float puck_width = m_puck->getBoundingBox().size.width;
 			float paddle_x_offset = 0.0f;
 			float puck_x_offset_thres = puck_width * 2;
+			cocos2d::Vec2* defense_point = &m_pyramid.pyramidBase;
 			if (puck_x_offset < -puck_x_offset_thres)
 			{
 				paddle_x_offset = -gate_rect.size.width / 4;
+				defense_point = &m_pyramid.pyramidLeft;
 			}
 			else if (puck_x_offset > puck_x_offset_thres)
 			{
 				paddle_x_offset = gate_rect.size.width / 4;
+				defense_point = &m_pyramid.pyramidRight;
 			}
 			float paddle_radius = m_aiPaddle->getRadius();
-			auto move_back_to_gate = cocos2d::MoveTo::create(0.5f, cocos2d::Vec2(gate_rect.getMidX() + paddle_x_offset, gate_rect.getMinY() - paddle_radius));
-			return move_back_to_gate;
+			//auto move_back_to_gate = cocos2d::MoveTo::create(0.25f, cocos2d::Vec2(gate_rect.getMidX() + paddle_x_offset, gate_rect.getMinY() - paddle_radius));
+			//return move_back_to_gate;
+			auto move_to_pyramid = cocos2d::MoveTo::create(0.25f, *defense_point);
+			return move_to_pyramid;
 		};
 		m_aiPaddle->getStick()->runAction(ai_defense_action());
 		return true;

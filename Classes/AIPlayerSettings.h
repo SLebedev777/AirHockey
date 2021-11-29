@@ -13,10 +13,11 @@ namespace airhockey
 		explicit Pyramid(const Vec2& p_top, const Vec2& p_left, const Vec2& p_right) :
 			pyramidTop(p_top),
 			pyramidLeft(p_left),
-			pyramidRight(p_right)
+			pyramidRight(p_right),
+			pyramidBase(p_top.x, (p_left.y + p_right.y) / 2)
 		{}
 
-		Vec2 pyramidTop, pyramidLeft, pyramidRight;
+		Vec2 pyramidTop, pyramidLeft, pyramidRight, pyramidBase;
 	};
 
 	struct AIPlayerSettings
