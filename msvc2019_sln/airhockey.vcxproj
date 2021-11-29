@@ -807,6 +807,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClInclude Include="..\Classes\AINullState.h" />
     <ClInclude Include="..\Classes\AIPlayer.h" />
+    <ClInclude Include="..\Classes\AIPlayerSettings.h" />
     <ClInclude Include="..\Classes\CCHelpers.h" />
     <ClInclude Include="..\Classes\DebugLogger.h" />
     <ClInclude Include="..\Classes\AirHockey_fwd.h" />
