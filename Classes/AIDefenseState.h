@@ -13,7 +13,8 @@ namespace airhockey
 	class AIDefenseState: public IFSMState
 	{
 	public:
-		AIDefenseState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius,
+		AIDefenseState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, 
+			AIPlayerSettings::AttackRadiusFunction attack_radius_func,
 			const Pyramid& pyramid);
 		~AIDefenseState();
 
@@ -30,7 +31,8 @@ namespace airhockey
 		PaddlePtr m_playerPaddle = nullptr;
 		cocos2d::Sprite* m_puck = nullptr;
 		Pyramid m_pyramid;
-		float m_attackRadius;
+		AIPlayerSettings::AttackRadiusFunction m_attackRadiusFunc = nullptr;
+		//float m_attackRadius;
 
 	};
 

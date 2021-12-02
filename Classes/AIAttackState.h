@@ -4,7 +4,7 @@
 #include "IFSMState.h"
 #include "cocos2d.h"
 #include "AirHockey_fwd.h"
-
+#include "AIPlayerSettings.h"
 
 namespace airhockey
 {
@@ -13,7 +13,8 @@ namespace airhockey
 	class AIAttackState: public IFSMState
 	{
 	public:
-		AIAttackState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius);
+		AIAttackState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, 
+			AIPlayerSettings::AttackRadiusFunction attack_radius_func);
 		~AIAttackState();
 
 		bool onEnter() override;
@@ -28,7 +29,7 @@ namespace airhockey
 		PaddlePtr m_aiPaddle = nullptr;
 		PaddlePtr m_playerPaddle = nullptr;
 		cocos2d::Sprite* m_puck = nullptr;
-		float m_attackRadius;
+		AIPlayerSettings::AttackRadiusFunction m_attackRadiusFunc = nullptr;
 		int m_attackActionTag = 2606;
 	};
 

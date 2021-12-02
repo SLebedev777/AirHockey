@@ -9,7 +9,8 @@
 
 namespace airhockey
 {
-	AIDefenseState::AIDefenseState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius,
+	AIDefenseState::AIDefenseState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, 
+		AIPlayerSettings::AttackRadiusFunction attack_radius_func,
 		const Pyramid& pyramid) :
 		IFSMState(),
 		m_field(game_field),
@@ -17,7 +18,7 @@ namespace airhockey
 		m_playerPaddle(player_paddle),
 		m_puck(puck),
 		m_pyramid(pyramid),
-		m_attackRadius(attack_radius)
+		m_attackRadiusFunc(attack_radius_func)
 	{}
 
 	AIDefenseState::~AIDefenseState()
@@ -64,7 +65,7 @@ namespace airhockey
 
 	void AIDefenseState::handleTransitions()
 	{
-		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadius &&
+		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) &&
 			m_puck->getPosition().y < m_aiPaddle->getPosition().y)
 		{
 			getContext()->getLogger()->log("AIDefenseState::handleTransitions(): making transition to Attack State");
@@ -81,7 +82,7 @@ namespace airhockey
 		float puck_dx = (puck_old_x != 0.0f) ? (m_puck->getPosition().x - puck_old_x) : 0.0f;
 		puck_old_x = m_puck->getPosition().x;
 		float puck_x_center_offset = m_puck->getPosition().x - m_field->getCenter().x;
-		float shift = 2;
+		float shift = 5;
 		if (puck_x_center_offset < 0 && puck_dx < 0)
 		{
 			m_aiPaddle->getStick()->runAction(MoveBy::create(0, Vec2(-shift, 0)));
@@ -90,6 +91,7 @@ namespace airhockey
 		{
 			m_aiPaddle->getStick()->runAction(MoveBy::create(0, Vec2(shift, 0)));
 		}
+		
 	}
 
 	void AIDefenseState::pause()

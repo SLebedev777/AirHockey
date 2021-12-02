@@ -9,7 +9,8 @@
 
 namespace airhockey
 {
-	AIIdleState::AIIdleState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius,
+	AIIdleState::AIIdleState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, 
+		AIPlayerSettings::AttackRadiusFunction attack_radius_func,
 		const Pyramid& pyramid) :
 		IFSMState(),
 		m_field(game_field),
@@ -17,7 +18,7 @@ namespace airhockey
 		m_playerPaddle(player_paddle),
 		m_puck(puck),
 		m_pyramid(pyramid),
-		m_attackRadius(attack_radius)
+		m_attackRadiusFunc(attack_radius_func)
 	{}
 
 	AIIdleState::~AIIdleState()
@@ -52,9 +53,9 @@ namespace airhockey
 
 	void AIIdleState::handleTransitions()
 	{
-		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadius)
+		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()))
 		{
-			getContext()->getLogger()->log("AIIdleState::handleTransitions(): add DefenseState ans AttackState to stack");
+			getContext()->getLogger()->log("AIIdleState::handleTransitions(): add DefenseState to stack");
 
 			auto ai_player = static_cast<AIPlayer*>(m_context);
 			ai_player->pushState(std::move(ai_player->createDefenseState()));

@@ -164,13 +164,14 @@ namespace airhockey
 		}
 	}
 
-	AIAttackState::AIAttackState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, float attack_radius) :
+	AIAttackState::AIAttackState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck,
+		AIPlayerSettings::AttackRadiusFunction attack_radius_func) :
 		IFSMState(),
 		m_field(game_field),
 		m_aiPaddle(ai_paddle),
 		m_playerPaddle(player_paddle),
 		m_puck(puck),
-		m_attackRadius(attack_radius)
+		m_attackRadiusFunc(attack_radius_func)
 	{}
 
 	AIAttackState::~AIAttackState()
@@ -400,7 +401,7 @@ namespace airhockey
 
 	void AIAttackState::handleTransitions()
 	{
-		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) > m_attackRadius ||
+		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) > m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) ||
 			m_puck->getPosition().y > m_aiPaddle->getPosition().y ||
 			m_aiPaddle->getPosition().y <= m_field->getCenter().y ||
 			!m_aiPaddle->getStick()->getActionByTag(m_attackActionTag))

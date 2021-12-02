@@ -2,6 +2,7 @@
 #define __AIRHOCKEY_AIPLAYERSETTINGS_H__
 
 #include "cocos2d.h"
+#include <functional>
 
 
 namespace airhockey
@@ -22,13 +23,18 @@ namespace airhockey
 
 	struct AIPlayerSettings
 	{
-		explicit AIPlayerSettings(const Pyramid& pyramid, float attack_radius) :
+		using AttackRadiusFunction = std::function<float (const cocos2d::Vec2&)>;
+
+		explicit AIPlayerSettings(const Pyramid& pyramid, float attack_radius, 
+			AttackRadiusFunction attack_radius_func) :
 			pyramid(pyramid),
-			attackRadius(attack_radius)
+			attackRadius(attack_radius),
+			attackRadiusFunc(attack_radius_func)
 		{}
 
 		Pyramid pyramid;
 		float attackRadius;
+		AttackRadiusFunction attackRadiusFunc;
 	};
 
 }

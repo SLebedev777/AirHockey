@@ -187,7 +187,33 @@ bool GameScene::init()
     Vec2 ai_pyramid_top(m_field->getCenter().x, ai_pyramid_left.y - 4 * PADDLE_RADIUS);
     Pyramid pyramid(ai_pyramid_top, ai_pyramid_left, ai_pyramid_right);
 
-    AIPlayerSettings ai_settings(pyramid, ATTACK_RADIUS);
+    auto constant_attack_radius_func = [=](const Vec2&) { return ATTACK_RADIUS; };
+
+    const float MAX_ATTACK_RADIUS = ATTACK_RADIUS;
+    const float MIN_ATTACK_RADIUS = 2 * PADDLE_RADIUS;
+    const float PUCK_VEL_FOR_MAX_ATTACK_RADIUS = 20;
+    const float PUCK_VEL_FOR_MIN_ATTACK_RADIUS = 1000;
+
+    auto linear_attack_radius_func = [=](const Vec2& puck_vel) {
+        float vel_scalar = puck_vel.length();
+
+        if (vel_scalar <= PUCK_VEL_FOR_MAX_ATTACK_RADIUS)
+        {
+            return MAX_ATTACK_RADIUS;
+        }
+        else if (vel_scalar > PUCK_VEL_FOR_MIN_ATTACK_RADIUS)
+        {
+            return MIN_ATTACK_RADIUS;
+        }
+        else
+        {
+            float PUCK_VEL_RANGE = PUCK_VEL_FOR_MIN_ATTACK_RADIUS - PUCK_VEL_FOR_MAX_ATTACK_RADIUS;
+            float ATTACK_RADIUS_RANGE = MAX_ATTACK_RADIUS - MIN_ATTACK_RADIUS;
+            return MAX_ATTACK_RADIUS - ATTACK_RADIUS_RANGE * (vel_scalar - PUCK_VEL_FOR_MAX_ATTACK_RADIUS) / PUCK_VEL_RANGE;
+        }
+    };
+
+    AIPlayerSettings ai_settings(pyramid, ATTACK_RADIUS, linear_attack_radius_func);
     m_AI = std::make_shared<AIPlayer>(m_field.get(), m_paddle2, m_paddle1, m_puck, ai_settings);
     m_AIIdleState = static_cast<AIPlayer*>(m_AI.get())->createIdleState();
     m_AI->setLogger(m_logger);
