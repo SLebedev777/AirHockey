@@ -191,11 +191,16 @@ bool GameScene::init()
 
     const float MAX_ATTACK_RADIUS = ATTACK_RADIUS;
     const float MIN_ATTACK_RADIUS = 2 * PADDLE_RADIUS;
-    const float PUCK_VEL_FOR_MAX_ATTACK_RADIUS = 20;
+    const float PUCK_VEL_FOR_MAX_ATTACK_RADIUS = 100;
     const float PUCK_VEL_FOR_MIN_ATTACK_RADIUS = 1000;
 
     auto linear_attack_radius_func = [=](const Vec2& puck_vel) {
         float vel_scalar = puck_vel.length();
+
+        if (puck_vel.y <= 0.0f)
+        {
+            return MAX_ATTACK_RADIUS;
+        }
 
         if (vel_scalar <= PUCK_VEL_FOR_MAX_ATTACK_RADIUS)
         {
@@ -211,6 +216,7 @@ bool GameScene::init()
             float ATTACK_RADIUS_RANGE = MAX_ATTACK_RADIUS - MIN_ATTACK_RADIUS;
             return MAX_ATTACK_RADIUS - ATTACK_RADIUS_RANGE * (vel_scalar - PUCK_VEL_FOR_MAX_ATTACK_RADIUS) / PUCK_VEL_RANGE;
         }
+        
     };
 
     AIPlayerSettings ai_settings(pyramid, ATTACK_RADIUS, linear_attack_radius_func);
