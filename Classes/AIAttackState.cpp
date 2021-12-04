@@ -164,45 +164,18 @@ namespace airhockey
 		}
 	}
 
-	AIAttackState::AIAttackState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck,
-		AIPlayerSettings::AttackRadiusFunction attack_radius_func) :
-		IFSMState(),
-		m_field(game_field),
-		m_aiPaddle(ai_paddle),
-		m_playerPaddle(player_paddle),
-		m_puck(puck),
-		m_attackRadiusFunc(attack_radius_func)
-	{}
-
-	AIAttackState::~AIAttackState()
-	{}
-
-	bool AIAttackState::onEnter()
+	bool AIAttackState::calcEncounter(float paddle_vel_scalar, /*OUT*/ float& predicted_time, /*OUT*/ cocos2d::Vec2& predicted_x_paddle,
+		/*OUT*/ cocos2d::Vec2& predicted_x_puck)
 	{
-		getContext()->getLogger()->log("AIAttackState::onEnter(): enter");
-
 		using namespace cocos2d;
 
-		auto ai_attack_action = [this]() {
-			const float attack_duration = 0.5f;  // in sec
-			cocos2d::Vec2 puck_future_offset = attack_duration * m_puck->getPhysicsBody()->getVelocity();
-			auto move_push_puck = cocos2d::MoveTo::create(attack_duration, m_puck->getPosition() + puck_future_offset);
-			move_push_puck->setTag(m_attackActionTag);
-			return move_push_puck;
-		};
-		
 		Vec2 x0_puck = m_puck->getPosition();
-		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x0_puck))
-		{
-			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, puck is outside AI play rect");
-			return false;
-		}
 
 		Vec2 x0_paddle = m_aiPaddle->getSprite()->getPosition();
 		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
 
 		Vec2 dx0 = x0_paddle - x0_puck;
-		float v_paddle_scalar = 1000.0f;
+		float v_paddle_scalar = paddle_vel_scalar;
 		float alpha = 0.0f;
 		float z1, z2;
 		if (dx0.x < dx0.y)
@@ -215,7 +188,7 @@ namespace airhockey
 			float D = 4 * Cpow2 * E;  // discriminant of sqr equation
 			if (D < 0.0f)
 			{
-				getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, D < 0");
+				getContext()->getLogger()->log("AIAttackState::calcEncounter(): failed, D < 0");
 				return false;
 			}
 			z1 = (-A - C * sqrtE) / (1.0f + Cpow2);
@@ -232,7 +205,7 @@ namespace airhockey
 			float D = 4 * E;  // discriminant of sqr equation
 			if (D < 0.0f)
 			{
-				getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, D < 0");
+				getContext()->getLogger()->log("AIAttackState::calcEncounter(): failed, D < 0");
 				return false;
 			}
 			z1 = (C * A - sqrtE) / (1.0f + Cpow2);
@@ -240,10 +213,12 @@ namespace airhockey
 			getContext()->getLogger()->log("dx0.x >= dx0.y");
 		}
 		// substitution: z = sin(alpha)
-		if (z1 > 1.0f || z1 < -1.0f)
+		if (z1 > 1.0f || z1 < -1.0f ||
+			z2 > 1.0f || z2 < -1.0f)
+		{
+			getContext()->getLogger()->log("AIAttackState::calcEncounter(): failed, equation root(s) for sin(alpha) outside [-1;+1] bounds");
 			return false;
-		if (z2 > 1.0f || z2 < -1.0f)
-			return false;
+		}
 		float alpha1 = asin(z1);
 		float alpha2 = asin(z2);
 		alpha1 += M_PI;
@@ -264,61 +239,84 @@ namespace airhockey
 		std::tie(t2x, t2y, t2) = calcEncounterTime(dx0, v_paddle2 - v_puck, dx_threshold, dv_threshold);
 		if (t1 < 0.0f && t2 < 0.0f)
 		{
-			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, both predicted times t1 and t2 < 0");
+			getContext()->getLogger()->log("AIAttackState::calcEncounter(): failed, both predicted times t1 and t2 < 0");
 			return false;
 		}
+
 		float t = t2;
+
 		Vec2 v_paddle = v_paddle2;
-
-		Vec2 x_new_paddle1 = x0_paddle + v_paddle1 * t1;
-		Vec2 x_new_paddle2 = x0_paddle + v_paddle2 * t2;
 		Vec2 x_new_paddle = x0_paddle + v_paddle * t;
-
-		Vec2 x_new_puck1 = x0_puck + v_puck * t1;
-		Vec2 x_new_puck2 = x0_puck + v_puck * t2;
 		Vec2 x_new_puck = x0_puck + v_puck * t;
-
-		using namespace CCHelpers;
-		getContext()->getLogger()->log("-----------------------------");
-		getContext()->getLogger()->log("Paddle position prediction");
-		getContext()->getLogger()->log("alpha1(deg) =" + std::to_string(alpha1_deg) + ",  " + "alpha2(deg) =" + std::to_string(alpha2_deg));
-		getContext()->getLogger()->log("v_paddle1 = " + Vec2Str(v_paddle1) + ", " + "v_paddle2 = " + Vec2Str(v_paddle2));
-		getContext()->getLogger()->log("t1x =" + std::to_string(t1x) + ",  " + "t1y =" + std::to_string(t1y) + ",  " + "t1 =" + std::to_string(t1));
-		getContext()->getLogger()->log("t2x =" + std::to_string(t2x) + ",  " + "t2y =" + std::to_string(t2y) + ",  " + "t2 =" + std::to_string(t2));
-		getContext()->getLogger()->log("x_new_paddle1 = " + Vec2Str(x_new_paddle1) + ", " + "x_new_paddle2 = " + Vec2Str(x_new_paddle2));
-		getContext()->getLogger()->log("x_new_puck1 = " + Vec2Str(x_new_puck1) + ", " + "x_new_puck2 = " + Vec2Str(x_new_puck2));
-		getContext()->getLogger()->log("-----------------------------");
 
 		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x_new_paddle))
 		{
-			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, predicted paddle coords outside of AI play rect");
+			getContext()->getLogger()->log("AIAttackState::calcEncounter(): failed, predicted paddle coords outside of AI play rect");
 			return false;
 		}
 
-		cocos2d::Rect lower_gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::LOWER).getRect();
+		predicted_time = t2;
+		predicted_x_paddle = x_new_paddle;
+		predicted_x_puck = x_new_puck;
+		return true;
+	}
 
+	AIAttackState::AIAttackState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck,
+		AIPlayerSettings::AttackRadiusFunction attack_radius_func) :
+		IFSMState(),
+		m_field(game_field),
+		m_aiPaddle(ai_paddle),
+		m_playerPaddle(player_paddle),
+		m_puck(puck),
+		m_attackRadiusFunc(attack_radius_func)
+	{}
+
+	AIAttackState::~AIAttackState()
+	{}
+
+	bool AIAttackState::onEnter()
+	{
+		getContext()->getLogger()->log("AIAttackState::onEnter(): enter");
+
+		using namespace cocos2d;
+
+		Vec2 x0_puck = m_puck->getPosition();
+		Vec2 x0_paddle = m_aiPaddle->getSprite()->getPosition();
+		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
+		float puck_radius = 50;  // !!!
+		float paddle_radius = m_aiPaddle->getRadius();
+
+		float v_paddle_scalar = 1000.0f;
+
+		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x0_puck))
+		{
+			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, puck is outside AI play rect");
+			return false;
+		}
+
+
+		/*
+		choice of attack strategy (cascade approach - if one failed, try next one)
+			strategy 1 - move horizontally along puck's vector and then make straight attack to the gate
+			strategy 2 - straight attack to the gate
+			strategy 3 - targeted shot not possible, so just move to meet the puck
+		*/
+
+		// define predictions for encounter AI paddle and puck within AI play rect
+		Vec2 x_new_paddle;
+		Vec2 x_new_puck;
+		float t;
+
+		// define targets for attacking enemy gate
+		cocos2d::Rect lower_gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::LOWER).getRect();
 		Vec2 target_center(lower_gate_rect.getMidX(), lower_gate_rect.getMaxY());
 		Vec2 target_left_corner(lower_gate_rect.getMinX() + puck_radius, lower_gate_rect.getMaxY());
 		Vec2 target_right_corner(lower_gate_rect.getMaxX() - puck_radius, lower_gate_rect.getMaxY());
 
-		Vec2 x_new_paddle_correct = correctXnewPaddle(x_new_paddle, target_center, x0_paddle,
-			puck_radius, m_aiPaddle->getRadius(), /*dx_threshold*/puck_radius/2,
-			getContext()->getLogger());
-
-		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x_new_paddle_correct))
-		{
-			getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, predicted correct paddle coords outside of AI play rect");
-			return false;
-		}
-
-		/*
-		choice of attack strategy
-			strategy 1 - move horizontally along puck's vector and then make straight attack to the gate
-			strategy 2 - straight attack to the gate
-		*/
 
 		cocos2d::Action* attack_action = nullptr;
 		
+		// define strategies actions
 		auto attack_action_strategy1 = [](const Vec2& x_new_puck, const Vec2& target, float time, float prepare_y_offset) {
 			const float KICK_TIME_FRAC = 0.25f;
 			Vec2 prepare_dir_vector = directionVector(x_new_puck - target, prepare_y_offset);
@@ -330,65 +328,114 @@ namespace airhockey
 			return seq;
 		};
 
-		auto attack_action_strategy2 = MoveTo::create(t, x_new_paddle_correct);
+		auto attack_action_strategy2 = [](float time, const Vec2& x_new_paddle_correct) {
+			return MoveTo::create(time, x_new_paddle_correct); 
+		};
 
+		auto attack_action_strategy3 = [this]() {
+			const float attack_duration = 0.2f;  // consider less than 0.5 sec to avoid weird behaviour
+			cocos2d::Vec2 puck_future_offset = 0.75*attack_duration* m_puck->getPhysicsBody()->getVelocity();
+			auto move_push_puck = cocos2d::MoveTo::create(attack_duration, m_puck->getPosition() + puck_future_offset);
+			move_push_puck->setTag(m_attackActionTag);
+			return move_push_puck;
+		};
+
+		// constants for Strategy 1
 		const float V_PUCK_THRESHOLD_SQR = pow(puck_radius * 30, 2);
+		const float V_PUCK_SLOW_THRESHOLD_SQR = pow(20, 2);
+		assert(V_PUCK_SLOW_THRESHOLD_SQR < V_PUCK_THRESHOLD_SQR);
+
 		const float CORRIDOR_WIDTH = 0.66f * m_field->getPlayRect().size.width;
 		const float MIN_CORRIDOR_X = m_field->getCenter().x - CORRIDOR_WIDTH / 2;
 		const float MAX_CORRIDOR_X = m_field->getCenter().x + CORRIDOR_WIDTH / 2;
 		const float PADDLE_PREDICTED_PATH_LENGTH_X_THRESHOLD = m_field->getPlayRect().size.width / 2;
 		const float PREPARE_Y_OFFSET = paddle_radius * 4 + puck_radius;
-		if (v_puck.lengthSquared() < V_PUCK_THRESHOLD_SQR &&
-			x_new_puck.x > MIN_CORRIDOR_X && x_new_puck.x < MAX_CORRIDOR_X  &&
-			(x_new_puck - x0_paddle).x <= PADDLE_PREDICTED_PATH_LENGTH_X_THRESHOLD &&
-			x_new_puck.y + PREPARE_Y_OFFSET + paddle_radius < m_field->getPlayRect().getMaxY() )
+
+		if (calcEncounter(v_paddle_scalar, t, x_new_paddle, x_new_puck))
 		{
-			getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 1 (move along puck then straight attack)");
-			
-			auto player_paddle_pos = m_playerPaddle->getSprite()->getPosition();
-			float player_paddle_radius = m_playerPaddle->getRadius();
-			Vec2 final_target;
-			if ((m_field->getPlayRect().getMinY() + m_field->getPlayRect().size.height / 4) < player_paddle_pos.y &&
-				player_paddle_pos.x > MIN_CORRIDOR_X && player_paddle_pos.x < MAX_CORRIDOR_X)
+			// Strategies 1 or 2 are possible
+
+			if (v_puck.lengthSquared() < V_PUCK_THRESHOLD_SQR &&
+				x_new_puck.x > MIN_CORRIDOR_X && x_new_puck.x < MAX_CORRIDOR_X &&
+				(x_new_puck - x0_paddle).x <= PADDLE_PREDICTED_PATH_LENGTH_X_THRESHOLD &&
+				x_new_puck.y + PREPARE_Y_OFFSET + paddle_radius < m_field->getPlayRect().getMaxY())
 			{
-				float side_target_x = (player_paddle_pos.x < m_field->getCenter().x) ?
-					m_field->getPlayRect().getMaxX() :
-					m_field->getPlayRect().getMinX();
-				final_target = Vec2(side_target_x, 2 * puck_radius + m_field->getPlayRect().getMinY() + m_field->getPlayRect().size.height / 4);
-			}
-			else
-			{
-				if (isTargetClear(target_center, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+				// Strategy 1
+
+				getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 1 (move along puck then straight attack)");
+
+				auto player_paddle_pos = m_playerPaddle->getSprite()->getPosition();
+				float player_paddle_radius = m_playerPaddle->getRadius();
+				Vec2 final_target;
+				if ((m_field->getPlayRect().getMinY() + m_field->getPlayRect().size.height / 4) < player_paddle_pos.y &&
+					player_paddle_pos.x > MIN_CORRIDOR_X && player_paddle_pos.x < MAX_CORRIDOR_X)
 				{
-					final_target = target_center;
-				}
-				else if (isTargetClear(target_left_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
-				{
-					final_target = target_left_corner;
-				}
-				else if (isTargetClear(target_right_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
-				{
-					final_target = target_right_corner;
+					float side_target_x = (player_paddle_pos.x < m_field->getCenter().x) ?
+						m_field->getPlayRect().getMaxX() :
+						m_field->getPlayRect().getMinX();
+					final_target = Vec2(side_target_x, 2 * puck_radius + m_field->getPlayRect().getMinY() + m_field->getPlayRect().size.height / 4);
 				}
 				else
 				{
-					return false;
+					if (isTargetClear(target_center, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+					{
+						final_target = target_center;
+					}
+					else if (isTargetClear(target_left_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+					{
+						final_target = target_left_corner;
+					}
+					else if (isTargetClear(target_right_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+					{
+						final_target = target_right_corner;
+					}
+					else
+					{
+						final_target = target_center;
+					}
+				}
+				attack_action = attack_action_strategy1(x_new_puck, final_target, t, PREPARE_Y_OFFSET);
+				attack_action->setTag(m_attackActionTag);
+				m_aiPaddle->getStick()->runAction(attack_action);
+				return true;
+			}
+
+			else if (v_puck.lengthSquared() >= V_PUCK_SLOW_THRESHOLD_SQR)
+			{
+				// Strategy  2
+
+				getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 2 (straight attack)");
+
+				Vec2 x_new_paddle_correct = correctXnewPaddle(x_new_paddle, target_center, x0_paddle,
+					puck_radius, m_aiPaddle->getRadius(), /*dx_threshold*/puck_radius / 2,
+					getContext()->getLogger());
+
+				if (m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x_new_paddle_correct))
+				{
+					attack_action = attack_action_strategy2(t, x_new_paddle_correct);
+					attack_action->setTag(m_attackActionTag);
+					m_aiPaddle->getStick()->runAction(attack_action);
+					return true;
+				}
+				else
+				{
+					getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, predicted correct paddle coords outside of AI play rect");
 				}
 			}
-			attack_action = attack_action_strategy1(x_new_puck, final_target, t, PREPARE_Y_OFFSET);
 		}
-		else
+		// targeted shot (Strategies 1 and 2) failed, just move towards puck if it's slow enough
+		else if (v_puck.lengthSquared() < V_PUCK_SLOW_THRESHOLD_SQR)
 		{
-			getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 2 (straight attack)");
-			attack_action = attack_action_strategy2;
+			getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 3 (chasing slow puck)");
+			attack_action = attack_action_strategy3();
+			attack_action->setTag(m_attackActionTag);
+			m_aiPaddle->getStick()->runAction(attack_action);
+			return true;
+
 		}
 
-		if (!attack_action)
-			return false;
-
-		attack_action->setTag(m_attackActionTag);
-		m_aiPaddle->getStick()->runAction(attack_action);
-		return true;
+		getContext()->getLogger()->log("AIAttackState::onEnter(): none of attack strategies possible, go to defense");
+		return false;
 	}
 
 	void AIAttackState::onExit()
@@ -402,7 +449,7 @@ namespace airhockey
 	void AIAttackState::handleTransitions()
 	{
 		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) > m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) ||
-			m_puck->getPosition().y > m_aiPaddle->getPosition().y ||
+			//m_puck->getPosition().y > m_aiPaddle->getPosition().y ||
 			m_aiPaddle->getPosition().y <= m_field->getCenter().y ||
 			!m_aiPaddle->getStick()->getActionByTag(m_attackActionTag))
 		{

@@ -25,6 +25,13 @@ namespace airhockey
 		void resume() override;
 
 	private:
+		bool calcEncounter(float paddle_vel_scalar, 
+			/*OUT*/ float& predicted_time, 
+			/*OUT*/ cocos2d::Vec2& predicted_x_paddle,
+			/*OUT*/ cocos2d::Vec2& predicted_x_puck
+		);
+
+	private:
 		GameField* m_field = nullptr;
 		PaddlePtr m_aiPaddle = nullptr;
 		PaddlePtr m_playerPaddle = nullptr;
