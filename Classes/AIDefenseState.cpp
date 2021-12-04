@@ -6,6 +6,7 @@
 #include "GameField.h"
 #include "Paddle.h"
 #include "cocos2d.h"
+#include "CCHelpers.h"
 
 namespace airhockey
 {
@@ -28,7 +29,9 @@ namespace airhockey
 	{
 		getContext()->getLogger()->log("AIDefenseState::onEnter(): enter");
 
-		auto ai_defense_action = [this]() {
+		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
+
+		auto ai_move_to_pyramid_action = [this]() {
 			cocos2d::Rect gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::UPPER).getRect();
 			float puck_x_offset = m_puck->getPosition().x - m_field->getCenter().x;
 			float puck_width = m_puck->getBoundingBox().size.width;
@@ -51,7 +54,14 @@ namespace airhockey
 			auto move_to_pyramid = cocos2d::MoveTo::create(0.25f, *defense_point);
 			return move_to_pyramid;
 		};
-		m_aiPaddle->getStick()->runAction(ai_defense_action());
+
+		cocos2d::Action* defense_action = nullptr;
+
+		getContext()->getLogger()->log("AIDefenseState::onEnter(): move to pyramid");
+		defense_action = ai_move_to_pyramid_action();
+		defense_action->setTag(m_defenseActionTag);
+
+		m_aiPaddle->getStick()->runAction(defense_action);
 		return true;
 	}
 
@@ -66,8 +76,10 @@ namespace airhockey
 	void AIDefenseState::handleTransitions()
 	{
 		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) &&
-			m_puck->getPosition().y < m_aiPaddle->getPosition().y)
+			m_puck->getPosition().y < m_aiPaddle->getPosition().y
+			)
 		{
+
 			getContext()->getLogger()->log("AIDefenseState::handleTransitions(): making transition to Attack State");
 
 			auto ai_player = static_cast<AIPlayer*>(m_context);
@@ -77,6 +89,9 @@ namespace airhockey
 
 	void AIDefenseState::update()
 	{
+		if (m_aiPaddle->getStick()->getActionByTag(m_defenseActionTag))
+			return;
+
 		using namespace cocos2d;
 		static float puck_old_x = 0.0f;
 		float puck_dx = (puck_old_x != 0.0f) ? (m_puck->getPosition().x - puck_old_x) : 0.0f;

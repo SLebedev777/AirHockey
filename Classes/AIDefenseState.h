@@ -32,7 +32,7 @@ namespace airhockey
 		cocos2d::Sprite* m_puck = nullptr;
 		Pyramid m_pyramid;
 		AIPlayerSettings::AttackRadiusFunction m_attackRadiusFunc = nullptr;
-		//float m_attackRadius;
+		int m_defenseActionTag = 2607;
 
 	};
 
