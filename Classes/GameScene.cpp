@@ -219,7 +219,7 @@ bool GameScene::init()
         
     };
 
-    AIPlayerSettings ai_settings(pyramid, ATTACK_RADIUS, linear_attack_radius_func);
+    AIPlayerSettings ai_settings(pyramid, ATTACK_RADIUS, constant_attack_radius_func);
     m_AI = std::make_shared<AIPlayer>(m_field.get(), m_paddle2, m_paddle1, m_puck, ai_settings);
     m_AIIdleState = static_cast<AIPlayer*>(m_AI.get())->createIdleState();
     m_AI->setLogger(m_logger);
@@ -648,5 +648,9 @@ void GameScene::update(float dt)
     auto p2_s_p = CCHelpers::Vec2Str(m_paddle2->getStick()->getPosition());
     auto p2_s_v = CCHelpers::Vec2Str(m_paddle2->getStickPhysicsBody()->getVelocity());
     m_logger->log("Paddle2 pos = " + p2_p + "  vel = " + p2_v + "  stick_pos = " + p2_s_p + "  stick_vel = " + p2_s_v);
+
+    auto puck_pos = CCHelpers::Vec2Str(m_puck->getPosition());
+    auto puck_vel = CCHelpers::Vec2Str(m_puck->getPhysicsBody()->getVelocity());
+    m_logger->log("Puck pos = " + puck_pos + " puck vel = " + puck_vel);
 
 }
