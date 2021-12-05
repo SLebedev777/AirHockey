@@ -171,6 +171,8 @@ bool GameScene::init()
     m_paddle1 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMinY() + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
 
+    assert(m_paddle1->getSprite()->getBoundingBox().size.width == 2 * PADDLE_RADIUS);
+
     //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1, /*touch_margin*/PUCK_RADIUS);
 

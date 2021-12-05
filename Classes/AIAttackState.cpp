@@ -228,7 +228,7 @@ namespace airhockey
 		Vec2 v_paddle1 = azimuthVector(alpha1, v_paddle_scalar);
 		Vec2 v_paddle2 = azimuthVector(alpha2, v_paddle_scalar);
 
-		float puck_radius = 50;  // !!!
+		float puck_radius = m_puck->getBoundingBox().size.width / 2;
 		float paddle_radius = m_aiPaddle->getRadius();
 
 		float t1x, t1y, t1;
@@ -283,7 +283,7 @@ namespace airhockey
 		Vec2 x0_puck = m_puck->getPosition();
 		Vec2 x0_paddle = m_aiPaddle->getSprite()->getPosition();
 		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
-		float puck_radius = 50;  // !!!
+		float puck_radius = m_puck->getBoundingBox().size.width / 2;
 		float paddle_radius = m_aiPaddle->getRadius();
 
 		float v_paddle_scalar = 1000.0f;
