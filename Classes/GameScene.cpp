@@ -186,7 +186,7 @@ bool GameScene::init()
     Rect ai_gate_rect = m_field->getGoalGate(GoalGateLocationType::UPPER).getRect();
     Vec2 ai_pyramid_left(m_field->getCenter().x - 0.5 * GOAL_GATE_SIZE.width, ai_gate_rect.getMinY() - 0.5 * GOAL_GATE_SIZE.width);
     Vec2 ai_pyramid_right(ai_pyramid_left + Vec2(GOAL_GATE_SIZE.width, 0));
-    Vec2 ai_pyramid_top(m_field->getCenter().x, ai_pyramid_left.y - 4 * PADDLE_RADIUS);
+    Vec2 ai_pyramid_top(m_field->getCenter().x, ai_pyramid_left.y - 2 * PADDLE_RADIUS);
     Pyramid pyramid(ai_pyramid_top, ai_pyramid_left, ai_pyramid_right);
 
     auto constant_attack_radius_func = [=](const Vec2&) { return ATTACK_RADIUS; };
