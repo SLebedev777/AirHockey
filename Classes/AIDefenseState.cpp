@@ -77,9 +77,9 @@ namespace airhockey
 	AIDefenseState::~AIDefenseState()
 	{}
 
-	bool AIDefenseState::onEnter()
+	bool AIDefenseState::defense()
 	{
-		getContext()->getLogger()->log("AIDefenseState::onEnter(): enter");
+		getContext()->getLogger()->log("AIDefenseState::defense(): enter");
 
 		Vec2 x0_puck = m_puck->getPosition();
 		Vec2 x0_paddle = m_aiPaddle->getSprite()->getPosition();
@@ -114,9 +114,17 @@ namespace airhockey
 		cocos2d::Rect gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::UPPER).getRect();
 		float dist_threshold = puck_radius - 1;
 		float vel_threshold = 5;
-		float defense_time = 0.1f;
+		float defense_time = 0.25f;
 		Vec2 x_new_puck = x0_puck + defense_time * v_puck;
 		float max_y = m_field->getPlayRect().getMaxY() - paddle_radius;
+
+		if (x0_puck.y < m_field->getCenter().y)
+		{
+			defense_action = cocos2d::MoveTo::create(defense_time, m_pyramid.pyramidTop);
+			defense_action->setTag(m_defenseActionTag);
+			m_aiPaddle->getStick()->runAction(defense_action);
+			return true;
+		}
 
 		bool is_puck_hits_the_goal = movingPointIntersectHorizontalSegment(x0_puck, v_puck, gate_rect.getMinY(), gate_rect.getMinX(), gate_rect.getMaxX(),
 			dist_threshold, vel_threshold);
@@ -188,6 +196,13 @@ namespace airhockey
 		return true;
 	}
 
+	bool AIDefenseState::onEnter()
+	{
+		getContext()->getLogger()->log("AIDefenseState::onEnter(): enter");
+
+		return defense();
+	}
+
 	void AIDefenseState::onExit()
 	{
 		getContext()->getLogger()->log("AIDefenseState::onExit()");
@@ -198,8 +213,12 @@ namespace airhockey
 
 	void AIDefenseState::handleTransitions()
 	{
-		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) <= m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) &&
-			m_puck->getPosition().y < m_aiPaddle->getPosition().y
+		Vec2 x_paddle = m_aiPaddle->getSprite()->getPosition();
+		Vec2 x_puck = m_puck->getPosition();
+
+		if (x_puck.distance(x_paddle) <= m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) &&
+			x_puck.y < x_paddle.y &&
+			x_puck.y >= m_field->getCenter().y
 			)
 		{
 
@@ -212,26 +231,10 @@ namespace airhockey
 
 	void AIDefenseState::update()
 	{
-		return;
-
 		if (m_aiPaddle->getStick()->getActionByTag(m_defenseActionTag))
 			return;
 
-		using namespace cocos2d;
-		static float puck_old_x = 0.0f;
-		float puck_dx = (puck_old_x != 0.0f) ? (m_puck->getPosition().x - puck_old_x) : 0.0f;
-		puck_old_x = m_puck->getPosition().x;
-		float puck_x_center_offset = m_puck->getPosition().x - m_field->getCenter().x;
-		float shift = 5;
-		if (puck_x_center_offset < 0 && puck_dx < 0)
-		{
-			m_aiPaddle->getStick()->runAction(MoveBy::create(0, Vec2(-shift, 0)));
-		}
-		else if (puck_x_center_offset > 0 && puck_dx > 0)
-		{
-			m_aiPaddle->getStick()->runAction(MoveBy::create(0, Vec2(shift, 0)));
-		}
-		
+		defense();		
 	}
 
 	void AIDefenseState::pause()

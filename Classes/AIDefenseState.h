@@ -26,6 +26,9 @@ namespace airhockey
 		void resume() override;
 
 	private:
+		bool defense();
+
+	private:
 		GameField* m_field = nullptr;
 		PaddlePtr m_aiPaddle = nullptr;
 		PaddlePtr m_playerPaddle = nullptr;
