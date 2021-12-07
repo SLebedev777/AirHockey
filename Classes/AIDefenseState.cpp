@@ -10,6 +10,58 @@
 
 namespace airhockey
 {
+	namespace
+	{
+		using namespace cocos2d;
+
+		bool movingPointIntersectHorizontalLine(const Vec2& x0, const Vec2& vel, float y_line, /*OUT*/ float& x_line_out,
+			float dist_threshold=0.0f, float vel_threshold=0.0f)
+		{
+			assert(vel_threshold >= 0.0f && dist_threshold >= 0.0f);
+
+			if (vel.lengthSquared() <= vel_threshold * vel_threshold)
+			{
+				return false;
+			}
+
+			if ((x0.y < y_line && vel.y <= vel_threshold) ||
+				(x0.y > y_line && vel.y >= -vel_threshold)
+				)
+			{
+				return false;
+			}
+
+			if (abs(y_line - x0.y) <= dist_threshold)
+			{
+				x_line_out = x0.x;
+				return true;
+			}
+
+			x_line_out = x0.x + (y_line - x0.y) * vel.x / vel.y;
+			return true;
+				
+		}
+
+		bool movingPointIntersectHorizontalSegment(const Vec2& x0, const Vec2& vel, float y_line, float x1_seg, float x2_seg,
+			float dist_threshold = 0.0f, float vel_threshold = 0.0f)
+		{
+			assert(x1_seg != x2_seg);
+
+			float x_line_out = 0.0f;
+			bool res = movingPointIntersectHorizontalLine(x0, vel, y_line, x_line_out, dist_threshold, vel_threshold);
+			if (!res)
+				return false;
+
+			if (x1_seg > x2_seg)
+			{
+				std::swap(x1_seg, x2_seg);
+			}
+
+			return x1_seg <= x_line_out && x_line_out <= x2_seg;
+		}
+
+	}
+
 	AIDefenseState::AIDefenseState(GameField* game_field, PaddlePtr ai_paddle, PaddlePtr player_paddle, cocos2d::Sprite* puck, 
 		AIPlayerSettings::AttackRadiusFunction attack_radius_func,
 		const Pyramid& pyramid) :
@@ -29,9 +81,13 @@ namespace airhockey
 	{
 		getContext()->getLogger()->log("AIDefenseState::onEnter(): enter");
 
+		Vec2 x0_puck = m_puck->getPosition();
+		Vec2 x0_paddle = m_aiPaddle->getSprite()->getPosition();
 		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
+		float puck_radius = m_puck->getBoundingBox().size.width / 2;
+		float paddle_radius = m_aiPaddle->getRadius();
 
-		auto ai_move_to_pyramid_action = [this]() {
+		auto ai_move_to_pyramid_action = [this](float defense_time) {
 			cocos2d::Rect gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::UPPER).getRect();
 			float puck_x_offset = m_puck->getPosition().x - m_field->getCenter().x;
 			float puck_width = m_puck->getBoundingBox().size.width;
@@ -40,25 +96,92 @@ namespace airhockey
 			cocos2d::Vec2* defense_point = &m_pyramid.pyramidBase;
 			if (puck_x_offset < -puck_x_offset_thres)
 			{
-				paddle_x_offset = -gate_rect.size.width / 4;
 				defense_point = &m_pyramid.pyramidLeft;
 			}
 			else if (puck_x_offset > puck_x_offset_thres)
 			{
-				paddle_x_offset = gate_rect.size.width / 4;
 				defense_point = &m_pyramid.pyramidRight;
 			}
-			float paddle_radius = m_aiPaddle->getRadius();
-			//auto move_back_to_gate = cocos2d::MoveTo::create(0.25f, cocos2d::Vec2(gate_rect.getMidX() + paddle_x_offset, gate_rect.getMinY() - paddle_radius));
-			//return move_back_to_gate;
-			auto move_to_pyramid = cocos2d::MoveTo::create(0.25f, *defense_point);
+			auto move_to_pyramid = cocos2d::MoveTo::create(defense_time, *defense_point);
 			return move_to_pyramid;
 		};
 
 		cocos2d::Action* defense_action = nullptr;
 
-		getContext()->getLogger()->log("AIDefenseState::onEnter(): move to pyramid");
-		defense_action = ai_move_to_pyramid_action();
+		/*
+		choice of defense strategy
+		*/
+		cocos2d::Rect gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::UPPER).getRect();
+		float dist_threshold = puck_radius - 1;
+		float vel_threshold = 5;
+		float defense_time = 0.1f;
+		Vec2 x_new_puck = x0_puck + defense_time * v_puck;
+		float max_y = m_field->getPlayRect().getMaxY() - paddle_radius;
+
+		bool is_puck_hits_the_goal = movingPointIntersectHorizontalSegment(x0_puck, v_puck, gate_rect.getMinY(), gate_rect.getMinX(), gate_rect.getMaxX(),
+			dist_threshold, vel_threshold);
+
+		if (x0_puck.y < x0_paddle.y)
+		{
+			if (v_puck.y < 0.0f)
+			{
+				defense_action = ai_move_to_pyramid_action(defense_time);
+			}
+			else
+			{
+				if (is_puck_hits_the_goal)
+				{
+					float target_y = x_new_puck.y + puck_radius + paddle_radius;
+					target_y = target_y > max_y ? max_y : target_y;
+					float target_x;
+					if (movingPointIntersectHorizontalLine(x0_puck, v_puck, target_y, target_x, dist_threshold, vel_threshold))
+					{
+						defense_action = MoveTo::create(defense_time, Vec2(target_x, target_y));
+					}
+					else
+					{
+						defense_action = MoveTo::create(defense_time, m_pyramid.pyramidBase);
+					}
+				}
+				else
+				{
+					defense_action = ai_move_to_pyramid_action(defense_time);
+				}
+			}
+		}
+		else
+		{
+			if (v_puck.y < 0.0f)
+			{
+				float target_y = x_new_puck.y + puck_radius;
+				target_y = target_y > max_y ? max_y : target_y;
+				defense_action = MoveTo::create(defense_time, Vec2(x0_paddle.x, target_y));
+			}
+			else
+			{
+				if (is_puck_hits_the_goal)
+				{
+					float target_y = x_new_puck.y + puck_radius + paddle_radius;
+					target_y = target_y > max_y ? max_y : target_y;
+					float target_x;
+					if (movingPointIntersectHorizontalLine(x0_puck, v_puck, target_y, target_x, dist_threshold, vel_threshold))
+					{
+						defense_action = MoveTo::create(defense_time, Vec2(target_x, target_y));
+					}
+					else
+					{
+						defense_action = MoveTo::create(defense_time, Vec2(gate_rect.getMidX(), max_y));
+					}
+				}
+				else
+				{
+					defense_action = MoveTo::create(defense_time, Vec2(gate_rect.getMidX(), max_y));
+				}
+			}
+		}
+
+		//getContext()->getLogger()->log("AIDefenseState::onEnter(): move to pyramid");
+		//defense_action = ai_move_to_pyramid_action(defense_time);
 		defense_action->setTag(m_defenseActionTag);
 
 		m_aiPaddle->getStick()->runAction(defense_action);
@@ -89,6 +212,8 @@ namespace airhockey
 
 	void AIDefenseState::update()
 	{
+		return;
+
 		if (m_aiPaddle->getStick()->getActionByTag(m_defenseActionTag))
 			return;
 

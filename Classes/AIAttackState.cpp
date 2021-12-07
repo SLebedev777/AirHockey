@@ -449,7 +449,7 @@ namespace airhockey
 	void AIAttackState::handleTransitions()
 	{
 		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) > m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) ||
-			//m_puck->getPosition().y > m_aiPaddle->getPosition().y ||
+			m_puck->getPosition().y > m_aiPaddle->getPosition().y ||
 			m_aiPaddle->getPosition().y <= m_field->getCenter().y ||
 			!m_aiPaddle->getStick()->getActionByTag(m_attackActionTag))
 		{
