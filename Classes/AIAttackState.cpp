@@ -332,9 +332,12 @@ namespace airhockey
 			return MoveTo::create(time, x_new_paddle_correct); 
 		};
 
-		auto attack_action_strategy3 = [this]() {
+		auto attack_action_strategy3 = [this]()-> Action* {
 			const float attack_duration = 0.2f;  // consider less than 0.5 sec to avoid weird behaviour
 			cocos2d::Vec2 puck_future_offset = 0.75*attack_duration* m_puck->getPhysicsBody()->getVelocity();
+			Vec2 x_new_puck = m_puck->getPosition() + puck_future_offset;
+			if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x_new_puck))
+				return nullptr;
 			auto move_push_puck = cocos2d::MoveTo::create(attack_duration, m_puck->getPosition() + puck_future_offset);
 			move_push_puck->setTag(m_attackActionTag);
 			return move_push_puck;
@@ -354,6 +357,7 @@ namespace airhockey
 		if (calcEncounter(v_paddle_scalar, t, x_new_paddle, x_new_puck))
 		{
 			// Strategies 1 or 2 are possible
+			getContext()->getLogger()->log("AIAttackState::onEnter(): strategies 1 or 2 are possible");
 
 			if (v_puck.lengthSquared() < V_PUCK_THRESHOLD_SQR &&
 				x_new_puck.x > MIN_CORRIDOR_X && x_new_puck.x < MAX_CORRIDOR_X &&
@@ -400,7 +404,7 @@ namespace airhockey
 				return true;
 			}
 
-			else if (v_puck.lengthSquared() >= V_PUCK_SLOW_THRESHOLD_SQR)
+			else
 			{
 				// Strategy  2
 
@@ -420,6 +424,7 @@ namespace airhockey
 				else
 				{
 					getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, predicted correct paddle coords outside of AI play rect");
+					return false;
 				}
 			}
 		}
@@ -428,6 +433,8 @@ namespace airhockey
 		{
 			getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 3 (chasing slow puck)");
 			attack_action = attack_action_strategy3();
+			if (!attack_action)
+				return false;
 			attack_action->setTag(m_attackActionTag);
 			m_aiPaddle->getStick()->runAction(attack_action);
 			return true;
@@ -448,9 +455,12 @@ namespace airhockey
 
 	void AIAttackState::handleTransitions()
 	{
-		if (m_puck->getPosition().distance(m_aiPaddle->getPosition()) > m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) ||
-			m_puck->getPosition().y > m_aiPaddle->getPosition().y ||
-			m_aiPaddle->getPosition().y <= m_field->getCenter().y ||
+		Vec2 x_paddle = m_aiPaddle->getSprite()->getPosition();
+		Vec2 x_puck = m_puck->getPosition();
+
+		if (x_puck.distance(x_paddle) > m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) ||
+			x_puck.y > x_paddle.y ||
+			x_paddle.y <= m_field->getCenter().y ||
 			!m_aiPaddle->getStick()->getActionByTag(m_attackActionTag))
 		{
 			// back to defense state
