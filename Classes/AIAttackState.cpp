@@ -345,7 +345,7 @@ namespace airhockey
 
 		// constants for Strategy 1
 		const float V_PUCK_THRESHOLD_SQR = pow(puck_radius * 30, 2);
-		const float V_PUCK_SLOW_THRESHOLD_SQR = pow(20, 2);
+		const float V_PUCK_SLOW_THRESHOLD_SQR = pow(100, 2);
 		assert(V_PUCK_SLOW_THRESHOLD_SQR < V_PUCK_THRESHOLD_SQR);
 
 		const float CORRIDOR_WIDTH = 0.66f * m_field->getPlayRect().size.width;
@@ -423,13 +423,12 @@ namespace airhockey
 				}
 				else
 				{
-					getContext()->getLogger()->log("AIAttackState::onEnter(): attack failed, predicted correct paddle coords outside of AI play rect");
-					return false;
+					getContext()->getLogger()->log("AIAttackState::onEnter(): Strategy 2 failed, predicted correct paddle coords outside of AI play rect");
 				}
 			}
 		}
 		// targeted shot (Strategies 1 and 2) failed, just move towards puck if it's slow enough
-		else if (v_puck.lengthSquared() < V_PUCK_SLOW_THRESHOLD_SQR)
+		if (v_puck.lengthSquared() < V_PUCK_SLOW_THRESHOLD_SQR)
 		{
 			getContext()->getLogger()->log("AIAttackState::onEnter(): chosen Strategy 3 (chasing slow puck)");
 			attack_action = attack_action_strategy3();
