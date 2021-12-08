@@ -120,6 +120,8 @@ namespace airhockey
 
 		if (x0_puck.y < m_field->getCenter().y)
 		{
+			getContext()->getLogger()->log("AIDefenseState::defense(): puck is outside AI rect. Move paddle to pyramid top");
+
 			defense_action = cocos2d::MoveTo::create(defense_time, m_pyramid.pyramidTop);
 			defense_action->setTag(m_defenseActionTag);
 			m_aiPaddle->getStick()->runAction(defense_action);
@@ -131,36 +133,49 @@ namespace airhockey
 
 		if (x0_puck.y < x0_paddle.y)
 		{
+			getContext()->getLogger()->log("AIDefenseState::defense(): puck.y < paddle.y - puck lower than paddle");
+
 			if (v_puck.y < 0.0f)
 			{
+				getContext()->getLogger()->log("AIDefenseState::defense(): puck goes away from the AI gate. Move paddle to pyramid");
 				defense_action = ai_move_to_pyramid_action(defense_time);
 			}
 			else
 			{
 				if (is_puck_hits_the_goal)
 				{
+					getContext()->getLogger()->log("AIDefenseState::defense(): puck will hit the gate!");
+
 					float target_y = x_new_puck.y + puck_radius + paddle_radius;
 					target_y = target_y > max_y ? max_y : target_y;
 					float target_x;
 					if (movingPointIntersectHorizontalLine(x0_puck, v_puck, target_y, target_x, dist_threshold, vel_threshold))
 					{
+						getContext()->getLogger()->log("AIDefenseState::defense(): close the puck's way to the gate");
 						defense_action = MoveTo::create(defense_time, Vec2(target_x, target_y));
 					}
 					else
 					{
+						getContext()->getLogger()->log("AIDefenseState::defense(): failed to close the puck's way to the gate. Move to pyramid base");
 						defense_action = MoveTo::create(defense_time, m_pyramid.pyramidBase);
 					}
 				}
 				else
 				{
+					getContext()->getLogger()->log("AIDefenseState::defense(): puck goes towards the gate, but won't hit it. Move paddle to pyramid");
+
 					defense_action = ai_move_to_pyramid_action(defense_time);
 				}
 			}
 		}
 		else
 		{
+			getContext()->getLogger()->log("AIDefenseState::defense(): puck.y >= paddle.y - puck between paddle and gate!");
+
 			if (v_puck.y < 0.0f)
 			{
+				getContext()->getLogger()->log("AIDefenseState::defense(): puck goes away from the AI gate. Move paddle up close to the gate");
+
 				float target_y = x_new_puck.y + puck_radius;
 				target_y = target_y > max_y ? max_y : target_y;
 				defense_action = MoveTo::create(defense_time, Vec2(x0_paddle.x, target_y));
@@ -169,21 +184,31 @@ namespace airhockey
 			{
 				if (is_puck_hits_the_goal)
 				{
+					getContext()->getLogger()->log("AIDefenseState::defense(): puck will hit the gate!");
+
 					float target_y = x_new_puck.y + puck_radius + paddle_radius;
 					target_y = target_y > max_y ? max_y : target_y;
 					float target_x;
 					if (movingPointIntersectHorizontalLine(x0_puck, v_puck, target_y, target_x, dist_threshold, vel_threshold))
 					{
+						getContext()->getLogger()->log("AIDefenseState::defense(): close the puck's way to the gate");
 						defense_action = MoveTo::create(defense_time, Vec2(target_x, target_y));
 					}
 					else
 					{
+						getContext()->getLogger()->log("AIDefenseState::defense(): failed to close the puck's way to the gate. Move paddle to gate center");
 						defense_action = MoveTo::create(defense_time, Vec2(gate_rect.getMidX(), max_y));
 					}
 				}
+				else if (v_puck.length() > 20)
+				{
+					getContext()->getLogger()->log("AIDefenseState::defense(): puck goes towards the gate, but won't hit it. Move paddle to gate center");
+					defense_action = MoveTo::create(defense_time, Vec2(gate_rect.getMidX(), max_y));
+				}
 				else
 				{
-					defense_action = MoveTo::create(defense_time, Vec2(gate_rect.getMidX(), max_y));
+					getContext()->getLogger()->log("AIDefenseState::defense(): SLOW puck goes towards the gate, but won't hit it. Move paddle to the puck");
+					defense_action = MoveTo::create(defense_time, x_new_puck);
 				}
 			}
 		}
@@ -215,6 +240,7 @@ namespace airhockey
 	{
 		Vec2 x_paddle = m_aiPaddle->getSprite()->getPosition();
 		Vec2 x_puck = m_puck->getPosition();
+		Vec2 v_puck = m_puck->getPhysicsBody()->getVelocity();
 
 		if (x_puck.distance(x_paddle) <= m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) &&
 			x_puck.y < x_paddle.y &&
