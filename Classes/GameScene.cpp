@@ -346,8 +346,10 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 
 void GameScene::onGameMenuOpen(Ref* sender)
 {
-    if (this->getChildByTag(TAG_GAME_MENU_LAYER))
+    if (this->getChildByTag(TAG_GAME_MENU_LAYER) || this->getChildByTag(TAG_GAME_END_MENU_LAYER))
         return;
+
+    m_logger->log("GameScene::onGameMenuOpen() enter");
 
     Director::getInstance()->getScheduler()->pauseTarget(this);
     this->getPhysicsWorld()->setAutoStep(false);
@@ -358,6 +360,8 @@ void GameScene::onGameMenuOpen(Ref* sender)
 
 void GameScene::onGameMenuClose(Event* event)
 {
+    m_logger->log("GameScene::onGameMenuClose() enter");
+
     Director::getInstance()->getScheduler()->resumeTarget(this);
     this->getPhysicsWorld()->setAutoStep(true);
 
@@ -374,6 +378,9 @@ void GameScene::onGameEndMenuOpen(Ref* sender)
 {
     if (this->getChildByTag(TAG_GAME_END_MENU_LAYER))
         return;
+
+    if (this->getChildByTag(TAG_GAME_MENU_LAYER))
+        onGameMenuClose(nullptr);
 
     m_logger->log("GameScene::onGameEndMenuOpen() enter");
 
@@ -579,7 +586,7 @@ void GameScene::update(float dt)
 
     float puck_y_offset = m_field->getCentralCircleMarking().getSettings().radius;
     // goal to Player1's gate (lower)
-    if (m_isPuckPlayable)
+    if (m_isPuckPlayable && puck_body->getVelocity() != Vec2::ZERO)
     {
         // goal to Player1's gate (lower)
         if (m_field->getGoalGate(GoalGateLocationType::LOWER).getRect().containsPoint(m_puck->getPosition()))
