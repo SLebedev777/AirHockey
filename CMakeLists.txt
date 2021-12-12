@@ -80,6 +80,9 @@ list(APPEND GAME_SOURCE
      Classes/GameField.cpp
      Classes/GameMenuLayer.cpp
      Classes/UIButtonMenu.cpp
+     Classes/AIPlayer.cpp
+     Classes/CCHelpers.cpp
+     Classes/DebugLogger.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -95,6 +98,7 @@ list(APPEND GAME_HEADER
      Classes/AIAttackState.h
      Classes/AIDefenseState.h
      Classes/AIIdleState.h
+     Classes/AINullState.h
      Classes/FSMContext.h
      Classes/GameEndLayer.h
      Classes/GameField.h
@@ -102,6 +106,11 @@ list(APPEND GAME_HEADER
      Classes/IFSMState.h
      Classes/UIButtonMenu.h
      Classes/UISettings.h
+     Classes/AIPlayer.h
+     Classes/AIPlayerSettings.h
+     Classes/AirHockey_fwd.h
+     Classes/CCHelpers.h
+     Classes/DebugLogger.h
      )
 
 if(ANDROID)
