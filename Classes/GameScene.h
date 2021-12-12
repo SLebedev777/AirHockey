@@ -48,8 +48,8 @@ public:
     void update(float dt) override;
 
 private:
-    void startDelay(float duration, std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345);
-    bool isDelayOver(std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345);
+    void startDelay(float duration, const std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345);
+    bool isDelayOver(const std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345);
 
 protected:
     enum class GoalHitBy

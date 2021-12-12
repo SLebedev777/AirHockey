@@ -480,13 +480,13 @@ void GameScene::onNewGameStart()
 
 }
 
-void GameScene::startDelay(float duration, std::string& wait_node_name, int action_tag)
+void GameScene::startDelay(float duration, const std::string& wait_node_name, int action_tag)
 {
     m_logger->log("GameScene:: delay started");
     CCHelpers::startDelay(this, duration, wait_node_name, action_tag);
 }
 
-bool GameScene::isDelayOver(std::string& wait_node_name, int action_tag)
+bool GameScene::isDelayOver(const std::string& wait_node_name, int action_tag)
 {
     bool result = CCHelpers::isDelayOver(this, wait_node_name, action_tag);
     result ? m_logger->log("GameScene:: delay is over") : m_logger->log("GameScene:: delay is NOT over");
