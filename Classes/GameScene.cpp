@@ -156,7 +156,7 @@ bool GameScene::init()
     m_puck->setPosition(m_field->getCenter());
     game_layer->addChild(m_puck, 1);
 
-    const float PADDLE_RADIUS = 1.5 * PUCK_RADIUS;
+    const float PADDLE_RADIUS = 2 * PUCK_RADIUS;
 
     // human (lower)
     Rect PLAYER1_FIELDRECT = Rect(GAMEFIELDRECT.getMinX(), GAMEFIELDRECT.getMinY(), GAMEFIELDRECT.size.width, PADDLE_RADIUS + GAMEFIELDRECT.size.height / 2);
@@ -175,7 +175,8 @@ bool GameScene::init()
     assert(m_paddle1->getSprite()->getBoundingBox().size.width == 2 * PADDLE_RADIUS);
 
     //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
-    m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1, /*touch_margin*/PUCK_RADIUS);
+    m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1, /*touch_margin*/PUCK_RADIUS,
+                                                               /*touch_offset*/Vec2(0, PADDLE_RADIUS));
 
     m_paddle2 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());

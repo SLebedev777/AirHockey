@@ -35,13 +35,10 @@ namespace airhockey
 
     void TouchInputController::onTouchBegan(cocos2d::Touch* touch, Event* event)
     {
-        if (isTouchWithinPaddle(touch))
-        {
-            m_isMyPaddleGrabbed = true;
-            return;
-        }
-        m_isMyPaddleGrabbed = false;
-        sendStopPaddleEvent();
+        m_isMyPaddleGrabbed = true;
+        Vec2 touch_pos = Director::getInstance()->convertToGL(touch->getLocationInView());
+        touch_pos += m_touchOffset;
+        m_myPaddle->setPosition(touch_pos);
     }
 
     void TouchInputController::onTouchEnded(cocos2d::Touch* touch, Event* event)
@@ -52,13 +49,9 @@ namespace airhockey
 
     void TouchInputController::onTouchMoved(cocos2d::Touch* touch, Event* event)
     {
-        if (!m_isMyPaddleGrabbed)
-        {
-            return;
-        }
-
         Vec2 touch_pos = Director::getInstance()->convertToGL(touch->getLocationInView());
-        m_myPaddle->setPosition(touch_pos);
+        touch_pos += m_touchOffset;
+        m_myPaddle->setPositionImmideately(touch_pos);
     }
 
 
