@@ -28,7 +28,8 @@ namespace airhockey
 		Vec2 location = Vec2(m_centerX, m_centerY);
 		m_ccsSprite->setPosition(location);
 
-		auto paddle_physics_body = PhysicsBody::createCircle(m_radius, PHYSICSBODY_MATERIAL_DEFAULT);
+		auto paddle_material = PHYSICSBODY_MATERIAL_DEFAULT;
+		auto paddle_physics_body = PhysicsBody::createCircle(m_radius, paddle_material);
 		paddle_physics_body->setDynamic(true);
 		paddle_physics_body->setName(m_physicsBodyName);
 		m_ccsSprite->addComponent(paddle_physics_body);
@@ -39,7 +40,8 @@ namespace airhockey
 		m_ccnStick->addComponent(stick_physics_body);
 		m_ccnStick->setPosition(location);
 		m_joint = PhysicsJointFixed::construct(stick_physics_body, paddle_physics_body, location);
-		m_joint->setMaxForce(50000.0f * paddle_physics_body->getMass());  // TODO: define a constant
+		const float MAX_FORCE = 50000.0f * paddle_physics_body->getMass();
+		m_joint->setMaxForce(MAX_FORCE);
 		m_ccPhysicsWorld->addJoint(m_joint);
 
 		m_ccnParent->addChild(m_ccsSprite, 1);
