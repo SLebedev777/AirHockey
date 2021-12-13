@@ -165,6 +165,7 @@ bool GameScene::init()
     Rect PLAYER2_FIELDRECT = Rect(GAMEFIELDRECT.getMinX(), GAMEFIELDRECT.getMidY() - PADDLE_RADIUS, GAMEFIELDRECT.size.width, PADDLE_RADIUS + GAMEFIELDRECT.size.height / 2);
 
     _physicsWorld->setGravity(Vec2::ZERO);
+    _physicsWorld->setSpeed(1.0f);
 
     const float PADDLE_START_Y_CENTER_OFFSET = GOAL_GATE_SIZE.width / 2;
 
