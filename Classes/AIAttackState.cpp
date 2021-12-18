@@ -286,7 +286,7 @@ namespace airhockey
 		float puck_radius = m_puck->getBoundingBox().size.width / 2;
 		float paddle_radius = m_aiPaddle->getRadius();
 
-		float v_paddle_scalar = 1000.0f;
+		float v_paddle_scalar = 1200.0f;
 
 		if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x0_puck))
 		{

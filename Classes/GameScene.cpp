@@ -197,9 +197,15 @@ bool GameScene::init()
     const float MIN_ATTACK_RADIUS = 4 * PADDLE_RADIUS;
     const float PUCK_VEL_FOR_MAX_ATTACK_RADIUS = 70;
     const float PUCK_VEL_FOR_MIN_ATTACK_RADIUS = 1200;
+    const float PUCK_VEL_TANGENT_COEFF = 2;
 
     auto linear_attack_radius_func = [=](const Vec2& puck_vel) {
         float vel_scalar = puck_vel.length();
+
+        if (puck_vel.y < puck_vel.x * PUCK_VEL_TANGENT_COEFF)
+        {
+            return MIN_ATTACK_RADIUS;
+        }
 
         if (puck_vel.y <= 0.0f)
         {
