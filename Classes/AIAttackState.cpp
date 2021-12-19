@@ -178,7 +178,7 @@ namespace airhockey
 		float v_paddle_scalar = paddle_vel_scalar;
 		float alpha = 0.0f;
 		float z1, z2;
-		if (dx0.x < dx0.y)
+		if (abs(dx0.x) < abs(dx0.y))
 		{
 			float C = dx0.x / dx0.y;
 			float Cpow2 = C * C;
