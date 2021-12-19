@@ -114,7 +114,7 @@ namespace airhockey
 		cocos2d::Rect gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::UPPER).getRect();
 		float dist_threshold = puck_radius - 1;
 		float vel_threshold = 5;
-		float defense_time = 0.25f;
+		float defense_time = 0.2f;
 		Vec2 x_new_puck = x0_puck + defense_time * v_puck;
 		float max_y = m_field->getPlayRect().getMaxY() - paddle_radius;
 
