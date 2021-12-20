@@ -352,7 +352,7 @@ namespace airhockey
 		const float MIN_CORRIDOR_X = m_field->getCenter().x - CORRIDOR_WIDTH / 2;
 		const float MAX_CORRIDOR_X = m_field->getCenter().x + CORRIDOR_WIDTH / 2;
 		const float PADDLE_PREDICTED_PATH_LENGTH_X_THRESHOLD = m_field->getPlayRect().size.width / 2;
-		const float PREPARE_Y_OFFSET = paddle_radius * 4 + puck_radius;
+		const float PREPARE_Y_OFFSET = paddle_radius * 2 + puck_radius;
 
 		if (calcEncounter(v_paddle_scalar, t, x_new_paddle, x_new_puck))
 		{
