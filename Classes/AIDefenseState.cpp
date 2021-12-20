@@ -37,7 +37,7 @@ namespace airhockey
 				return true;
 			}
 
-			x_line_out = x0.x + (y_line - x0.y) * vel.x / vel.y;
+			x_line_out = x0.x + abs(y_line - x0.y) * vel.x / vel.y;
 			return true;
 				
 		}
@@ -106,6 +106,21 @@ namespace airhockey
 			return move_to_pyramid;
 		};
 
+		auto ai_move_along_pyramid_base_action = [this, x0_paddle](float defense_time) {
+			cocos2d::Rect gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::UPPER).getRect();
+			float puck_x_offset = m_puck->getPosition().x - m_field->getPlayRect().getMinX();
+			float frac = puck_x_offset / m_field->getPlayRect().size.width;
+			float pyramid_width = m_pyramid.pyramidRight.x - m_pyramid.pyramidLeft.x;
+			Vec2 defense_point(m_pyramid.pyramidLeft.x + frac * pyramid_width, m_pyramid.pyramidBase.y);
+
+			float time_frac = defense_point.distance(x0_paddle) / pyramid_width;
+			time_frac = time_frac > 1.0f ? 1.0f : time_frac;
+			time_frac = time_frac < 0.0f ? 0.0f : time_frac;
+			auto move_to_pyramid = cocos2d::MoveTo::create(defense_time * time_frac, defense_point);
+			return move_to_pyramid;
+		};
+
+
 		cocos2d::Action* defense_action = nullptr;
 
 		/*
@@ -139,6 +154,7 @@ namespace airhockey
 			{
 				getContext()->getLogger()->log("AIDefenseState::defense(): puck goes away from the AI gate. Move paddle to pyramid");
 				defense_action = ai_move_to_pyramid_action(defense_time);
+
 			}
 			else
 			{
@@ -157,14 +173,14 @@ namespace airhockey
 					else
 					{
 						getContext()->getLogger()->log("AIDefenseState::defense(): failed to close the puck's way to the gate. Move to pyramid base");
-						defense_action = MoveTo::create(defense_time, m_pyramid.pyramidBase);
+						defense_action = ai_move_along_pyramid_base_action(defense_time);
 					}
 				}
 				else
 				{
 					getContext()->getLogger()->log("AIDefenseState::defense(): puck goes towards the gate, but won't hit it. Move paddle to pyramid");
 
-					defense_action = ai_move_to_pyramid_action(defense_time);
+					defense_action = ai_move_along_pyramid_base_action(defense_time);
 				}
 			}
 		}
@@ -213,8 +229,6 @@ namespace airhockey
 			}
 		}
 
-		//getContext()->getLogger()->log("AIDefenseState::onEnter(): move to pyramid");
-		//defense_action = ai_move_to_pyramid_action(defense_time);
 		defense_action->setTag(m_defenseActionTag);
 
 		m_aiPaddle->getStick()->runAction(defense_action);
