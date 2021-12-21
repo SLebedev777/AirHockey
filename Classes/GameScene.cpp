@@ -88,55 +88,59 @@ bool GameScene::init()
     //
     auto game_layer = Layer::create();
  
-    auto background = cocos2d::LayerGradient::create(cocos2d::Color4B::BLUE, cocos2d::Color4B::ORANGE);
-    game_layer->addChild(background, 1);
-
     Rect GAMEFIELDRECT = Rect(frameCenter.x - m_currLevel.m_width / 2, 
                               frameCenter.y - m_currLevel.m_height / 2, 
                               m_currLevel.m_width, m_currLevel.m_height);
-    
+
+    auto field_background_layer = cocos2d::LayerGradient::create(cocos2d::Color4B(70, 70, 150, 255), cocos2d::Color4B(50, 50, 170, 255));
+    field_background_layer->setContentSize(GAMEFIELDRECT.size);
+
     GameFieldBuilder builder = GameFieldBuilder();
+
     // building steps
-    builder.addPlayRect(GAMEFIELDRECT);
+    builder.addPlayRect(GAMEFIELDRECT, field_background_layer);
     
-    const int SIDE_WIDTH = 40;
-    const int SIDE_HEIGHT = 40;
-    const float GAP = 10;
+    const int SIDE_WIDTH = 20;
+    const int SIDE_HEIGHT = 20;
+    const float GAP = 0;
     const float PUCK_RADIUS = 50;
     const Size GOAL_GATE_SIZE = Size(8 * PUCK_RADIUS, 1000);  // do gate height large enough to catch puck even on high speed intersecting gate
     const Size LONG_PART_SIZE = Size(SIDE_WIDTH, GAMEFIELDRECT.size.height / 2 - 2 * GAP);
     const Size SHORT_PART_SIZE = Size((GAMEFIELDRECT.size.width - GOAL_GATE_SIZE.width)/2 - GAP, SIDE_HEIGHT);
 
+    Color4F SIDE_COLOR = Color4F(0.5, 0.6, 0.15, 1.0);
     GameFieldSidePtr left_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::UP);
-    left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, Color4F::GREEN), GAP);
-    left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, Color4F::RED), 2 * GAP);
+    left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, SIDE_COLOR), GAP);
+    left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, SIDE_COLOR), 2 * GAP);
     builder.addSide(std::move(left_long_side));
 
     GameFieldSidePtr upper_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::RIGHT);
-    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::YELLOW), GAP);
-    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::WHITE), GOAL_GATE_SIZE.width);
+    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, SIDE_COLOR), GAP);
+    upper_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, SIDE_COLOR), GOAL_GATE_SIZE.width);
     builder.addSide(std::move(upper_short_side));
 
     GameFieldSidePtr right_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::DOWN);
-    right_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, Color4F::GREEN), GAP);
-    right_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, Color4F::RED), 2 * GAP);
+    right_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, SIDE_COLOR), GAP);
+    right_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, SIDE_COLOR), 2 * GAP);
     builder.addSide(std::move(right_long_side));
 
     GameFieldSidePtr lower_short_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::LEFT);
-    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::YELLOW), GAP);
-    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, Color4F::WHITE), GOAL_GATE_SIZE.width);
+    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, SIDE_COLOR), GAP);
+    lower_short_side->addSidePart(std::make_unique<GameFieldSidePart>(SHORT_PART_SIZE, SIDE_COLOR), GOAL_GATE_SIZE.width);
     builder.addSide(std::move(lower_short_side));
     
-    const Size CORNER_SIZE = Size(SIDE_WIDTH * 2, SIDE_WIDTH * 2);
-    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::BLACK), GameField::GameFieldPlayRectCornerType::BOTTOM_LEFT);
-    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::WHITE), GameField::GameFieldPlayRectCornerType::TOP_LEFT);
-    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::BLACK), GameField::GameFieldPlayRectCornerType::TOP_RIGHT);
-    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, Color4F::WHITE), GameField::GameFieldPlayRectCornerType::BOTTOM_RIGHT);
+    const Size CORNER_SIZE = Size(SIDE_WIDTH, SIDE_WIDTH);
+    Color4F CORNER_COLOR = SIDE_COLOR;
+    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, CORNER_COLOR), GameField::GameFieldPlayRectCornerType::BOTTOM_LEFT);
+    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, CORNER_COLOR), GameField::GameFieldPlayRectCornerType::TOP_LEFT);
+    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, CORNER_COLOR), GameField::GameFieldPlayRectCornerType::TOP_RIGHT);
+    builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, CORNER_COLOR), GameField::GameFieldPlayRectCornerType::BOTTOM_RIGHT);
     
     builder.addGoalGate(std::make_unique<GoalGate>(GOAL_GATE_SIZE, GoalGateLocationType::LOWER));
     builder.addGoalGate(std::make_unique<GoalGate>(GOAL_GATE_SIZE, GoalGateLocationType::UPPER));
 
-    builder.addCentralCircleMarking(CentralCircleMarkingSettings(GOAL_GATE_SIZE.width / 2, 3, Color4F::MAGENTA, Color4F::GRAY));
+    builder.addCentralCircleMarking(CentralCircleMarkingSettings(GOAL_GATE_SIZE.width / 2, 3, Color4F(0, 0, 0, 0), Color4F::GRAY));
+    builder.addCentralLine(Color4F::GRAY, 3);
 
     builder.addGoalGateMarking(GoalGateMarkingSettings(GOAL_GATE_SIZE.width, 3, Color4F::MAGENTA, Color4F::GRAY, 
         GoalGateMarkingSettings::GoalGateMarkingShapeType::RECTANGLE), Vec2::ZERO);
@@ -153,7 +157,6 @@ bool GameScene::init()
     puck_body->setAngularDamping(0.2f);
     puck_body->setName("puck_body");
     m_puck->addComponent(puck_body);
-    m_puck->setPosition(m_field->getCenter());
     game_layer->addChild(m_puck, 1);
 
     const float PADDLE_RADIUS = 2 * PUCK_RADIUS;

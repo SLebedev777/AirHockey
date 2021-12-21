@@ -259,12 +259,13 @@ namespace airhockey
 
 	public:
 		GameFieldBuilder(); // v
-		void addPlayRect(const cocos2d::Rect& rect); // v
+		void addPlayRect(const cocos2d::Rect& rect, cocos2d::Node* background = nullptr); // v
 		void addSide(GameFieldSidePtr side); // v
 		void addCorner(GameFieldSidePartPtr corner, const GameField::GameFieldPlayRectCornerType& play_rect_corner_type);  // v
 		void addGoalGate(GoalGatePtr gate);
 		void addGoalGateMarking(const GoalGateMarkingSettings& settings, const cocos2d::Vec2& pos);
 		void addCentralCircleMarking(const CentralCircleMarkingSettings& settings);  // v
+		void addCentralLine(const cocos2d::Color4F& color, float width);
 		GameFieldPtr getResult();  // v
 
 	private:

@@ -295,10 +295,16 @@ namespace airhockey
 		m_field->m_ccGameFieldNode = cocos2d::Node::create();
 	}
 
-	void GameFieldBuilder::addPlayRect(const cocos2d::Rect& rect)
+	void GameFieldBuilder::addPlayRect(const cocos2d::Rect& rect, cocos2d::Node* background)
 	{
 		m_field->m_playRect = rect;
 		m_field->m_center = Vec2(rect.getMidX(), rect.getMidY());
+		if (background)
+		{
+			background->setAnchorPoint(Vec2(0.0f, 0.0f));
+			background->setPosition(m_field->getPlayRect().origin);
+			m_field->m_ccGameFieldNode->addChild(background, 0, "play_rect_background");
+		}
 	}
 
 	void GameFieldBuilder::addSide(GameFieldSidePtr side)
@@ -395,6 +401,17 @@ namespace airhockey
 		m_field->m_centralCircleMarking = std::make_unique<CentralCircleMarking>(settings);
 		m_field->m_centralCircleMarking->setPosition(m_field->getCenter());
 		m_field->m_centralCircleMarking->setParent(m_field->m_ccGameFieldNode);
+	}
+
+	void GameFieldBuilder::addCentralLine(const cocos2d::Color4F& color, float width)
+	{
+		auto node = DrawNode::create();
+		node->setLineWidth(width);
+		auto rect = m_field->getPlayRect();
+		Vec2 src = Vec2(rect.getMinX(), rect.getMidY());
+		Vec2 dst = Vec2(rect.getMaxX(), rect.getMidY());
+		node->drawLine(src, dst, color);
+		m_field->m_ccGameFieldNode->addChild(node, 1);
 	}
 
 	GameFieldPtr GameFieldBuilder::getResult()
