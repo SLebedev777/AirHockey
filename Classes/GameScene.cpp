@@ -245,17 +245,19 @@ bool GameScene::init()
     
     auto hud_layer = LayerColor::create(Color4B(0, 0, 0, 0));
 
-    auto label_score1 = Label::createWithTTF("0", "fonts/arial.ttf", 72);
-    label_score1->setRotation(-90.f);
-    label_score1->setAnchorPoint(Vec2(0.5f, 0.5f));
-    m_labelScore1StartPos = frameCenter - Vec2(0, PUCK_RADIUS);
+    std::string score_font_filename("fonts/Abduction.ttf");
+    const float score_font_size = 72;
+    auto label_score1 = Label::createWithTTF("0", score_font_filename, score_font_size);
+    label_score1->setClipMarginEnabled(true);
+    label_score1->setRotation(90.f);
+    m_labelScore1StartPos = frameCenter - Vec2(0, 2*PUCK_RADIUS);
     label_score1->setPosition(m_labelScore1StartPos);
     hud_layer->addChild(label_score1, 1, TAG_HUD_LAYER_SCORE1_STRING);
 
-    auto label_score2 = Label::createWithTTF("0", "fonts/arial.ttf", 72);
-    label_score2->setRotation(-90.f);
-    label_score2->setAnchorPoint(Vec2(0.5f, 0.5f));
-    m_labelScore2StartPos = frameCenter + Vec2(0, PUCK_RADIUS);
+    auto label_score2 = Label::createWithTTF("0", score_font_filename, score_font_size);
+    label_score1->setClipMarginEnabled(true);
+    label_score2->setRotation(90.f);
+    m_labelScore2StartPos = frameCenter + Vec2(0, 2*PUCK_RADIUS);
     label_score2->setPosition(m_labelScore2StartPos);
     hud_layer->addChild(label_score2, 1, TAG_HUD_LAYER_SCORE2_STRING);
 
