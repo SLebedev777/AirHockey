@@ -3,6 +3,7 @@
 
 namespace CCHelpers
 {
+	USING_NS_CC;
 
 	void CallCCNodeMethodRecursively(cocos2d::Node* node, std::function<void(cocos2d::Node*)> func)
 	{
@@ -39,5 +40,22 @@ namespace CCHelpers
 		if (!parent)
 			return true;
 		return !parent->getChildByName(wait_node_name)->getActionByTag(action_tag);
+	}
+
+	bool saveTransformedSpriteImageToFile(const std::string& src_filename,
+		std::function<cocos2d::Sprite* (const std::string&)> transform_func, const std::string& dst_filename)
+	{
+		Sprite* dst_sprite = transform_func(src_filename);
+		dst_sprite->setAnchorPoint(Vec2(0.5, 0.5));
+		Size size = dst_sprite->getContentSize();
+		dst_sprite->setPosition(size.width / 2, size.height / 2);
+		RenderTexture* renderTexture = RenderTexture::create(size.width, size.height, backend::PixelFormat::RGBA8888);
+		renderTexture->setKeepMatrix(false);
+		renderTexture->begin();
+		dst_sprite->visit();
+		renderTexture->end();
+		// will be saved by Cocos to platform dependent writable directory
+		// for ex, for Win32 it will be Users/<CurrentUser>/AppData/Local/airhockey/
+		return renderTexture->saveToFile(dst_filename, Image::Format::PNG);
 	}
 }

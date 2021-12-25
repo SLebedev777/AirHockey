@@ -160,6 +160,34 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
     FileUtils::getInstance()->setSearchPaths(searchPaths);
 
+//#define GENERATE_UI_ICONS_IMAGE_FILES
+#if defined COCOS2D_DEBUG && defined GENERATE_UI_ICONS_IMAGE_FILES
+
+    auto make_pressed_button = [](const std::string& src_filename)->Sprite* {
+        Sprite* spr = Sprite::create(src_filename);
+        spr->setColor(Color3B(200, 200, 200));
+        return spr;
+    };
+
+    std::vector<std::string> ui_icons_filenames = {
+        "audioOff",
+        "audioOn",
+        "exit",
+        "exitRight",
+        "gear",
+        "home",
+        "pause",
+        "right"
+    };
+    std::string ext(".png");
+    for (const auto& filename : ui_icons_filenames)
+    {
+        std::string path("HD/ui/" + filename + ext);
+        CCHelpers::saveTransformedSpriteImageToFile(path, make_pressed_button, filename + "_pressed" + ext);
+    }
+#endif
+
+
     register_all_packages();
 
     // create a scene. it's an autorelease object
