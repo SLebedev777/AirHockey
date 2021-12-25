@@ -113,11 +113,11 @@ namespace airhockey
 		m_node->setAnchorPoint(anchor_point);
 	}
 
-	void GameFieldSidePart::addPhysicsBody(const cocos2d::PhysicsMaterial& material)
+	void GameFieldSidePart::addPhysicsBody(PhysicsBody* body, const cocos2d::PhysicsMaterial& material)
 	{
-		PhysicsBody* box = PhysicsBody::createEdgeBox(m_node->getContentSize(), material);
-		box->setDynamic(false);
-		m_node->addComponent(box);
+		PhysicsBody* physics_body = (body != nullptr) ? body : PhysicsBody::createEdgeBox(m_node->getContentSize(), material);
+		physics_body->setDynamic(false);
+		m_node->addComponent(physics_body);
 	}
 
 	/// <summary>

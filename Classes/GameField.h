@@ -133,7 +133,8 @@ namespace airhockey
 		cocos2d::Rect getRect() const { return m_node->getBoundingBox(); }  // v
 		void setAnchorPoint(const cocos2d::Vec2& anchor_point);  // v
 		void setParent(cocos2d::Node* parent);  // v
-		void addPhysicsBody(const cocos2d::PhysicsMaterial& material = cocos2d::PhysicsMaterial(0.1f, 1.0f, 0.0f));  // v
+		void addPhysicsBody(cocos2d::PhysicsBody* body = nullptr, 
+			const cocos2d::PhysicsMaterial& material = cocos2d::PhysicsMaterial(0.1f, 1.0f, 0.0f));  // v
 
 	private:
 		cocos2d::Node* m_node = nullptr;
