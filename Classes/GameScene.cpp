@@ -155,6 +155,7 @@ bool GameScene::init()
     auto puck_body = PhysicsBody::createCircle(m_puck->getBoundingBox().size.width / 2, puck_material);
     puck_body->setLinearDamping(0.15f); // simulate friction when puck glides on table surface, to prevent endless motion
     puck_body->setAngularDamping(0.2f);
+    puck_body->setVelocityLimit(3500);
     puck_body->setName("puck_body");
     m_puck->addComponent(puck_body);
     game_layer->addChild(m_puck, 1);
@@ -169,6 +170,7 @@ bool GameScene::init()
 
     _physicsWorld->setGravity(Vec2::ZERO);
     _physicsWorld->setSpeed(1.0f);
+    _physicsWorld->setUpdateRate(0.5f);
 
     const float PADDLE_START_Y_CENTER_OFFSET = GOAL_GATE_SIZE.width / 2;
 
