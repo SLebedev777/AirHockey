@@ -40,7 +40,6 @@ bool UIButtonMenu::init()
 		auto button_listener = EventListenerCustom::create("button_pressed_" + std::to_string(i),
 			[=](EventCustom* event) { callback(nullptr); });
 		m_dispatcher->addEventListenerWithSceneGraphPriority(button_listener, m_parent);
-		button->setScale(0.8);
 		i++;
 	}
 	if (!m_focusedButtonActionCallback)
@@ -129,7 +128,6 @@ void UIButtonMenu::update()
 	if (old_id != m_currButtonId)
 	{
 		m_buttonsCallbacks[old_id].first->stopAllActions();
-		m_buttonsCallbacks[old_id].first->setScale(0.8);
 		if (!m_focusedButtonActionCallback)
 		{
 			m_buttonsCallbacks[m_currButtonId].first->runAction(defaultFocusedButtonActionCallback());
@@ -144,8 +142,9 @@ void UIButtonMenu::update()
 
 Action* UIButtonMenu::defaultFocusedButtonActionCallback()
 {
-	auto bouncer = cocos2d::ScaleTo::create(0.2f, 0.9f);
-	auto unbouncer = cocos2d::ScaleTo::create(0.2f, 1.0f);
+	float scale_by = 0.8f;
+	auto bouncer = cocos2d::ScaleBy::create(0.2f, scale_by);
+	auto unbouncer = cocos2d::ScaleBy::create(0.2f, 1.0f / scale_by);
 	auto delay = cocos2d::DelayTime::create(3);
 	auto seq = cocos2d::RepeatForever::create(cocos2d::Sequence::create(bouncer, unbouncer, bouncer, unbouncer, delay, nullptr));
 	return seq;
