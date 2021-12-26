@@ -207,11 +207,6 @@ bool GameScene::init()
     auto linear_attack_radius_func = [=](const Vec2& puck_vel) {
         float vel_scalar = puck_vel.length();
 
-        if (puck_vel.y < puck_vel.x * PUCK_VEL_TANGENT_COEFF)
-        {
-            return MIN_ATTACK_RADIUS;
-        }
-
         if (puck_vel.y <= 0.0f)
         {
             return MAX_ATTACK_RADIUS;
@@ -221,7 +216,7 @@ bool GameScene::init()
         {
             return MAX_ATTACK_RADIUS;
         }
-        else if (vel_scalar > PUCK_VEL_FOR_MIN_ATTACK_RADIUS)
+        else if (vel_scalar > PUCK_VEL_FOR_MIN_ATTACK_RADIUS || puck_vel.y < puck_vel.x * PUCK_VEL_TANGENT_COEFF)
         {
             return MIN_ATTACK_RADIUS;
         }
