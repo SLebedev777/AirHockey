@@ -34,27 +34,42 @@ bool GameMenuLayer::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     auto s = Director::getInstance()->getWinSize();
+    Vec2 center = Vec2(s.width / 2, s.height / 2);
 
-    auto button_resume = ui::Button::create("button_green.png", "button_green.png");
-    button_resume->setTitleText("Resume");
-    button_resume->setTitleFontName(FONT_FILENAME_MENU);
-    button_resume->setTitleFontSize(32);
-    button_resume->setPosition(Vec2(s.width / 2, s.height / 2));
-    this->addChild(button_resume);
+    auto button_resume = ui::Button::create("HD/ui/right.png", "HD/ui/right_pressed.png");
+    button_resume->setScale(2.0f);
+    button_resume->addClickEventListener([=](Ref* sender) { menuResumeCallback(sender); });
+    button_resume->runAction(UIButtonMenu::defaultFocusedButtonActionCallback());
 
-    auto button_quit = ui::Button::create("button_red.png", "button_red.png");
-    button_quit->setTitleText("Main Menu");
-    button_quit->setTitleFontName(FONT_FILENAME_MENU);
-    button_quit->setTitleFontSize(24);
-    button_quit->setPosition(Vec2(s.width / 2, s.height / 2 - button_resume->getContentSize().height - 20));
-    this->addChild(button_quit);
+    auto button_toggle_audio = ui::CheckBox::create("HD/ui/audioOn.png", "HD/ui/cross.png");
+    button_toggle_audio->setScale(1.5f);
 
-    std::vector<std::pair<ui::Button*, ui::Widget::ccWidgetClickCallback>> buttons_callbacks;
-    buttons_callbacks.push_back({ button_resume, [=](Ref* sender) { menuResumeCallback(sender); } });
-    buttons_callbacks.push_back({ button_quit, [=](Ref* sender) { menuBackToMainMenuCallback(sender); } });
+    auto button_quit = ui::Button::create("HD/ui/home.png", "HD/ui/home_pressed.png");
+    button_quit->setScale(1.5f);
+    button_quit->addClickEventListener([=](Ref* sender) { menuBackToMainMenuCallback(sender); });
 
-    UIButtonMenu* menu = UIButtonMenu::create(buttons_callbacks, this, this->getEventDispatcher());
-    this->addChild(menu);
+    ui::Layout* layout = ui::Layout::create();
+    layout->setLayoutType(ui::Layout::Type::VERTICAL);
+    layout->setContentSize(Size(400, 500));
+    layout->setBackGroundColor(Color3B::MAGENTA);
+    layout->setBackGroundColorOpacity(100);
+    layout->setBackGroundColorType(ui::Layout::BackGroundColorType::SOLID);
+
+    ui::LinearLayoutParameter* linerP1 = ui::LinearLayoutParameter::create();
+    linerP1->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
+
+    button_resume->setLayoutParameter(linerP1);
+    button_toggle_audio->setLayoutParameter(linerP1);
+    button_quit->setLayoutParameter(linerP1);
+
+    layout->addChild(button_resume);
+    layout->addChild(button_toggle_audio);
+    layout->addChild(button_quit);
+
+    layout->setAnchorPoint(Vec2(0.5, 0.5));
+    layout->setPosition(center);
+
+    this->addChild(layout, 1);
 
     return true;
 }
