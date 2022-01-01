@@ -9,9 +9,9 @@ class GameScene;
 class GameEndMenuLayer : public cocos2d::LayerColor
 {
 public:
-    static GameEndMenuLayer* create(GameScene* from);
+    static GameEndMenuLayer* create(GameScene* from, cocos2d::Label* title = nullptr);
 
-    GameEndMenuLayer(GameScene* from);
+    GameEndMenuLayer(GameScene* from, cocos2d::Label* title = nullptr);
     ~GameEndMenuLayer() {}
 
     bool init() override;
@@ -23,6 +23,7 @@ public:
 
 private:
     GameScene* game_scene = nullptr;
+    cocos2d::Label* m_title = nullptr;
 };
 
 #endif // __GAMEENDMENULAYER_H__

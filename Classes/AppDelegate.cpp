@@ -25,6 +25,7 @@
 #include "AppDelegate.h"
 #include "GameLevel.h"
 #include "GameScene.h"
+#include "CCHelpers.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -177,7 +178,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
         "gear",
         "home",
         "pause",
-        "right"
+        "right",
+        "retry"
     };
     std::string ext(".png");
     for (const auto& filename : ui_icons_filenames)

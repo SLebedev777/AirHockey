@@ -409,7 +409,9 @@ void GameScene::onGameEndMenuOpen(Ref* sender)
     Director::getInstance()->getScheduler()->pauseTarget(this);
     this->getPhysicsWorld()->setAutoStep(false);
 
-    auto game_end_menu_layer = GameEndMenuLayer::create(this);
+    auto label_result = Label::createWithTTF(m_score1 > m_score2 ? "YOU WIN!" : "YOU LOSE", "fonts/Abduction.ttf", 128);
+    label_result->setTextColor(m_score1 > m_score2 ? Color4B::GREEN : Color4B::RED);
+    auto game_end_menu_layer = GameEndMenuLayer::create(this, label_result);
     this->addChild(game_end_menu_layer, 255, TAG_GAME_END_MENU_LAYER);
 }
 

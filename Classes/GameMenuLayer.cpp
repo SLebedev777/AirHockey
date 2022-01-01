@@ -58,9 +58,9 @@ bool GameMenuLayer::init()
     ui::LinearLayoutParameter* liner = ui::LinearLayoutParameter::create();
     liner->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
 
-    std::string score_font_filename("fonts/Abduction.ttf");
-    const float score_font_size = 64;
-    auto text_title = ui::Text::create("PAUSED", score_font_filename, score_font_size);
+    std::string font_filename("fonts/Abduction.ttf");
+    const float font_size = 64;
+    auto text_title = ui::Text::create("PAUSED", font_filename, font_size);
     ui::LinearLayoutParameter* liner_top = ui::LinearLayoutParameter::create();
     liner_top->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
     liner_top->setMargin(ui::Margin(0, 25, 0, 20));

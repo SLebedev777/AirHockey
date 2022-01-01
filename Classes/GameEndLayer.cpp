@@ -7,14 +7,15 @@
 USING_NS_CC;
 
 
-GameEndMenuLayer::GameEndMenuLayer(GameScene* from) : 
-    game_scene(from)
+GameEndMenuLayer::GameEndMenuLayer(GameScene* from, cocos2d::Label* title) :
+    game_scene(from),
+    m_title(title)
 {
 }
 
-GameEndMenuLayer* GameEndMenuLayer::create(GameScene* from)
+GameEndMenuLayer* GameEndMenuLayer::create(GameScene* from, cocos2d::Label* title)
 {
-    GameEndMenuLayer* pRet = new (std::nothrow) GameEndMenuLayer(from);
+    GameEndMenuLayer* pRet = new (std::nothrow) GameEndMenuLayer(from, title);
     if (pRet && pRet->init())
     {
         pRet->autorelease();
@@ -34,27 +35,72 @@ bool GameEndMenuLayer::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     auto s = Director::getInstance()->getWinSize();
+    Vec2 center = Vec2(s.width / 2, s.height / 2);
 
-    auto button_resume = ui::Button::create("button_green.png", "button_green.png");
-    button_resume->setTitleText("Another game");
-    button_resume->setTitleFontName(FONT_FILENAME_MENU);
-    button_resume->setTitleFontSize(32);
-    button_resume->setPosition(Vec2(s.width / 2, s.height / 2));
-    this->addChild(button_resume);
+    std::string font_filename("fonts/Abduction.ttf");
 
-    auto button_quit = ui::Button::create("button_red.png", "button_red.png");
-    button_quit->setTitleText("Main Menu");
-    button_quit->setTitleFontName(FONT_FILENAME_MENU);
-    button_quit->setTitleFontSize(24);
-    button_quit->setPosition(Vec2(s.width / 2, s.height / 2 - button_resume->getContentSize().height - 20));
-    this->addChild(button_quit);
+    Color3B ui_color_secondary = Color3B(230, 220, 250);
+    Color3B ui_color_primary = Color3B(190, 255, 255);
 
-    std::vector<std::pair<ui::Button*, ui::Widget::ccWidgetClickCallback>> buttons_callbacks;
-    buttons_callbacks.push_back({ button_resume, [=](Ref* sender) { menuContinueCallback(sender); } });
-    buttons_callbacks.push_back({ button_quit, [=](Ref* sender) { menuBackToMainMenuCallback(sender); } });
+    auto label = m_title;
+    label->setAnchorPoint(Vec2(0.5, 0.5));
+    label->setPosition(center + Vec2(0, visibleSize.height / 4));
+    auto seq = []() {
+        auto stretch = ScaleBy::create(0.0f, 20, 1, 1);
+        auto squeeze = ScaleTo::create(0.5f, 1);
+        return Sequence::create(stretch, squeeze, nullptr);
+    };
+    label->runAction(seq());
+    this->addChild(label);
 
-    UIButtonMenu* menu = UIButtonMenu::create(buttons_callbacks, this, this->getEventDispatcher());
-    this->addChild(menu);
+    auto button_resume = ui::Button::create("HD/ui/retry.png", "HD/ui/retry_pressed.png");
+    button_resume->setScale(2.0f);
+    button_resume->addClickEventListener([=](Ref* sender) { menuContinueCallback(sender); });
+    button_resume->runAction(UIButtonMenu::defaultFocusedButtonActionCallback());
+
+    auto button_quit = ui::Button::create("HD/ui/home.png", "HD/ui/home_pressed.png");
+    button_quit->setScale(1.5f);
+    button_quit->addClickEventListener([=](Ref* sender) { menuBackToMainMenuCallback(sender); });
+
+    ui::Layout* layout = ui::Layout::create();
+    layout->setLayoutType(ui::Layout::Type::VERTICAL);
+    layout->setContentSize(Size(400, 500));
+    layout->setBackGroundColor(Color3B(50, 0, 50), Color3B(20, 0, 20));
+    layout->setBackGroundColorOpacity(220);
+    layout->setBackGroundColorType(ui::Layout::BackGroundColorType::GRADIENT);
+
+    ui::LinearLayoutParameter* liner = ui::LinearLayoutParameter::create();
+    liner->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
+
+    const float font_size = 64;
+    auto text_title = ui::Text::create("RETRY?", font_filename, font_size);
+    ui::LinearLayoutParameter* liner_top = ui::LinearLayoutParameter::create();
+    liner_top->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
+    liner_top->setMargin(ui::Margin(0, 25, 0, 20));
+    text_title->setLayoutParameter(liner_top);
+
+    button_resume->setLayoutParameter(liner);
+    button_quit->setLayoutParameter(liner);
+
+    button_resume->setColor(ui_color_primary);
+    button_quit->setColor(ui_color_secondary);
+
+    layout->addChild(text_title);
+    layout->addChild(button_resume);
+    layout->addChild(button_quit);
+
+    Rect layout_rect = layout->getBoundingBox();
+    DrawNode* border = DrawNode::create();
+    Color4F border_color = Color4F(ui_color_primary); // Color4F(Color3B(140, 90, 240));
+    border->setLineWidth(5);
+    border->drawRect(layout_rect.origin, layout_rect.origin + layout_rect.size, border_color);
+    layout->addChild(border, 1);
+
+    layout->setAnchorPoint(Vec2(0.5, 0.5));
+    layout->setPosition(center);
+
+    this->addChild(layout, 1);
+
 
     return true;
 }
