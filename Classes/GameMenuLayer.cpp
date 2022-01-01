@@ -50,17 +50,25 @@ bool GameMenuLayer::init()
 
     ui::Layout* layout = ui::Layout::create();
     layout->setLayoutType(ui::Layout::Type::VERTICAL);
-    layout->setContentSize(Size(400, 500));
+    layout->setContentSize(Size(400, 600));
     layout->setBackGroundColor(Color3B(50, 0, 50), Color3B(20, 0, 20));
     layout->setBackGroundColorOpacity(220);
     layout->setBackGroundColorType(ui::Layout::BackGroundColorType::GRADIENT);
 
-    ui::LinearLayoutParameter* linerP1 = ui::LinearLayoutParameter::create();
-    linerP1->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
+    ui::LinearLayoutParameter* liner = ui::LinearLayoutParameter::create();
+    liner->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
 
-    button_resume->setLayoutParameter(linerP1);
-    button_toggle_audio->setLayoutParameter(linerP1);
-    button_quit->setLayoutParameter(linerP1);
+    std::string score_font_filename("fonts/Abduction.ttf");
+    const float score_font_size = 64;
+    auto text_title = ui::Text::create("PAUSED", score_font_filename, score_font_size);
+    ui::LinearLayoutParameter* liner_top = ui::LinearLayoutParameter::create();
+    liner_top->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
+    liner_top->setMargin(ui::Margin(0, 25, 0, 20));
+    text_title->setLayoutParameter(liner_top);
+
+    button_resume->setLayoutParameter(liner);
+    button_toggle_audio->setLayoutParameter(liner);
+    button_quit->setLayoutParameter(liner);
 
     Color3B ui_color_secondary = Color3B(230, 220, 250);
     Color3B ui_color_primary = Color3B(190, 255, 255);
@@ -68,6 +76,7 @@ bool GameMenuLayer::init()
     button_toggle_audio->setColor(ui_color_secondary);
     button_quit->setColor(ui_color_secondary);
 
+    layout->addChild(text_title);
     layout->addChild(button_resume);
     layout->addChild(button_toggle_audio);
     layout->addChild(button_quit);
