@@ -51,9 +51,9 @@ bool GameMenuLayer::init()
     ui::Layout* layout = ui::Layout::create();
     layout->setLayoutType(ui::Layout::Type::VERTICAL);
     layout->setContentSize(Size(400, 500));
-    layout->setBackGroundColor(Color3B::MAGENTA);
-    layout->setBackGroundColorOpacity(100);
-    layout->setBackGroundColorType(ui::Layout::BackGroundColorType::SOLID);
+    layout->setBackGroundColor(Color3B(50, 0, 50), Color3B(20, 0, 20));
+    layout->setBackGroundColorOpacity(220);
+    layout->setBackGroundColorType(ui::Layout::BackGroundColorType::GRADIENT);
 
     ui::LinearLayoutParameter* linerP1 = ui::LinearLayoutParameter::create();
     linerP1->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
@@ -62,14 +62,29 @@ bool GameMenuLayer::init()
     button_toggle_audio->setLayoutParameter(linerP1);
     button_quit->setLayoutParameter(linerP1);
 
+    Color3B ui_color_secondary = Color3B(230, 220, 250);
+    Color3B ui_color_primary = Color3B(190, 255, 255);
+    button_resume->setColor(ui_color_primary);
+    button_toggle_audio->setColor(ui_color_secondary);
+    button_quit->setColor(ui_color_secondary);
+
     layout->addChild(button_resume);
     layout->addChild(button_toggle_audio);
     layout->addChild(button_quit);
+
+    Rect layout_rect = layout->getBoundingBox();
+    DrawNode* border = DrawNode::create();
+    Color4F border_color = Color4F(ui_color_primary); // Color4F(Color3B(140, 90, 240));
+    border->setLineWidth(5);
+    border->drawRect(layout_rect.origin, layout_rect.origin + layout_rect.size, border_color);
+    layout->addChild(border, 1);
 
     layout->setAnchorPoint(Vec2(0.5, 0.5));
     layout->setPosition(center);
 
     this->addChild(layout, 1);
+
+
 
     return true;
 }
