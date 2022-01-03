@@ -174,8 +174,9 @@ bool GameScene::init()
 
     const float PADDLE_START_Y_CENTER_OFFSET = GOAL_GATE_SIZE.width / 2;
 
-    m_paddle1 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMinY() + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
+    m_paddle1 = std::make_shared<Paddle>("paddle_gimp.png", m_field->getCenter().x, m_field->getPlayRect().getMinY() + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
+    m_paddle1->getSprite()->setColor(Color3B::RED);
 
     assert(m_paddle1->getSprite()->getBoundingBox().size.width == 2 * PADDLE_RADIUS);
 
@@ -183,8 +184,9 @@ bool GameScene::init()
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1, /*touch_margin*/PUCK_RADIUS,
                                                                /*touch_offset*/Vec2(0, PADDLE_RADIUS));
 
-    m_paddle2 = std::make_shared<Paddle>("paddle.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
+    m_paddle2 = std::make_shared<Paddle>("paddle_gimp.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());
+    m_paddle2->getSprite()->setColor(Color3B(120, 220, 100));
 
     //m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
 
