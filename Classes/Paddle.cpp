@@ -32,6 +32,7 @@ namespace airhockey
 		auto paddle_physics_body = PhysicsBody::createCircle(m_radius, paddle_material);
 		paddle_physics_body->setDynamic(true);
 		paddle_physics_body->setName(m_physicsBodyName);
+		paddle_physics_body->setAngularVelocityLimit(0.0f); // don't allow paddle to rotate
 		m_ccsSprite->addComponent(paddle_physics_body);
 
 		auto stick_physics_body = PhysicsBody::create(PHYSICS_INFINITY, PHYSICS_INFINITY);
