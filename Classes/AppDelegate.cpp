@@ -25,6 +25,7 @@
 #include "AppDelegate.h"
 #include "GameLevel.h"
 #include "GameScene.h"
+#include "MainMenuScene.h"
 #include "CCHelpers.h"
 
 // #define USE_AUDIO_ENGINE 1
@@ -192,14 +193,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     register_all_packages();
 
-    // create a scene. it's an autorelease object
-    float level_width = designResolutionSize.width * 0.9;
-    float level_height = level_width * 16 / 9;
-    airhockey::GameLevel level = airhockey::GameLevel(0, level_width, level_height);
-    auto scene = GameScene::createScene(level);
-
     // run
-    director->runWithScene(scene);
+    director->runWithScene(MainMenuScene::create());
 
     return true;
 }
