@@ -32,7 +32,7 @@ namespace airhockey
 		IPlayerInputController(IPlayerInputController& other);
 
 		virtual void bindInputListeners() = 0;  // bind device- or agent-specific events to virtual events
-		virtual ~IPlayerInputController() {}
+		virtual ~IPlayerInputController();
 		std::string makeCustomEventName(const std::string& input_action_event_name);
 		// bind virtual input event to owner's callback
 		void bindActionEventListener(const std::string& input_action_event_name, const std::function<void(cocos2d::EventCustom*)>& callback);
@@ -43,6 +43,7 @@ namespace airhockey
 		cocos2d::EventDispatcher* m_eventDispatcher = nullptr;
 		std::string m_name;
 		PaddlePtr m_myPaddle = nullptr;
+		std::vector<std::string> m_customEventsNames;
 	};
 
 	typedef std::shared_ptr<IPlayerInputController> IPlayerInputControllerPtr;

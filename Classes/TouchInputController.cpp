@@ -7,13 +7,18 @@ namespace airhockey
 
     void TouchInputController::bindInputListeners()
     {
-        auto touch_listener = EventListenerTouchOneByOne::create();
-        touch_listener->setSwallowTouches(true);
-        touch_listener->onTouchBegan = [this](Touch* touch, Event* event) { onTouchBegan(touch, event); return true; };
-        touch_listener->onTouchMoved = [this](Touch* touch, Event* event) { onTouchMoved(touch, event); };
-        touch_listener->onTouchEnded = [this](Touch* touch, Event* event) { onTouchEnded(touch, event); };
+        m_listener = EventListenerTouchOneByOne::create();
+        m_listener->setSwallowTouches(true);
+        m_listener->onTouchBegan = [this](Touch* touch, Event* event) { onTouchBegan(touch, event); return true; };
+        m_listener->onTouchMoved = [this](Touch* touch, Event* event) { onTouchMoved(touch, event); };
+        m_listener->onTouchEnded = [this](Touch* touch, Event* event) { onTouchEnded(touch, event); };
 
-        Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(touch_listener, 1);
+        Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(m_listener, 1);
+    }
+
+    TouchInputController::~TouchInputController()
+    {
+        Director::getInstance()->getEventDispatcher()->removeEventListener(m_listener);
     }
 
     void TouchInputController::sendStopPaddleEvent()

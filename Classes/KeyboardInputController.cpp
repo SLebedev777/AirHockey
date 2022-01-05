@@ -6,11 +6,16 @@ namespace airhockey
 
     void KeyboardInputController::bindInputListeners()
     {
-        auto keyboard_listener = EventListenerKeyboard::create();
-        keyboard_listener->onKeyPressed = CC_CALLBACK_2(KeyboardInputController::onKeyPressed, this);
-        keyboard_listener->onKeyReleased = CC_CALLBACK_2(KeyboardInputController::onKeyReleased, this);
+        m_listener = EventListenerKeyboard::create();
+        m_listener->onKeyPressed = CC_CALLBACK_2(KeyboardInputController::onKeyPressed, this);
+        m_listener->onKeyReleased = CC_CALLBACK_2(KeyboardInputController::onKeyReleased, this);
 
-        Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(keyboard_listener, 1);
+        Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(m_listener, 1);
+    }
+
+    KeyboardInputController::~KeyboardInputController()
+    {
+        Director::getInstance()->getEventDispatcher()->removeEventListener(m_listener);
     }
 
     void KeyboardInputController::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)

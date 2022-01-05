@@ -35,6 +35,13 @@ namespace airhockey
 		bindActionEventListener(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_DOWN, [=](EventCustom* event) { m_myPaddle->onStopMovingDown();  });
 	}
 
+	IPlayerInputController::~IPlayerInputController()
+	{
+		for (auto& custom_event_name : m_customEventsNames)
+		{
+			m_eventDispatcher->removeCustomEventListeners(custom_event_name);
+		}
+	}
 
 	std::string IPlayerInputController::makeCustomEventName(const std::string& input_action_event_name)
 	{
@@ -43,7 +50,9 @@ namespace airhockey
 
 	void IPlayerInputController::bindActionEventListener(const std::string& input_action_event_name, const std::function<void(EventCustom*)>& callback)
 	{
-		m_eventDispatcher->addCustomEventListener(makeCustomEventName(input_action_event_name), callback);
+		std::string custom_event_name = makeCustomEventName(input_action_event_name);
+		m_customEventsNames.push_back(custom_event_name);
+		m_eventDispatcher->addCustomEventListener(custom_event_name, callback);
 	}
 
 }

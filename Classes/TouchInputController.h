@@ -25,10 +25,11 @@ namespace airhockey
 			bindInputListeners();
 		}
 
-		~TouchInputController() {}
+		~TouchInputController();
 
 		void bindInputListeners() override;
 
+	// TODO: private
 		bool isTouchWithinPaddle(cocos2d::Touch* touch);
 		void sendStopPaddleEvent();
 		void onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
@@ -46,6 +47,8 @@ namespace airhockey
 		cocos2d::Node* m_HUDLayer = nullptr;
 		float m_touchMargin = 0.0f;  // addition to paddle radius when calculating is touch within paddle. Earned to ease grabbing paddle.
 		cocos2d::Vec2 m_touchOffset = cocos2d::Vec2::ZERO;
+		
+		cocos2d::EventListenerTouchOneByOne* m_listener = nullptr;
 	};
 
 }

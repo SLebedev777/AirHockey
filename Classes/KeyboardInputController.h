@@ -20,12 +20,15 @@ namespace airhockey
 			bindInputListeners();
 		}
 
-		~KeyboardInputController() {}
+		~KeyboardInputController();
 
 		void bindInputListeners() override;
 
 		void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
 		void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+
+	private:
+		cocos2d::EventListenerKeyboard* m_listener = nullptr;
 
 	};
 
