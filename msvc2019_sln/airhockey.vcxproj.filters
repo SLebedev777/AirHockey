@@ -67,6 +67,9 @@
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\cocos2d\cocos\precheader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\MainMenuScene.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.h">
@@ -194,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\res\.gitkeep">
       <Filter>Resources\res</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MainMenuScene.h">
+      <Filter>Source Files\Classes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
