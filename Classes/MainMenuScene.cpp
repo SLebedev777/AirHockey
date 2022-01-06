@@ -26,14 +26,17 @@ bool MainMenuScene::init()
     auto s = Director::getInstance()->getWinSize();
     Vec2 center = Vec2(s.width / 2, s.height / 2);
 
-    std::string font_filename("fonts/Abduction.ttf");
+    auto back_layer = LayerGradient::create(Color4B::BLUE, Color4B::BLACK);
+    this->addChild(back_layer);
+
+    std::string font_filename(airhockey::FONT_FILENAME_MENU);
 
     auto create_button = [=](const std::string& title_text, bool fit_to_title=false) -> ui::Button* {
-        auto button = ui::Button::create("button_green.png", "button_red.png");
+        auto button = ui::Button::create("HD/ui/button_frame.png", "HD/ui/button_frame.png");
         button->setScale9Enabled(true);
         //button->setUnifySizeEnabled(true);
         //button->ignoreContentAdaptWithSize(true);
-        Vec2 cap_inset_origin(25, 15);
+        Vec2 cap_inset_origin(25, 25);
         Size button_size = button->getContentSize();
         Rect cap_insets(cap_inset_origin, Size(button_size.width - 2 * cap_inset_origin.x, button_size.height - 2 * cap_inset_origin.y));
         button->setCapInsets(cap_insets);
@@ -55,20 +58,21 @@ bool MainMenuScene::init()
         return button;
     };
 
-    auto button_start = create_button("NEW GAME");
+    auto button_start = create_button("1PLAYER");
     button_start->addClickEventListener([=](Ref* sender) { menuNewGameCallback(sender); });
     button_start->runAction(UIButtonMenu::defaultFocusedButtonActionCallback());
 
-    //auto button_quit = ui::Button::create("HD/ui/home.png", "HD/ui/home_pressed.png");
-    //button_quit->setScale(1.5f);
+    auto button_settings = create_button("SETTINGS");
+    //button_settings->addClickEventListener([=](Ref* sender) { menuNewGameCallback(sender); });
+
     auto button_quit = create_button("QUIT");
     button_quit->addClickEventListener([=](Ref* sender) { menuCloseCallback(sender); });
 
     ui::Layout* layout = ui::Layout::create();
     layout->setLayoutType(ui::Layout::Type::VERTICAL);
-    layout->setContentSize(Size(600, 1000));
+    layout->setContentSize(Size(600, 600));
     layout->setBackGroundColor(Color3B(50, 0, 50), Color3B(20, 0, 20));
-    layout->setBackGroundColorOpacity(220);
+    layout->setBackGroundColorOpacity(170);
     layout->setBackGroundColorType(ui::Layout::BackGroundColorType::GRADIENT);
 
     ui::LinearLayoutParameter* liner = ui::LinearLayoutParameter::create();
@@ -83,23 +87,28 @@ bool MainMenuScene::init()
     text_title->setLayoutParameter(liner_top);
 
     button_start->setLayoutParameter(liner);
+    button_settings->setLayoutParameter(liner);
     button_quit->setLayoutParameter(liner);
 
     Color3B ui_color_secondary = Color3B(230, 220, 250);
     Color3B ui_color_primary = Color3B(190, 255, 255);
-    button_start->setColor(ui_color_primary);
-    button_quit->setColor(ui_color_secondary);
+    Color3B ui_color_yellow = Color3B(200, 200, 50);
+    Color3B ui_color_red = Color3B(200, 50, 50);
+    Color3B ui_color_purple = Color3B(127, 50, 127);
+
+    button_start->getRendererNormal()->setColor(ui_color_red);
+    button_start->setTitleColor(Color3B(255, 170, 170));
+
+    button_settings->getRendererNormal()->setColor(ui_color_yellow);
+    button_settings->setTitleColor(Color3B(255, 200, 170));
+
+    button_quit->getRendererNormal()->setColor(ui_color_purple);
+    button_quit->setTitleColor(Color3B(255, 170, 255));
 
     layout->addChild(text_title);
     layout->addChild(button_start);
+    layout->addChild(button_settings);
     layout->addChild(button_quit);
-
-    Rect layout_rect = layout->getBoundingBox();
-    DrawNode* border = DrawNode::create();
-    Color4F border_color = Color4F(ui_color_primary); // Color4F(Color3B(140, 90, 240));
-    border->setLineWidth(5);
-    border->drawRect(layout_rect.origin, layout_rect.origin + layout_rect.size, border_color);
-    layout->addChild(border, 1);
 
     layout->setAnchorPoint(Vec2(0.5, 0.5));
     layout->setPosition(center);
