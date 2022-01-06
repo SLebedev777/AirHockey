@@ -835,6 +835,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\resource.h" />
     <ClCompile Include="..\Classes\MainMenuScene.cpp" />
+    <ClCompile Include="..\Classes\UISettings.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene.cpp" />
