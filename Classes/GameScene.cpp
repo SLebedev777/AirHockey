@@ -10,6 +10,7 @@
 #include "AIPlayer.h"
 #include "CCHelpers.h"
 #include "ui/CocosGUI.h"
+#include "GlobalSettings.h"
 #include <memory>
 
 USING_NS_CC;
