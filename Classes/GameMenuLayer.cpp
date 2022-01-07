@@ -110,5 +110,6 @@ void GameMenuLayer::menuResumeCallback(cocos2d::Ref* pSender)
 
 void GameMenuLayer::menuBackToMainMenuCallback(cocos2d::Ref* pSender)
 {
+    GameScene::resetTotalScore();
     Director::getInstance()->popScene();
 }

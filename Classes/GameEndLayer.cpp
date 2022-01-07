@@ -73,7 +73,7 @@ bool GameEndMenuLayer::init()
     liner->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
 
     const float font_size = 64;
-    auto text_title = ui::Text::create("RETRY?", font_filename, font_size);
+    auto text_title = ui::Text::create("CONTINUE?", font_filename, font_size);
     ui::LinearLayoutParameter* liner_top = ui::LinearLayoutParameter::create();
     liner_top->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
     liner_top->setMargin(ui::Margin(0, 25, 0, 20));
@@ -117,5 +117,6 @@ void GameEndMenuLayer::menuContinueCallback(cocos2d::Ref* pSender)
 
 void GameEndMenuLayer::menuBackToMainMenuCallback(cocos2d::Ref* pSender)
 {
+    GameScene::resetTotalScore();
     Director::getInstance()->popScene();
 }

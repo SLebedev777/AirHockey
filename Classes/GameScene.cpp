@@ -14,6 +14,10 @@
 
 USING_NS_CC;
 
+uint32_t GameScene::m_totalScore1 = 0;
+uint32_t GameScene::m_totalScore2 = 0;
+uint32_t GameScene::m_totalGames = 0;
+
 enum LayersTags
 {
     TAG_GAME_LAYER = 1,
@@ -31,7 +35,9 @@ enum GameLayerTags
 enum HUDLayerTags
 {
     TAG_HUD_LAYER_SCORE1_STRING = 1,
-    TAG_HUD_LAYER_SCORE2_STRING = 2
+    TAG_HUD_LAYER_SCORE2_STRING = 2,
+    TAG_HUD_LAYER_TOTAL_SCORE1_STRING = 3,
+    TAG_HUD_LAYER_TOTAL_SCORE2_STRING = 4
 };
 
 GameScene::GameScene(airhockey::GameLevel& level) :
@@ -260,6 +266,19 @@ bool GameScene::init()
     label_score2->setPosition(m_labelScore2StartPos);
     hud_layer->addChild(label_score2, 1, TAG_HUD_LAYER_SCORE2_STRING);
 
+    auto label_total_score1 = Label::createWithTTF("0", score_font_filename, score_font_size * 0.7);
+    label_total_score1->setTextColor(Color4B::RED);
+    label_total_score1->setClipMarginEnabled(true);
+    label_total_score1->setRotation(90.f);
+    label_total_score1->setPosition(frameCenter + Vec2(m_field->getPlayRect().size.width / 2 - 90, -2 * PUCK_RADIUS));
+    hud_layer->addChild(label_total_score1, 1, TAG_HUD_LAYER_TOTAL_SCORE1_STRING);
+
+    auto label_total_score2 = Label::createWithTTF("0", score_font_filename, score_font_size * 0.7);
+    label_total_score2->setTextColor(Color4B::GREEN);
+    label_total_score2->setClipMarginEnabled(true);
+    label_total_score2->setRotation(90.f);
+    label_total_score2->setPosition(frameCenter + Vec2(m_field->getPlayRect().size.width / 2 - 90, 2 * PUCK_RADIUS));
+    hud_layer->addChild(label_total_score2, 1, TAG_HUD_LAYER_TOTAL_SCORE2_STRING);
 
     //////////////////////////////////////////////////
     // HUD CONTROL LAYER
@@ -672,11 +691,18 @@ void GameScene::update(float dt)
             m_AI->setEnabled(false);
         }
 
+        // update total score
+        m_totalGames++;
+        m_score1 > m_score2 ? ++m_totalScore1 : ++m_totalScore2;
+
         onGameEndMenuOpen(nullptr);
     }
 
     drawHUDString(TAG_HUD_LAYER_SCORE1_STRING, std::to_string(m_score1));
     drawHUDString(TAG_HUD_LAYER_SCORE2_STRING, std::to_string(m_score2));
+
+    drawHUDString(TAG_HUD_LAYER_TOTAL_SCORE1_STRING, std::to_string(m_totalScore1));
+    drawHUDString(TAG_HUD_LAYER_TOTAL_SCORE2_STRING, std::to_string(m_totalScore2));
 
     auto p2_p = CCHelpers::Vec2Str(m_paddle2->getSprite()->getPosition());
     auto p2_v = CCHelpers::Vec2Str(m_paddle2->getPhysicsBody()->getVelocity());

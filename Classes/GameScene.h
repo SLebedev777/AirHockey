@@ -47,6 +47,8 @@ public:
 
     void update(float dt) override;
 
+    static void resetTotalScore() { m_totalGames = 0; m_totalScore1 = 0; m_totalScore2 = 0; }
+
 private:
     void startDelay(float duration, const std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345);
     bool isDelayOver(const std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345);
@@ -87,10 +89,13 @@ protected:
     GoalHitBy m_goalHitBy = GoalHitBy::NONE;
     const int MAX_SCORE = 7;
 
+    static uint32_t m_totalScore1, m_totalScore2, m_totalGames;  // overall score of games played, until player exits to main menu
+
     airhockey::FSMContextPtr m_AI = nullptr;
     airhockey::IFSMStatePtr m_AIIdleState = nullptr;
 
     DebugLoggerPtr m_logger = nullptr;
 };
+
 
 #endif // __GAMESCENE_H__
