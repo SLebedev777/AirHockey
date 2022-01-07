@@ -12,6 +12,8 @@ public:
 
     void menuNewGameCallback(cocos2d::Ref* pSender);
     void menuCloseCallback(cocos2d::Ref* pSender);
+    void onMainMenuSettingsOpen(Ref* sender);
+    void onMainMenuSettingsClose(Ref* sender);
 
     // implement the "static create()" method manually
     CREATE_FUNC(MainMenuScene);

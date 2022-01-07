@@ -5,8 +5,15 @@
 #include "ui/CocosGUI.h"
 #include "UISettings.h"
 #include "UIButtonMenu.h"
+#include "MainMenuSettingsLayer.h"
 
 USING_NS_CC;
+
+static enum MainMenuLayersTags
+{
+    TAG_SETTINGS_LAYER = 1
+};
+
 
 Scene* MainMenuScene::createScene()
 {
@@ -63,7 +70,7 @@ bool MainMenuScene::init()
     button_start->runAction(UIButtonMenu::defaultFocusedButtonActionCallback());
 
     auto button_settings = create_button("SETTINGS");
-    //button_settings->addClickEventListener([=](Ref* sender) { menuNewGameCallback(sender); });
+    button_settings->addClickEventListener([=](Ref* sender) { onMainMenuSettingsOpen(sender); });
 
     auto button_quit = create_button("QUIT");
     button_quit->addClickEventListener([=](Ref* sender) { menuCloseCallback(sender); });
@@ -115,6 +122,16 @@ bool MainMenuScene::init()
 
     this->addChild(layout, 1);
 
+    auto settings_layer = MainMenuSettingsLayer::create();
+    this->addChild(settings_layer, 255, MainMenuLayersTags::TAG_SETTINGS_LAYER);
+    onMainMenuSettingsClose(nullptr);
+
+    auto _main_menu_settings_layer_close_listener = EventListenerCustom::create("event_main_menu_settings_layer_close", [=](EventCustom* event) {
+        onMainMenuSettingsClose(event);
+        });
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(_main_menu_settings_layer_close_listener, this);
+
+
     return true;
 }
 
@@ -135,4 +152,24 @@ void MainMenuScene::menuNewGameCallback(cocos2d::Ref* pSender)
     airhockey::GameLevel level = airhockey::GameLevel(0, level_width, level_height);
 
     Director::getInstance()->pushScene(GameScene::create(level));
+}
+
+void MainMenuScene::onMainMenuSettingsOpen(Ref* sender)
+{
+    auto settings_layer = this->getChildByTag(MainMenuLayersTags::TAG_SETTINGS_LAYER);
+    if (settings_layer)
+    {
+        settings_layer->setVisible(true);
+        settings_layer->resume();
+    }
+}
+
+void MainMenuScene::onMainMenuSettingsClose(Ref* sender)
+{
+    auto settings_layer = this->getChildByTag(MainMenuLayersTags::TAG_SETTINGS_LAYER);
+    if (settings_layer)
+    {
+        settings_layer->setVisible(false);
+        settings_layer->pause();
+    }
 }
