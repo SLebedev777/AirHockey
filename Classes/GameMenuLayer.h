@@ -20,6 +20,9 @@ public:
     void menuResumeCallback(cocos2d::Ref* pSender);
     // back to main menu scene callback
     void menuBackToMainMenuCallback(cocos2d::Ref* pSender);
+    void toggleAudioCallback(cocos2d::Ref* pSender);
+    
+    void updateToggleAudioButton();
 
 private:
     GameScene* game_scene = nullptr;

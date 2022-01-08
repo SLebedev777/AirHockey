@@ -397,6 +397,7 @@ void GameScene::onGameMenuOpen(Ref* sender)
 
         game_menu_layer->setVisible(true);
         game_menu_layer->resume();
+        static_cast<GameMenuLayer*>(game_menu_layer)->updateToggleAudioButton();
     }
 
 }

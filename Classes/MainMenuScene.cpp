@@ -161,6 +161,7 @@ void MainMenuScene::onMainMenuSettingsOpen(Ref* sender)
     {
         settings_layer->setVisible(true);
         settings_layer->resume();
+        static_cast<MainMenuSettingsLayer*>(settings_layer)->updateToggleAudioButton();
     }
 }
 

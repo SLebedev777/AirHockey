@@ -2,9 +2,15 @@
 #include "ui/CocosGUI.h"
 #include "UISettings.h"
 #include "UIButtonMenu.h"
+#include "GlobalSettings.h"
 
 USING_NS_CC;
 
+enum MAIN_MENU_SETTINGS_LAYER_TAGS
+{
+    TOGGLE_AUDIO_TAG = 1,
+    LAYOUT_TAG = 2
+};
 
 MainMenuSettingsLayer* MainMenuSettingsLayer::create()
 {
@@ -33,6 +39,7 @@ bool MainMenuSettingsLayer::init()
     auto button_toggle_audio = ui::CheckBox::create("HD/ui/audioOn.png", "HD/ui/cross.png");
     button_toggle_audio->addClickEventListener([=](Ref* sender) { toggleAudioCallback(sender); });
     button_toggle_audio->setScale(1.5f);
+    button_toggle_audio->setSelected(!airhockey::GlobalSettings::isAudioEnabled);
 
     auto button_quit = ui::Button::create("HD/ui/home.png", "HD/ui/home_pressed.png");
     button_quit->setScale(1.5f);
@@ -65,7 +72,7 @@ bool MainMenuSettingsLayer::init()
     button_quit->setColor(ui_color_secondary);
 
     layout->addChild(text_title);
-    layout->addChild(button_toggle_audio);
+    layout->addChild(button_toggle_audio, 0, MAIN_MENU_SETTINGS_LAYER_TAGS::TOGGLE_AUDIO_TAG);
     layout->addChild(button_quit);
 
     Rect layout_rect = layout->getBoundingBox();
@@ -78,13 +85,29 @@ bool MainMenuSettingsLayer::init()
     layout->setAnchorPoint(Vec2(0.5, 0.5));
     layout->setPosition(center);
 
-    this->addChild(layout, 1);
+    this->addChild(layout, 1, MAIN_MENU_SETTINGS_LAYER_TAGS::LAYOUT_TAG);
 
     return true;
 }
 
 void MainMenuSettingsLayer::toggleAudioCallback(cocos2d::Ref* pSender)
 {
+    auto layout = this->getChildByTag(MAIN_MENU_SETTINGS_LAYER_TAGS::LAYOUT_TAG);
+    auto button_toggle_audio = static_cast<ui::CheckBox*>(layout->getChildByTag(MAIN_MENU_SETTINGS_LAYER_TAGS::TOGGLE_AUDIO_TAG));
+    if (button_toggle_audio)
+    {
+        airhockey::GlobalSettings::isAudioEnabled = !airhockey::GlobalSettings::isAudioEnabled;
+    }
+}
+
+void MainMenuSettingsLayer::updateToggleAudioButton()
+{
+    auto layout = this->getChildByTag(MAIN_MENU_SETTINGS_LAYER_TAGS::LAYOUT_TAG);
+    auto button_toggle_audio = static_cast<ui::CheckBox*>(layout->getChildByTag(MAIN_MENU_SETTINGS_LAYER_TAGS::TOGGLE_AUDIO_TAG));
+    if (button_toggle_audio)
+    {
+        button_toggle_audio->setSelected(!airhockey::GlobalSettings::isAudioEnabled);
+    }
 }
 
 void MainMenuSettingsLayer::menuBackToMainMenuCallback(cocos2d::Ref* pSender)
