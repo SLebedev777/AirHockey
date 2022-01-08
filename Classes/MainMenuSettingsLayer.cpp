@@ -29,7 +29,7 @@ MainMenuSettingsLayer* MainMenuSettingsLayer::create()
 
 bool MainMenuSettingsLayer::init()
 {
-    this->initWithColor(Color4B(127, 0, 127, 255));
+    this->initWithColor(Color4B(127, 0, 127, 50));
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();

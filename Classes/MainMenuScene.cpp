@@ -2,7 +2,6 @@
 #include "GameScene.h"
 #include "GameLevel.h"
 #include "audio/include/AudioEngine.h"
-#include "ui/CocosGUI.h"
 #include "UISettings.h"
 #include "UIButtonMenu.h"
 #include "MainMenuSettingsLayer.h"
@@ -14,6 +13,10 @@ static enum MainMenuLayersTags
     TAG_SETTINGS_LAYER = 1
 };
 
+static enum MainMenuTags
+{
+    LAYOUT_TAG = 11
+};
 
 Scene* MainMenuScene::createScene()
 {
@@ -120,11 +123,12 @@ bool MainMenuScene::init()
     layout->setAnchorPoint(Vec2(0.5, 0.5));
     layout->setPosition(center);
 
-    this->addChild(layout, 1);
+    this->addChild(layout, 1, MainMenuTags::LAYOUT_TAG);
 
     auto settings_layer = MainMenuSettingsLayer::create();
     this->addChild(settings_layer, 255, MainMenuLayersTags::TAG_SETTINGS_LAYER);
-    onMainMenuSettingsClose(nullptr);
+    settings_layer->setVisible(false);
+    //onMainMenuSettingsClose(nullptr);
 
     auto _main_menu_settings_layer_close_listener = EventListenerCustom::create("event_main_menu_settings_layer_close", [=](EventCustom* event) {
         onMainMenuSettingsClose(event);
@@ -135,6 +139,10 @@ bool MainMenuScene::init()
     return true;
 }
 
+ui::Layout* MainMenuScene::getMenuLayout()
+{
+    return static_cast<ui::Layout*>(this->getChildByTag(MainMenuTags::LAYOUT_TAG));
+}
 
 void MainMenuScene::menuCloseCallback(Ref* pSender)
 {
@@ -159,6 +167,8 @@ void MainMenuScene::onMainMenuSettingsOpen(Ref* sender)
     auto settings_layer = this->getChildByTag(MainMenuLayersTags::TAG_SETTINGS_LAYER);
     if (settings_layer)
     {
+        getMenuLayout()->setVisible(false);
+
         settings_layer->setVisible(true);
         settings_layer->resume();
         static_cast<MainMenuSettingsLayer*>(settings_layer)->updateToggleAudioButton();
@@ -172,5 +182,7 @@ void MainMenuScene::onMainMenuSettingsClose(Ref* sender)
     {
         settings_layer->setVisible(false);
         settings_layer->pause();
+
+        getMenuLayout()->setVisible(true);
     }
 }
