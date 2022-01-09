@@ -41,43 +41,14 @@ bool MainMenuScene::init()
     auto back_layer = LayerGradient::create(Color4B::BLUE, Color4B::BLACK);
     this->addChild(back_layer);
 
-    std::string font_filename(airhockey::FONT_FILENAME_MENU);
-
-    auto create_button = [=](const std::string& title_text, bool fit_to_title=false) -> ui::Button* {
-        auto button = ui::Button::create("HD/ui/button_frame.png", "HD/ui/button_frame.png");
-        button->setScale9Enabled(true);
-        //button->setUnifySizeEnabled(true);
-        //button->ignoreContentAdaptWithSize(true);
-        Vec2 cap_inset_origin(25, 25);
-        Size button_size = button->getContentSize();
-        Rect cap_insets(cap_inset_origin, Size(button_size.width - 2 * cap_inset_origin.x, button_size.height - 2 * cap_inset_origin.y));
-        button->setCapInsets(cap_insets);
-        button->setTitleFontName(font_filename);
-        button->setTitleFontSize(50);
-        button->setTitleText(title_text);
-        auto fit_button_to_title = [](ui::Button* button, float coeff = 1.1f) {
-            auto lbl_size = button->getTitleRenderer()->getContentSize();
-            button->setContentSize(Size(lbl_size.width * coeff, lbl_size.height * coeff));
-        };
-        if (fit_to_title) 
-        { 
-            fit_button_to_title(button); 
-        }
-        else 
-        { 
-            button->setContentSize(Size(550, 100)); 
-        }
-        return button;
-    };
-
-    auto button_start = create_button("1PLAYER");
+    auto button_start = airhockey::createUIButton("1PLAYER");
     button_start->addClickEventListener([=](Ref* sender) { menuNewGameCallback(sender); });
     button_start->runAction(UIButtonMenu::defaultFocusedButtonActionCallback());
 
-    auto button_settings = create_button("SETTINGS");
+    auto button_settings = airhockey::createUIButton("SETTINGS");
     button_settings->addClickEventListener([=](Ref* sender) { onMainMenuSettingsOpen(sender); });
 
-    auto button_quit = create_button("QUIT");
+    auto button_quit = airhockey::createUIButton("QUIT");
     button_quit->addClickEventListener([=](Ref* sender) { menuCloseCallback(sender); });
 
     ui::Layout* layout = ui::Layout::create();
@@ -92,7 +63,7 @@ bool MainMenuScene::init()
     liner->setMargin(ui::Margin(0, 25, 0, 20));
 
     const float font_size = 64;
-    auto text_title = ui::Text::create("MAIN MENU", font_filename, font_size);
+    auto text_title = ui::Text::create("MAIN MENU", airhockey::FONT_FILENAME_MENU, font_size);
     ui::LinearLayoutParameter* liner_top = ui::LinearLayoutParameter::create();
     liner_top->setGravity(ui::LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL); //Center horizontally
     liner_top->setMargin(ui::Margin(0, 25, 0, 20));
@@ -136,8 +107,6 @@ bool MainMenuScene::init()
         onMainMenuSettingsClose(event);
         });
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_main_menu_settings_layer_close_listener, this);
-
-    AudioEngine::play2d("sound/background.mp3", true, 0.25f);
 
     return true;
 }

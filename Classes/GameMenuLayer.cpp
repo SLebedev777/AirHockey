@@ -47,16 +47,19 @@ bool GameMenuLayer::init()
     auto button_resume = ui::Button::create("HD/ui/right.png", "HD/ui/right_pressed.png");
     button_resume->setScale(2.0f);
     button_resume->addClickEventListener([=](Ref* sender) { menuResumeCallback(sender); });
+    button_resume->addTouchEventListener(airhockey::sound::uiButtonClickSoundCallback);
     button_resume->runAction(UIButtonMenu::defaultFocusedButtonActionCallback());
 
     auto button_toggle_audio = ui::CheckBox::create("HD/ui/audioOn.png", "HD/ui/cross.png");
     button_toggle_audio->addClickEventListener([=](Ref* sender) { toggleAudioCallback(sender); });
     button_toggle_audio->setScale(1.5f);
     button_toggle_audio->setSelected(!airhockey::GlobalSettings::isAudioEnabled);
+    button_toggle_audio->addTouchEventListener(airhockey::sound::uiButtonClickSoundCallback);
 
     auto button_quit = ui::Button::create("HD/ui/home.png", "HD/ui/home_pressed.png");
     button_quit->setScale(1.5f);
     button_quit->addClickEventListener([=](Ref* sender) { menuBackToMainMenuCallback(sender); });
+    button_quit->addTouchEventListener(airhockey::sound::uiButtonClickSoundCallback);
 
     ui::Layout* layout = ui::Layout::create();
     layout->setLayoutType(ui::Layout::Type::VERTICAL);

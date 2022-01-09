@@ -190,6 +190,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 #endif
 
+    AudioEngine::preload("sound\button_click.mp3");
 
     register_all_packages();
 
