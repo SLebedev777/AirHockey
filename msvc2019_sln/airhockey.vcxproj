@@ -808,6 +808,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\Classes\GlobalSettings.h" />
     <ClInclude Include="..\Classes\MainMenuScene.h" />
     <ClInclude Include="..\Classes\MainMenuSettingsLayer.h" />
+    <ClInclude Include="..\Classes\Sound.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene.h" />
@@ -839,6 +840,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\Classes\GlobalSettings.cpp" />
     <ClCompile Include="..\Classes\MainMenuScene.cpp" />
     <ClCompile Include="..\Classes\MainMenuSettingsLayer.cpp" />
+    <ClCompile Include="..\Classes\Sound.cpp" />
     <ClCompile Include="..\Classes\UISettings.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.cpp" />

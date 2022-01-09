@@ -4,6 +4,7 @@
 #include "UISettings.h"
 #include "UIButtonMenu.h"
 #include "GlobalSettings.h"
+#include "Sound.h"
 
 USING_NS_CC;
 
@@ -123,7 +124,9 @@ void GameMenuLayer::toggleAudioCallback(cocos2d::Ref* pSender)
     auto button_toggle_audio = static_cast<ui::CheckBox*>(layout->getChildByTag(GAME_MENU_LAYER_TAGS::TOGGLE_AUDIO_TAG));
     if (button_toggle_audio)
     {
-        airhockey::GlobalSettings::isAudioEnabled = !airhockey::GlobalSettings::isAudioEnabled;
+        using namespace airhockey;
+        GlobalSettings::isAudioEnabled = !GlobalSettings::isAudioEnabled;
+        sound::onToggleAudioCallback(GlobalSettings::isAudioEnabled);
     }
 }
 

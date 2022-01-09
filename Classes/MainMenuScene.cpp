@@ -5,6 +5,8 @@
 #include "UISettings.h"
 #include "UIButtonMenu.h"
 #include "MainMenuSettingsLayer.h"
+#include "audio/include/AudioEngine.h"
+
 
 USING_NS_CC;
 
@@ -135,6 +137,7 @@ bool MainMenuScene::init()
         });
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_main_menu_settings_layer_close_listener, this);
 
+    AudioEngine::play2d("sound/background.mp3", true, 0.25f);
 
     return true;
 }
