@@ -47,7 +47,7 @@ bool MainMenuSettingsLayer::init()
 
     ui::Layout* layout = ui::Layout::create();
     layout->setLayoutType(ui::Layout::Type::VERTICAL);
-    layout->setContentSize(Size(400, 600));
+    layout->setContentSize(Size(600, 600));
     layout->setBackGroundColor(Color3B(50, 0, 50), Color3B(20, 0, 20));
     layout->setBackGroundColorOpacity(220);
     layout->setBackGroundColorType(ui::Layout::BackGroundColorType::GRADIENT);
@@ -80,7 +80,7 @@ bool MainMenuSettingsLayer::init()
     Color4F border_color = Color4F(ui_color_primary); // Color4F(Color3B(140, 90, 240));
     border->setLineWidth(5);
     border->drawRect(layout_rect.origin, layout_rect.origin + layout_rect.size, border_color);
-    layout->addChild(border, 1);
+    //layout->addChild(border, 1);
 
     layout->setAnchorPoint(Vec2(0.5, 0.5));
     layout->setPosition(center);
