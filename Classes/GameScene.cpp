@@ -12,6 +12,7 @@
 #include "ui/CocosGUI.h"
 #include "GlobalSettings.h"
 #include <memory>
+#include "audio/include/AudioEngine.h"
 
 USING_NS_CC;
 
@@ -164,6 +165,7 @@ bool GameScene::init()
     puck_body->setAngularDamping(0.2f);
     puck_body->setVelocityLimit(3500);
     puck_body->setName("puck_body");
+    puck_body->setContactTestBitmask(0xFFFFFFFF);
     m_puck->addComponent(puck_body);
     game_layer->addChild(m_puck, 1);
 
@@ -196,6 +198,12 @@ bool GameScene::init()
     m_paddle2->getSprite()->setColor(Color3B(120, 220, 100));
 
     //m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
+
+    //adds contact event listener
+    auto contactListener = EventListenerPhysicsContact::create();
+    contactListener->onContactBegin = CC_CALLBACK_1(GameScene::onContactBegin, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+
 
     const float ATTACK_RADIUS = abs(m_paddle2->getStartPosition().y - m_field->getCenter().y) + PUCK_RADIUS;
     
@@ -337,6 +345,12 @@ bool GameScene::init()
 
     onNewGameStart();
 
+    return true;
+}
+
+bool GameScene::onContactBegin(PhysicsContact& contact)
+{
+    AudioEngine::play2d("sound/collide_puck_paddle.mp3", false, 0.5);
     return true;
 }
 

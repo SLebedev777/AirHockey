@@ -117,6 +117,7 @@ namespace airhockey
 	{
 		PhysicsBody* physics_body = (body != nullptr) ? body : PhysicsBody::createEdgeBox(m_node->getContentSize(), material);
 		physics_body->setDynamic(false);
+		physics_body->setContactTestBitmask(0xFFFFFFFF);
 		m_node->addComponent(physics_body);
 	}
 
