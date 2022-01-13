@@ -1,4 +1,5 @@
 #include "GameField.h"
+#include "Physics.h"
 
 namespace airhockey
 {
@@ -117,7 +118,8 @@ namespace airhockey
 	{
 		PhysicsBody* physics_body = (body != nullptr) ? body : PhysicsBody::createEdgeBox(m_node->getContentSize(), material);
 		physics_body->setDynamic(false);
-		physics_body->setContactTestBitmask(0xFFFFFFFF);
+		physics_body->setCategoryBitmask(airhockey::Physics::CollisionCategoryBitMask::CCBM_GAME_FIELD);
+		physics_body->setContactTestBitmask(airhockey::Physics::contactTestBitmask_GameField);
 		m_node->addComponent(physics_body);
 	}
 

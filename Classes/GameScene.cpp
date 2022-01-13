@@ -11,6 +11,7 @@
 #include "CCHelpers.h"
 #include "ui/CocosGUI.h"
 #include "GlobalSettings.h"
+#include "Physics.h"
 #include <memory>
 #include "audio/include/AudioEngine.h"
 
@@ -165,7 +166,8 @@ bool GameScene::init()
     puck_body->setAngularDamping(0.2f);
     puck_body->setVelocityLimit(3500);
     puck_body->setName("puck_body");
-    puck_body->setContactTestBitmask(0xFFFFFFFF);
+    puck_body->setCategoryBitmask(airhockey::Physics::CollisionCategoryBitMask::CCBM_PUCK);
+    puck_body->setContactTestBitmask(airhockey::Physics::contactTestBitmask_Puck);
     m_puck->addComponent(puck_body);
     game_layer->addChild(m_puck, 1);
 
@@ -186,6 +188,8 @@ bool GameScene::init()
     m_paddle1 = std::make_shared<Paddle>("paddle_gimp.png", m_field->getCenter().x, m_field->getPlayRect().getMinY() + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
     m_paddle1->getSprite()->setColor(Color3B::RED);
+    m_paddle1->getPhysicsBody()->setCategoryBitmask(airhockey::Physics::CollisionCategoryBitMask::CCBM_PADDLE1);
+    m_paddle1->getPhysicsBody()->setContactTestBitmask(airhockey::Physics::contactTestBitmask_Paddle1);
 
     assert(m_paddle1->getSprite()->getBoundingBox().size.width == 2 * PADDLE_RADIUS);
 
@@ -196,6 +200,8 @@ bool GameScene::init()
     m_paddle2 = std::make_shared<Paddle>("paddle_gimp.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
         PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());
     m_paddle2->getSprite()->setColor(Color3B(120, 220, 100));
+    m_paddle2->getPhysicsBody()->setCategoryBitmask(airhockey::Physics::CollisionCategoryBitMask::CCBM_PADDLE2);
+    m_paddle2->getPhysicsBody()->setContactTestBitmask(airhockey::Physics::contactTestBitmask_Paddle2);
 
     //m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
 
@@ -203,6 +209,10 @@ bool GameScene::init()
     auto contactListener = EventListenerPhysicsContact::create();
     contactListener->onContactBegin = CC_CALLBACK_1(GameScene::onContactBegin, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+
+    auto contactListenerVFX = EventListenerPhysicsContact::create();
+    contactListenerVFX->onContactBegin = CC_CALLBACK_1(GameScene::onContactBeginVFX, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListenerVFX, this);
 
 
     const float ATTACK_RADIUS = abs(m_paddle2->getStartPosition().y - m_field->getCenter().y) + PUCK_RADIUS;
@@ -350,9 +360,33 @@ bool GameScene::init()
 
 bool GameScene::onContactBegin(PhysicsContact& contact)
 {
-    AudioEngine::play2d("sound/collide_puck_paddle.mp3", false, 0.5);
+    using namespace airhockey::Physics;
+
+    PhysicsBody* a = contact.getShapeA()->getBody();
+    PhysicsBody* b = contact.getShapeB()->getBody();
+    int a_cat = a->getCategoryBitmask();
+    int b_cat = b->getCategoryBitmask();
+    switch (a_cat | b_cat)
+    {
+    case CCBM_GAME_FIELD | CCBM_PUCK:
+        AudioEngine::play2d("sound/collide_puck_walls.mp3", false, 0.5);
+        break;
+    case CCBM_PADDLE1 | CCBM_PUCK:
+    case CCBM_PADDLE2 | CCBM_PUCK:
+        AudioEngine::play2d("sound/collide_puck_paddle.mp3", false, 0.5);
+        break;
+    default: break;
+    }
+
     return true;
 }
+
+bool GameScene::onContactBeginVFX(PhysicsContact& contact)
+{
+    m_logger->log("onContactBeginVFX");
+    return true;
+}
+
 
 void GameScene::onMouseDown(Event* event)
 {

@@ -24,6 +24,7 @@ public:
     static GameScene* create(airhockey::GameLevel& level);
 
     bool onContactBegin(PhysicsContact& contact);
+    bool onContactBeginVFX(PhysicsContact& contact);
 
     void onMouseDown(Event* event);
     void onMouseUp(Event* event);
