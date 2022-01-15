@@ -364,16 +364,36 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
 
     PhysicsBody* a = contact.getShapeA()->getBody();
     PhysicsBody* b = contact.getShapeB()->getBody();
+    Vec2 delta_vel = a->getVelocity() - b->getVelocity();
+    float d_vel_scalar = delta_vel.lengthSquared();
+    const float MIN_DVEL = 300.0f;
+    const float MAX_DVEL = 100000.0f;
+    const float MIN_VOLUME = 0.01f;
+    const float MAX_VOLUME = 0.4f;
+    float volume = 0.0f;
+    if (d_vel_scalar <= MIN_DVEL)
+    {
+        volume = MIN_VOLUME;
+    }
+    else if (d_vel_scalar > MAX_DVEL)
+    {
+        volume = MAX_VOLUME;
+    }
+    else
+    {
+        volume = MIN_VOLUME + (d_vel_scalar - MIN_DVEL) * (MAX_VOLUME - MIN_VOLUME) / (MAX_DVEL - MIN_DVEL);
+    }
+
     int a_cat = a->getCategoryBitmask();
     int b_cat = b->getCategoryBitmask();
     switch (a_cat | b_cat)
     {
     case CCBM_GAME_FIELD | CCBM_PUCK:
-        AudioEngine::play2d("sound/collide_puck_walls.mp3", false, 0.5);
+        AudioEngine::play2d("sound/collide_puck_walls.mp3", false, volume);
         break;
     case CCBM_PADDLE1 | CCBM_PUCK:
     case CCBM_PADDLE2 | CCBM_PUCK:
-        AudioEngine::play2d("sound/collide_puck_paddle.mp3", false, 0.5);
+        AudioEngine::play2d("sound/collide_puck_paddle.mp3", false, volume);
         break;
     default: break;
     }
