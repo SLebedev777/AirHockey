@@ -13,6 +13,7 @@
 #include "GlobalSettings.h"
 #include "Physics.h"
 #include <memory>
+#include <chrono>
 #include "audio/include/AudioEngine.h"
 
 USING_NS_CC;
@@ -362,14 +363,23 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
 {
     using namespace airhockey::Physics;
 
+    static std::chrono::time_point<std::chrono::system_clock> last_time = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> diff = std::chrono::system_clock::now() - last_time;
+    double elapsed_time = diff.count();
+    if (elapsed_time <= 0.1)
+    {
+        return true;
+    }
+
     PhysicsBody* a = contact.getShapeA()->getBody();
     PhysicsBody* b = contact.getShapeB()->getBody();
     Vec2 delta_vel = a->getVelocity() - b->getVelocity();
     float d_vel_scalar = delta_vel.lengthSquared();
-    const float MIN_DVEL = 300.0f;
-    const float MAX_DVEL = 100000.0f;
+    const float MIN_DVEL = 40000.0f;
+    const float MAX_DVEL = 1000000.0f;
     const float MIN_VOLUME = 0.01f;
-    const float MAX_VOLUME = 0.4f;
+    const float MAX_VOLUME = 0.3f;
     float volume = 0.0f;
     if (d_vel_scalar <= MIN_DVEL)
     {
@@ -397,6 +407,8 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
         break;
     default: break;
     }
+
+    last_time = std::chrono::system_clock::now();
 
     return true;
 }
