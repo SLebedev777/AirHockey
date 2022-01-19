@@ -723,6 +723,8 @@ void GameScene::update(float dt)
             m_goalHitBy = GoalHitBy::PLAYER2;
             ++m_score2;
             puck_y_offset = -puck_y_offset;
+
+            AudioEngine::play2d("sound/buzz.mp3", false, 0.3f);
         }
         // goal to Player2's gate (upper)
         else if (m_field->getGoalGate(GoalGateLocationType::UPPER).getRect().containsPoint(m_puck->getPosition()))
@@ -731,6 +733,8 @@ void GameScene::update(float dt)
 
             m_goalHitBy = GoalHitBy::PLAYER1;
             ++m_score1;
+
+            AudioEngine::play2d("sound/organ1.mp3", false, 0.3f);
         }
     }
 
