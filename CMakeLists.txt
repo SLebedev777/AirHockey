@@ -83,6 +83,12 @@ list(APPEND GAME_SOURCE
      Classes/AIPlayer.cpp
      Classes/CCHelpers.cpp
      Classes/DebugLogger.cpp
+     Classes/GlobalSettings.cpp
+     Classes/MainMenuScene.cpp
+     Classes/MainMenuSettingsLayer.cpp
+     Classes/Physics.cpp
+     Classes/Sound.cpp
+     Classes/UISettings.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -111,6 +117,11 @@ list(APPEND GAME_HEADER
      Classes/AirHockey_fwd.h
      Classes/CCHelpers.h
      Classes/DebugLogger.h
+     Classes/GlobalSettings.h
+     Classes/MainMenuScene.h
+     Classes/MainMenuSettingsLayer.h
+     Classes/Physics.h
+     Classes/Sound.h
      )
 
 if(ANDROID)
