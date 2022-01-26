@@ -15,6 +15,7 @@
 #include <memory>
 #include <chrono>
 #include "audio/include/AudioEngine.h"
+#include "Sound.h"
 
 USING_NS_CC;
 
@@ -362,6 +363,7 @@ bool GameScene::init()
 bool GameScene::onContactBegin(PhysicsContact& contact)
 {
     using namespace airhockey::Physics;
+    using namespace airhockey::Sound;
 
     static std::chrono::time_point<std::chrono::system_clock> last_time = std::chrono::system_clock::now();
 
@@ -399,11 +401,11 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
     switch (a_cat | b_cat)
     {
     case CCBM_GAME_FIELD | CCBM_PUCK:
-        AudioEngine::play2d("sound/collide_puck_walls.mp3", false, volume);
+        AudioEngine::play2d(AUDIOFILE_COLLIDE_PUCK_WALLS, false, volume);
         break;
     case CCBM_PADDLE1 | CCBM_PUCK:
     case CCBM_PADDLE2 | CCBM_PUCK:
-        AudioEngine::play2d("sound/collide_puck_paddle.mp3", false, volume);
+        AudioEngine::play2d(AUDIOFILE_COLLIDE_PUCK_PADDLE, false, volume);
         break;
     default: break;
     }
@@ -512,6 +514,9 @@ void GameScene::onGameEndMenuOpen(Ref* sender)
     Director::getInstance()->getScheduler()->pauseTarget(this);
     this->getPhysicsWorld()->setAutoStep(false);
 
+    using namespace airhockey::Sound;
+    m_score1 > m_score2 ? AudioEngine::play2d(AUDIOFILE_WIN, false, 0.4f) : AudioEngine::play2d(AUDIOFILE_LOSE, false, 0.4f);
+
     auto label_result = Label::createWithTTF(m_score1 > m_score2 ? "YOU WIN!" : "YOU LOSE", "fonts/Abduction.ttf", 128);
     label_result->setTextColor(m_score1 > m_score2 ? Color4B::GREEN : Color4B::RED);
     auto game_end_menu_layer = GameEndMenuLayer::create(this, label_result);
@@ -560,6 +565,7 @@ void GameScene::rethrowPuck(cocos2d::Vec2& puck_rethrow_pos)
     m_puck->runAction(puck_restart_action(puck_rethrow_pos));
 
     auto puck_clone = Sprite::create("puck.png");
+    puck_clone->setPosition(Vec2(-1000, -1000));
     this->getChildByTag(TAG_GAME_LAYER)->addChild(puck_clone, 1);
     auto puck_throw_down_effect_action = [](cocos2d::Vec2& puck_rethrow_pos) {
         auto hide = cocos2d::Hide::create();
@@ -678,6 +684,7 @@ void GameScene::onScoreChanged()
 void GameScene::update(float dt)
 {
     using namespace airhockey;
+    using namespace airhockey::Sound;
 
     // GAME LOGIC HERE
     m_paddle1->move(dt);
@@ -724,7 +731,7 @@ void GameScene::update(float dt)
             ++m_score2;
             puck_y_offset = -puck_y_offset;
 
-            AudioEngine::play2d("sound/buzz.mp3", false, 0.3f);
+            AudioEngine::play2d(AUDIOFILE_BUZZ, false, 0.3f);
         }
         // goal to Player2's gate (upper)
         else if (m_field->getGoalGate(GoalGateLocationType::UPPER).getRect().containsPoint(m_puck->getPosition()))
@@ -734,12 +741,26 @@ void GameScene::update(float dt)
             m_goalHitBy = GoalHitBy::PLAYER1;
             ++m_score1;
 
-            AudioEngine::play2d("sound/organ1.mp3", false, 0.3f);
+            switch (rand() % 3)
+            {
+            case 0:
+                AudioEngine::play2d(AUDIOFILE_ORGAN1, false, 0.3f);
+                break;
+            case 1:
+                AudioEngine::play2d(AUDIOFILE_ORGAN2, false, 0.3f);
+                break;
+            case 2:
+            default:
+                AudioEngine::play2d(AUDIOFILE_ORGAN3, false, 0.3f);
+                break;
+            }
         }
     }
 
     if (m_goalHitBy != GoalHitBy::NONE)
     {
+        AudioEngine::play2d(AUDIOFILE_PUCK_FALL_GOAL, false, 0.4f);
+
         m_isPuckPlayable = false;
         startDelay(3.0f);
 

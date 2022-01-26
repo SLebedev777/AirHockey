@@ -45,7 +45,7 @@ bool MainMenuSettingsLayer::init()
     auto button_quit = ui::Button::create("HD/ui/home.png", "HD/ui/home_pressed.png");
     button_quit->setScale(1.5f);
     button_quit->addClickEventListener([=](Ref* sender) { menuBackToMainMenuCallback(sender); });
-    button_quit->addTouchEventListener(airhockey::sound::uiButtonClickSoundCallback);
+    button_quit->addTouchEventListener(airhockey::Sound::uiButtonClickSoundCallback);
 
     ui::Layout* layout = ui::Layout::create();
     layout->setLayoutType(ui::Layout::Type::VERTICAL);
@@ -100,7 +100,7 @@ void MainMenuSettingsLayer::toggleAudioCallback(cocos2d::Ref* pSender)
     {
         using namespace airhockey;
         GlobalSettings::isAudioEnabled = !GlobalSettings::isAudioEnabled;
-        sound::onToggleAudioCallback(GlobalSettings::isAudioEnabled);
+        Sound::onToggleAudioCallback(GlobalSettings::isAudioEnabled);
     }
 }
 

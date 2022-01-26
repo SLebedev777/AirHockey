@@ -32,7 +32,7 @@ namespace airhockey
             button->setContentSize(Size(550, 100));
         }
         // assign sound effect to event when button is clicked
-        button->addTouchEventListener(airhockey::sound::uiButtonClickSoundCallback);
+        button->addTouchEventListener(airhockey::Sound::uiButtonClickSoundCallback);
         return button;
 
 	}

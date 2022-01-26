@@ -27,6 +27,7 @@
 #include "GameScene.h"
 #include "MainMenuScene.h"
 #include "CCHelpers.h"
+#include "Sound.h"
 
 #define USE_AUDIO_ENGINE 1
 
@@ -190,7 +191,17 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 #endif
 
-    AudioEngine::preload("sound\button_click.mp3");
+    using namespace airhockey::Sound;
+    AudioEngine::preload(AUDIOFILE_BUTTON_CLICK);
+    AudioEngine::preload(AUDIOFILE_BUZZ);
+    AudioEngine::preload(AUDIOFILE_COLLIDE_PUCK_PADDLE);
+    AudioEngine::preload(AUDIOFILE_COLLIDE_PUCK_WALLS);
+    AudioEngine::preload(AUDIOFILE_LOSE);
+    AudioEngine::preload(AUDIOFILE_ORGAN1);
+    AudioEngine::preload(AUDIOFILE_ORGAN2);
+    AudioEngine::preload(AUDIOFILE_ORGAN3);
+    AudioEngine::preload(AUDIOFILE_PUCK_FALL_GOAL);
+    AudioEngine::preload(AUDIOFILE_WIN);
 
     register_all_packages();
 
