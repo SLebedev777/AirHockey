@@ -61,26 +61,29 @@
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\DebugLogger.cpp">
       <Filter>Source Files\Classes</Filter>
     </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GlobalSettings.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\MainMenuScene.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\MainMenuSettingsLayer.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\Physics.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\Sound.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\UISettings.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.cpp">
       <Filter>Source Files\proj.win32</Filter>
     </ClCompile>
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\cocos2d\cocos\precheader.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\MainMenuScene.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\UISettings.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GlobalSettings.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\MainMenuSettingsLayer.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Sound.cpp">
-      <Filter>Source Files\Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +165,21 @@
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\DebugLogger.h">
       <Filter>Source Files\Classes</Filter>
     </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GlobalSettings.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\MainMenuScene.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\MainMenuSettingsLayer.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\Physics.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\Sound.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.h">
       <Filter>Source Files\proj.win32</Filter>
     </ClInclude>
@@ -186,6 +204,9 @@
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\paddle_150.png">
       <Filter>Resources\HD</Filter>
     </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\paddle_gimp.png">
+      <Filter>Resources\HD</Filter>
+    </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\pause.png">
       <Filter>Resources\HD</Filter>
     </ClInclude>
@@ -195,11 +216,80 @@
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\puck.png">
       <Filter>Resources\HD</Filter>
     </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\audioOff.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\audioOff_pressed.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\audioOn.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\audioOn_pressed.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\button_frame.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\button_frame.xcf">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\cross.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\exit.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\exitRight.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\exitRight_pressed.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\exit_pressed.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\gear.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\gear_pressed.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\home.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\home_pressed.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\pause.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\pause_pressed.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\retry.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\retry_pressed.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\right.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\right_pressed.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\HD\ui\vfx.png">
+      <Filter>Resources\HD\ui</Filter>
+    </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\button_green.png">
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\button_red.png">
       <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\fonts\Abduction.ttf">
+      <Filter>Resources\fonts</Filter>
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\fonts\Marker Felt.ttf">
       <Filter>Resources\fonts</Filter>
@@ -207,20 +297,59 @@
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\fonts\arial.ttf">
       <Filter>Resources\fonts</Filter>
     </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\fonts\digital-7.italic.ttf">
+      <Filter>Resources\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\fonts\minisystem.ttf">
+      <Filter>Resources\fonts</Filter>
+    </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\res\.gitkeep">
       <Filter>Resources\res</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\MainMenuScene.h">
-      <Filter>Source Files\Classes</Filter>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\background.mp3">
+      <Filter>Resources\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\GlobalSettings.h">
-      <Filter>Source Files\Classes</Filter>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\button_click.mp3">
+      <Filter>Resources\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\MainMenuSettingsLayer.h">
-      <Filter>Source Files\Classes</Filter>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\buzz.mp3">
+      <Filter>Resources\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Sound.h">
-      <Filter>Source Files\Classes</Filter>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_paddle.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_paddle2.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_paddle3.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_walls.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_walls3.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\lose.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\organ1.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\organ2.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\organ3.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\puck_fall_goal.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\puck_fall_goal_hard.mp3">
+      <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\win.mp3">
+      <Filter>Resources\sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -238,11 +367,17 @@
     <Filter Include="Resources\HD">
       <UniqueIdentifier>{685DE461-055E-336D-9D34-830D5F56C688}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources\HD\ui">
+      <UniqueIdentifier>{13027669-AF2E-3D38-BB2E-EAE5B4DCB053}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resources\fonts">
       <UniqueIdentifier>{ED5EB285-F434-3338-B214-7496DC0BF695}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resources\res">
       <UniqueIdentifier>{D5258167-8011-37E7-8AED-815ED41A360F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\sound">
+      <UniqueIdentifier>{A5177625-CA27-3BFE-AAC7-820A675EF483}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{16F1C41A-43A6-320C-BE04-2039A9D7007E}</UniqueIdentifier>
