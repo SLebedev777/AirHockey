@@ -85,6 +85,9 @@
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\cocos2d\cocos\precheader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameScene_VFX.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.h">
@@ -350,6 +353,9 @@
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\win.mp3">
       <Filter>Resources\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameScene_VFX.h">
+      <Filter>Source Files\Classes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

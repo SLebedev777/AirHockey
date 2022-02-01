@@ -16,6 +16,7 @@
 #include <chrono>
 #include "audio/include/AudioEngine.h"
 #include "Sound.h"
+#include "GameScene_VFX.h"
 
 USING_NS_CC;
 
@@ -417,7 +418,48 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
 
 bool GameScene::onContactBeginVFX(PhysicsContact& contact)
 {
-    m_logger->log("onContactBeginVFX");
+    using namespace airhockey::Physics;
+    using namespace airhockey::VFX;
+
+    static std::chrono::time_point<std::chrono::system_clock> last_time = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> diff = std::chrono::system_clock::now() - last_time;
+    double elapsed_time = diff.count();
+    if (elapsed_time <= 0.1)
+    {
+        return true;
+    }
+
+    PhysicsBody* a = contact.getShapeA()->getBody();
+    PhysicsBody* b = contact.getShapeB()->getBody();
+
+    int a_cat = a->getCategoryBitmask();
+    int b_cat = b->getCategoryBitmask();
+
+    cocos2d::ParticleSystemQuad* emitter = nullptr;
+
+    switch (a_cat | b_cat)
+    {
+    case CCBM_GAME_FIELD | CCBM_PUCK:
+        emitter = getParticleVFXPuckCollideWalls();
+        break;
+    case CCBM_PADDLE1 | CCBM_PUCK:
+        emitter = getParticleVFXPuckCollidePaddle(Color4F(m_paddle1->getSprite()->getColor()));
+        break;
+    case CCBM_PADDLE2 | CCBM_PUCK:
+        emitter = getParticleVFXPuckCollidePaddle(Color4F(m_paddle2->getSprite()->getColor()));
+        break;
+    default: break;
+    }
+
+    if (emitter)
+    {
+        emitter->setPosition(contact.getContactData()->points[0]);
+        this->getChildByTag(TAG_GAME_LAYER)->addChild(emitter, 100);
+    }
+
+    last_time = std::chrono::system_clock::now();
+
     return true;
 }
 

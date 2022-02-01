@@ -41,7 +41,7 @@ bool MainMenuScene::init()
     auto back_layer = LayerGradient::create(Color4B::BLUE, Color4B::BLACK);
     this->addChild(back_layer);
 
-    auto button_start = airhockey::createUIButton("1PLAYER");
+    auto button_start = airhockey::createUIButton("PLAY");
     button_start->addClickEventListener([=](Ref* sender) { menuNewGameCallback(sender); });
     button_start->runAction(UIButtonMenu::defaultFocusedButtonActionCallback());
 

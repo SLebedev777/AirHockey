@@ -116,7 +116,8 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message>												</Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different D:/semen/games/cocos2d-x_projects/airhockey/cocos2d/external/openssl/prebuilt/win32/libssl-1_1.dll D:/semen/games/cocos2d-x_projects/airhockey/msvc2019_sln/bin/airhockey/Debug/libssl-1_1.dll
 if %errorlevel% neq 0 goto :cmEnd
@@ -281,7 +282,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message>												</Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different D:/semen/games/cocos2d-x_projects/airhockey/cocos2d/external/openssl/prebuilt/win32/libssl-1_1.dll D:/semen/games/cocos2d-x_projects/airhockey/msvc2019_sln/bin/airhockey/Release/libssl-1_1.dll
 if %errorlevel% neq 0 goto :cmEnd
@@ -446,7 +448,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message>												</Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different D:/semen/games/cocos2d-x_projects/airhockey/cocos2d/external/openssl/prebuilt/win32/libssl-1_1.dll D:/semen/games/cocos2d-x_projects/airhockey/msvc2019_sln/bin/airhockey/MinSizeRel/libssl-1_1.dll
 if %errorlevel% neq 0 goto :cmEnd
@@ -610,7 +613,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message>												</Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different D:/semen/games/cocos2d-x_projects/airhockey/cocos2d/external/openssl/prebuilt/win32/libssl-1_1.dll D:/semen/games/cocos2d-x_projects/airhockey/msvc2019_sln/bin/airhockey/RelWithDebInfo/libssl-1_1.dll
 if %errorlevel% neq 0 goto :cmEnd
@@ -801,6 +805,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Classes\GameScene_VFX.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene.h" />
@@ -834,6 +839,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\Sound.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.h" />
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\resource.h" />
+    <ClCompile Include="..\Classes\GameScene_VFX.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene.cpp" />
