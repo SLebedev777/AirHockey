@@ -214,7 +214,7 @@ bool GameScene::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
     auto contactListenerVFX = EventListenerPhysicsContact::create();
-    contactListenerVFX->onContactBegin = CC_CALLBACK_1(GameScene::onContactBeginVFX, this);
+    contactListenerVFX->onContactSeparate = CC_CALLBACK_1(GameScene::onContactSeparateVFX, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListenerVFX, this);
 
 
@@ -416,7 +416,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
     return true;
 }
 
-bool GameScene::onContactBeginVFX(PhysicsContact& contact)
+bool GameScene::onContactSeparateVFX(PhysicsContact& contact)
 {
     using namespace airhockey::Physics;
     using namespace airhockey::VFX;
@@ -452,8 +452,12 @@ bool GameScene::onContactBeginVFX(PhysicsContact& contact)
     default: break;
     }
 
-    if (emitter)
+    PhysicsBody* puck_body = (a_cat == CCBM_PUCK) ? a : ((b_cat == CCBM_PUCK) ? b : nullptr);
+
+    if (emitter && puck_body)
     {
+        float angle = 180 + CC_RADIANS_TO_DEGREES(puck_body->getVelocity().getAngle());
+        emitter->setAngle(angle);
         emitter->setPosition(contact.getContactData()->points[0]);
         this->getChildByTag(TAG_GAME_LAYER)->addChild(emitter, 100);
     }
