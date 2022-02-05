@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __GAMESCENE_VFX_H__
+#define __GAMESCENE_VFX_H__
+
 
 //#include "cocos/2d/CCParticleSystemQuad.h"
 #include "cocos2d.h"
@@ -11,3 +13,5 @@ namespace airhockey
 		cocos2d::ParticleSystemQuad* getParticleVFXPuckCollidePaddle(const cocos2d::Color4F& paddle_color);
 	}
 }
+
+#endif

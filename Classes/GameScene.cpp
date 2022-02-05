@@ -418,6 +418,9 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
 
 bool GameScene::onContactSeparateVFX(PhysicsContact& contact)
 {
+    if (!airhockey::GlobalSettings::isVFXEnabled)
+        return true;
+
     using namespace airhockey::Physics;
     using namespace airhockey::VFX;
 

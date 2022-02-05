@@ -5,13 +5,15 @@
 #include "UIButtonMenu.h"
 #include "GlobalSettings.h"
 #include "Sound.h"
+#include "GameScene_VFX.h"
 
 USING_NS_CC;
 
 enum GAME_MENU_LAYER_TAGS
 {
     TOGGLE_AUDIO_TAG = 1,
-    LAYOUT_TAG = 2
+    TOGGLE_VFX_TAG = 2,
+    LAYOUT_TAG = 3
 };
 
 
@@ -56,6 +58,12 @@ bool GameMenuLayer::init()
     button_toggle_audio->setSelected(!airhockey::GlobalSettings::isAudioEnabled);
     button_toggle_audio->addTouchEventListener(airhockey::Sound::uiButtonClickSoundCallback);
 
+    auto button_toggle_vfx = ui::CheckBox::create("HD/ui/vfx.png", "HD/ui/cross.png");
+    button_toggle_vfx->addClickEventListener([=](Ref* sender) { toggleVFXCallback(sender); });
+    button_toggle_vfx->setScale(1.5f);
+    button_toggle_vfx->setSelected(!airhockey::GlobalSettings::isVFXEnabled);
+    button_toggle_vfx->addTouchEventListener(airhockey::Sound::uiButtonClickSoundCallback);
+
     auto button_quit = ui::Button::create("HD/ui/home.png", "HD/ui/home_pressed.png");
     button_quit->setScale(1.5f);
     button_quit->addClickEventListener([=](Ref* sender) { menuBackToMainMenuCallback(sender); });
@@ -63,7 +71,7 @@ bool GameMenuLayer::init()
 
     ui::Layout* layout = ui::Layout::create();
     layout->setLayoutType(ui::Layout::Type::VERTICAL);
-    layout->setContentSize(Size(400, 600));
+    layout->setContentSize(Size(400, 800));
     layout->setBackGroundColor(Color3B(50, 0, 50), Color3B(20, 0, 20));
     layout->setBackGroundColorOpacity(220);
     layout->setBackGroundColorType(ui::Layout::BackGroundColorType::GRADIENT);
@@ -81,17 +89,20 @@ bool GameMenuLayer::init()
 
     button_resume->setLayoutParameter(liner);
     button_toggle_audio->setLayoutParameter(liner);
+    button_toggle_vfx->setLayoutParameter(liner);
     button_quit->setLayoutParameter(liner);
 
     Color3B ui_color_secondary = Color3B(230, 220, 250);
     Color3B ui_color_primary = Color3B(190, 255, 255);
     button_resume->setColor(ui_color_primary);
     button_toggle_audio->setColor(ui_color_secondary);
+    button_toggle_vfx->setColor(ui_color_secondary);
     button_quit->setColor(ui_color_secondary);
 
     layout->addChild(text_title);
     layout->addChild(button_resume);
     layout->addChild(button_toggle_audio, 0, GAME_MENU_LAYER_TAGS::TOGGLE_AUDIO_TAG);
+    layout->addChild(button_toggle_vfx, 0, GAME_MENU_LAYER_TAGS::TOGGLE_VFX_TAG);
     layout->addChild(button_quit);
 
     Rect layout_rect = layout->getBoundingBox();
@@ -142,6 +153,18 @@ void GameMenuLayer::updateToggleAudioButton()
         button_toggle_audio->setSelected(!airhockey::GlobalSettings::isAudioEnabled);
     }
 }
+
+void GameMenuLayer::toggleVFXCallback(cocos2d::Ref* pSender)
+{
+    auto layout = this->getChildByTag(GAME_MENU_LAYER_TAGS::LAYOUT_TAG);
+    auto button_toggle_vfx = static_cast<ui::CheckBox*>(layout->getChildByTag(GAME_MENU_LAYER_TAGS::TOGGLE_VFX_TAG));
+    if (button_toggle_vfx)
+    {
+        using namespace airhockey;
+        GlobalSettings::isVFXEnabled = !GlobalSettings::isVFXEnabled;
+    }
+}
+
 
 void GameMenuLayer::menuBackToMainMenuCallback(cocos2d::Ref* pSender)
 {

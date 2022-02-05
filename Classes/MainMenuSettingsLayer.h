@@ -17,6 +17,9 @@ public:
     void menuBackToMainMenuCallback(cocos2d::Ref* pSender);
     void toggleAudioCallback(cocos2d::Ref* sender);
     void updateToggleAudioButton();
+    void toggleVFXCallback(cocos2d::Ref* sender);
+    void updateToggleVFXButton();
+
 };
 
 #endif // __GAMEMENULAYER_H__

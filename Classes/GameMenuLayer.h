@@ -21,6 +21,7 @@ public:
     // back to main menu scene callback
     void menuBackToMainMenuCallback(cocos2d::Ref* pSender);
     void toggleAudioCallback(cocos2d::Ref* pSender);
+    void toggleVFXCallback(cocos2d::Ref* pSender);
     
     void updateToggleAudioButton();
 

@@ -10,7 +10,8 @@ USING_NS_CC;
 enum MAIN_MENU_SETTINGS_LAYER_TAGS
 {
     TOGGLE_AUDIO_TAG = 1,
-    LAYOUT_TAG = 2
+    TOGGLE_VFX_TAG = 2,
+    LAYOUT_TAG = 3
 };
 
 MainMenuSettingsLayer* MainMenuSettingsLayer::create()
@@ -42,6 +43,11 @@ bool MainMenuSettingsLayer::init()
     button_toggle_audio->setScale(1.5f);
     button_toggle_audio->setSelected(!airhockey::GlobalSettings::isAudioEnabled);
 
+    auto button_toggle_vfx = ui::CheckBox::create("HD/ui/vfx.png", "HD/ui/cross.png");
+    button_toggle_vfx->addClickEventListener([=](Ref* sender) { toggleVFXCallback(sender); });
+    button_toggle_vfx->setScale(1.5f);
+    button_toggle_vfx->setSelected(!airhockey::GlobalSettings::isVFXEnabled);
+
     auto button_quit = ui::Button::create("HD/ui/home.png", "HD/ui/home_pressed.png");
     button_quit->setScale(1.5f);
     button_quit->addClickEventListener([=](Ref* sender) { menuBackToMainMenuCallback(sender); });
@@ -66,15 +72,18 @@ bool MainMenuSettingsLayer::init()
     text_title->setLayoutParameter(liner_top);
 
     button_toggle_audio->setLayoutParameter(liner);
+    button_toggle_vfx->setLayoutParameter(liner);
     button_quit->setLayoutParameter(liner);
 
     Color3B ui_color_secondary = Color3B(230, 220, 250);
     Color3B ui_color_primary = Color3B(190, 255, 255);
     button_toggle_audio->setColor(ui_color_secondary);
+    button_toggle_vfx->setColor(ui_color_secondary);
     button_quit->setColor(ui_color_secondary);
 
     layout->addChild(text_title);
     layout->addChild(button_toggle_audio, 0, MAIN_MENU_SETTINGS_LAYER_TAGS::TOGGLE_AUDIO_TAG);
+    layout->addChild(button_toggle_vfx, 0, MAIN_MENU_SETTINGS_LAYER_TAGS::TOGGLE_VFX_TAG);
     layout->addChild(button_quit);
 
     Rect layout_rect = layout->getBoundingBox();
@@ -113,6 +122,28 @@ void MainMenuSettingsLayer::updateToggleAudioButton()
         button_toggle_audio->setSelected(!airhockey::GlobalSettings::isAudioEnabled);
     }
 }
+
+void MainMenuSettingsLayer::toggleVFXCallback(cocos2d::Ref* pSender)
+{
+    auto layout = this->getChildByTag(MAIN_MENU_SETTINGS_LAYER_TAGS::LAYOUT_TAG);
+    auto button_toggle_vfx = static_cast<ui::CheckBox*>(layout->getChildByTag(MAIN_MENU_SETTINGS_LAYER_TAGS::TOGGLE_VFX_TAG));
+    if (button_toggle_vfx)
+    {
+        using namespace airhockey;
+        GlobalSettings::isVFXEnabled = !GlobalSettings::isVFXEnabled;
+    }
+}
+
+void MainMenuSettingsLayer::updateToggleVFXButton()
+{
+    auto layout = this->getChildByTag(MAIN_MENU_SETTINGS_LAYER_TAGS::LAYOUT_TAG);
+    auto button_toggle_vfx = static_cast<ui::CheckBox*>(layout->getChildByTag(MAIN_MENU_SETTINGS_LAYER_TAGS::TOGGLE_VFX_TAG));
+    if (button_toggle_vfx)
+    {
+        button_toggle_vfx->setSelected(!airhockey::GlobalSettings::isVFXEnabled);
+    }
+}
+
 
 void MainMenuSettingsLayer::menuBackToMainMenuCallback(cocos2d::Ref* pSender)
 {
