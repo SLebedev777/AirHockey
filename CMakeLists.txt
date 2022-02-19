@@ -89,6 +89,7 @@ list(APPEND GAME_SOURCE
      Classes/Physics.cpp
      Classes/Sound.cpp
      Classes/UISettings.cpp
+     Classes/GameScene_VFX.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -122,6 +123,7 @@ list(APPEND GAME_HEADER
      Classes/MainMenuSettingsLayer.h
      Classes/Physics.h
      Classes/Sound.h
+     Classes/GameScene_VFX.h
      )
 
 if(ANDROID)
