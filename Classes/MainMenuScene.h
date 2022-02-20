@@ -11,6 +11,7 @@ public:
 
     virtual bool init();
 
+    void onEnterTransitionDidFinish() override;
     void menuNewGameCallback(cocos2d::Ref* pSender);
     void menuCloseCallback(cocos2d::Ref* pSender);
     void onMainMenuSettingsOpen(Ref* sender);

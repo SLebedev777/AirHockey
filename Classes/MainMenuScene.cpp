@@ -20,6 +20,29 @@ static enum MainMenuTags
     LAYOUT_TAG = 11
 };
 
+namespace
+{
+    Label* createMirror(Label* label, const std::string& font_name)
+    {
+        auto mirror = Label::createWithTTF(label->getString(), font_name, label->getRenderingFontSize());
+        mirror->setScaleY(-1);
+        
+        Color4B color = label->getTextColor();
+        Color4B color_delta = Color4B(80, 0, 80, 0);
+        color.r = (color.r - color_delta.r > 0) ? color.r - color_delta.r : 0;
+        color.g = (color.g - color_delta.g > 0) ? color.g - color_delta.g : 0;
+        color.b = (color.b - color_delta.b > 0) ? color.b - color_delta.b : 0;
+        color.a = (color.a - color_delta.a > 0) ? color.a - color_delta.a : 0;
+
+        mirror->setTextColor(color);
+        mirror->setOpacity(150);
+        mirror->setClipMarginEnabled(true);
+        float height_coeff = 0.2;
+        mirror->setPosition(label->getPosition() - Vec2(0, label->getBoundingBox().size.height * (1 - height_coeff)));
+        return mirror;
+    }
+}
+
 Scene* MainMenuScene::createScene()
 {
     return MainMenuScene::create();
@@ -41,10 +64,39 @@ bool MainMenuScene::init()
     auto back_layer = LayerGradient::create(Color4B::BLUE, Color4B::BLACK);
     this->addChild(back_layer);
 
+    // caption
+    const std::string caption_font = "fonts/RetronoidItalic-ln9V.ttf";
+    const float caption_font_size = 150;
+    const float caption_y = center.y + 700;
+
+    auto caption_left = Label::createWithTTF("AIR", caption_font, caption_font_size);
+    caption_left->setClipMarginEnabled(true);
+    caption_left->setTextColor(Color4B(255, 127, 0, 255));
+    this->addChild(caption_left, 1, 666);
+
+    auto caption_right = Label::createWithTTF("HOCKEY", caption_font, caption_font_size);
+    caption_right->setAnchorPoint(Vec2(0.0, 0.5));
+    caption_right->setClipMarginEnabled(true);
+    caption_right->setTextColor(Color4B::YELLOW);
+    this->addChild(caption_right, 1, 667);
+
+    caption_left->setPosition(Vec2(-1000, caption_y));
+    caption_right->setPosition(Vec2(2000, caption_y));
+
+    auto caption_mirror_left = createMirror(caption_left, caption_font);
+    auto caption_mirror_right = createMirror(caption_right, caption_font);
+    float mirror_y = caption_mirror_left->getPosition().y;
+    caption_mirror_left->setPosition(Vec2(-1000, mirror_y));
+    caption_mirror_right->setPosition(Vec2(2000, mirror_y));
+    caption_mirror_right->setAnchorPoint(Vec2(0.0, 0.5));
+    this->addChild(caption_mirror_left, 1, 668);
+    this->addChild(caption_mirror_right, 1, 669);
+
+    // buttons
     auto button_start = airhockey::createUIButton("PLAY");
     button_start->addClickEventListener([=](Ref* sender) { menuNewGameCallback(sender); });
     button_start->runAction(UIButtonMenu::defaultFocusedButtonActionCallback());
-
+    
     auto button_settings = airhockey::createUIButton("SETTINGS");
     button_settings->addClickEventListener([=](Ref* sender) { onMainMenuSettingsOpen(sender); });
 
@@ -94,7 +146,7 @@ bool MainMenuScene::init()
     layout->addChild(button_quit);
 
     layout->setAnchorPoint(Vec2(0.5, 0.5));
-    layout->setPosition(center);
+    layout->setPosition(center - Vec2(0, 100));
 
     this->addChild(layout, 1, MainMenuTags::LAYOUT_TAG);
 
@@ -109,6 +161,46 @@ bool MainMenuScene::init()
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_main_menu_settings_layer_close_listener, this);
 
     return true;
+}
+
+void MainMenuScene::onEnterTransitionDidFinish()
+{
+    auto caption_left = this->getChildByTag(666);
+    if (!caption_left)
+        return;
+    auto caption_right = this->getChildByTag(667);
+    if (!caption_right)
+        return;
+    auto caption_mirror_left = this->getChildByTag(668);
+    if (!caption_mirror_left)
+        return;
+    auto caption_mirror_right = this->getChildByTag(669);
+    if (!caption_mirror_right)
+        return;
+
+    auto s = Director::getInstance()->getWinSize();
+    Vec2 center = Vec2(s.width / 2, s.height / 2);
+
+    const float caption_y = center.y + 700;
+    float caption_x_start = 200;
+    const float offset_x = caption_left->getBoundingBox().size.width - 70;
+    const float ease_rate = 10;
+    float mirror_y = caption_mirror_left->getPosition().y;
+
+    auto seq_appear = [ease_rate](const Vec2& from, const Vec2& to) {
+        auto seq = Sequence::create(MoveTo::create(0.0f, from),
+            EaseOut::create(MoveTo::create(1.0f, to), ease_rate),
+            nullptr);
+        return seq;
+    };
+
+    caption_left->runAction(seq_appear(Vec2(-1000, caption_y), Vec2(caption_x_start, caption_y)));
+    caption_right->runAction(seq_appear(Vec2(2000, caption_y), Vec2(caption_x_start + offset_x, caption_y)));
+
+    caption_mirror_left->runAction(seq_appear(Vec2(-1000, mirror_y), Vec2(caption_x_start, mirror_y)));
+    caption_mirror_right->runAction(seq_appear(Vec2(2000, mirror_y), Vec2(caption_x_start + offset_x, mirror_y)));
+
+
 }
 
 ui::Layout* MainMenuScene::getMenuLayout()

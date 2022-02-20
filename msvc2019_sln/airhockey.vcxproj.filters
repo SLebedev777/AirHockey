@@ -79,14 +79,14 @@
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\UISettings.cpp">
       <Filter>Source Files\Classes</Filter>
     </ClCompile>
+    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene_VFX.cpp">
+      <Filter>Source Files\Classes</Filter>
+    </ClCompile>
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.cpp">
       <Filter>Source Files\proj.win32</Filter>
     </ClCompile>
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\cocos2d\cocos\precheader.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GameScene_VFX.cpp">
-      <Filter>Source Files\Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +181,9 @@
       <Filter>Source Files\Classes</Filter>
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\Sound.h">
+      <Filter>Source Files\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene_VFX.h">
       <Filter>Source Files\Classes</Filter>
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\proj.win32\main.h">
@@ -318,16 +321,7 @@
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\buzz.mp3">
       <Filter>Resources\sound</Filter>
     </ClInclude>
-    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_paddle.mp3">
-      <Filter>Resources\sound</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_paddle2.mp3">
-      <Filter>Resources\sound</Filter>
-    </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_paddle3.mp3">
-      <Filter>Resources\sound</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_walls.mp3">
       <Filter>Resources\sound</Filter>
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\collide_puck_walls3.mp3">
@@ -348,14 +342,8 @@
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\puck_fall_goal.mp3">
       <Filter>Resources\sound</Filter>
     </ClInclude>
-    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\puck_fall_goal_hard.mp3">
-      <Filter>Resources\sound</Filter>
-    </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Resources\sound\win.mp3">
       <Filter>Resources\sound</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GameScene_VFX.h">
-      <Filter>Source Files\Classes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
