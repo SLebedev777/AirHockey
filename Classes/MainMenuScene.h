@@ -22,6 +22,9 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(MainMenuScene);
 
+private:
+    cocos2d::Sprite* m_puck = nullptr;
+    cocos2d::MotionStreak* m_streak = nullptr;
 
 };
 

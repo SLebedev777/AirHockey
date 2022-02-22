@@ -94,7 +94,7 @@ bool MainMenuSettingsLayer::init()
     //layout->addChild(border, 1);
 
     layout->setAnchorPoint(Vec2(0.5, 0.5));
-    layout->setPosition(center);
+    layout->setPosition(center - Vec2(0, 100));
 
     this->addChild(layout, 1, MAIN_MENU_SETTINGS_LAYER_TAGS::LAYOUT_TAG);
 
