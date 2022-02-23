@@ -74,6 +74,7 @@ bool MainMenuScene::init()
 
     // flying puck with motion streak
     m_puck = Sprite::create("HD/puck.png");
+    m_puck->setPosition(Vec2(-1000, -1000));
     const float spawn_interval = 2.0f;
     const float streak_interval = 1.0f;
     m_streak = MotionStreak::create(streak_interval, 5, m_puck->getBoundingBox().size.width, Color3B::WHITE, "HD/streak.png");
@@ -107,18 +108,28 @@ bool MainMenuScene::init()
         int end_x = genRandomInRange(0, end_rect.size.width) + end_rect.origin.x;
         int end_y = genRandomInRange(0, end_rect.size.height) + end_rect.origin.y;
 
+
         auto seq = Sequence::create(
+            DelayTime::create(streak_interval),
             Hide::create(),
             MoveTo::create(0, Vec2(start_x, start_y)),
+            ScaleTo::create(0.0f, 1.0f / float(genRandomInRange(1, 8))),
             DelayTime::create(streak_interval),
             Show::create(),
-            MoveTo::create(1.0f, Vec2(end_x, end_y)),  // TODO: parameterize motion interval
+            Spawn::createWithTwoActions(MoveTo::create(1.0f, Vec2(end_x, end_y)),  // TODO: parameterize motion interval
+                                        ScaleTo::create(1.0f, float(genRandomInRange(1, 4)))),
             nullptr);
-        this->m_puck->runAction(seq);
-        this->m_streak->runAction(seq->clone());
+        m_puck->runAction(seq);
         }, 
         spawn_interval + streak_interval,
         "puck_streak_schedule");
+
+    schedule([this](float) {
+        m_streak->setVisible(m_puck->isVisible());
+        m_streak->setPosition(m_puck->getPosition());
+        m_streak->setStroke(m_puck->getBoundingBox().size.width);
+        }
+    , "streak_move");
 
     // caption
     const std::string caption_font = "fonts/RetronoidItalic-ln9V.ttf";
