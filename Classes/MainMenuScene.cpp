@@ -72,6 +72,19 @@ bool MainMenuScene::init()
     auto back_layer = LayerGradient::create(Color4B::BLUE, Color4B::BLACK);
     this->addChild(back_layer);
 
+    // dots imitating air hockey table surface
+    DrawNode* dots = DrawNode::create();
+    const int dot_step = 60;
+    for (int y = dot_step / 2; y < s.height; y += dot_step)
+    {
+        float color_step = float(y) / s.height;
+        for (int x = dot_step / 2; x < s.width; x += dot_step)
+        {
+            dots->drawDot(Vec2(x, y), 3, Color4F(0.1f, 0.1f, 1.0f - color_step, 1.0f));
+        }
+    }
+    back_layer->addChild(dots, 1);
+
     // flying puck with motion streak
     m_puck = Sprite::create("HD/puck.png");
     m_puck->setPosition(Vec2(-1000, -1000));
@@ -108,7 +121,6 @@ bool MainMenuScene::init()
         int end_x = genRandomInRange(0, end_rect.size.width) + end_rect.origin.x;
         int end_y = genRandomInRange(0, end_rect.size.height) + end_rect.origin.y;
 
-
         auto seq = Sequence::create(
             DelayTime::create(streak_interval),
             Hide::create(),
@@ -117,7 +129,7 @@ bool MainMenuScene::init()
             DelayTime::create(streak_interval),
             Show::create(),
             Spawn::createWithTwoActions(MoveTo::create(1.0f, Vec2(end_x, end_y)),  // TODO: parameterize motion interval
-                                        ScaleTo::create(1.0f, float(genRandomInRange(1, 4)))),
+                                        ScaleTo::create(1.0f, 1)),
             nullptr);
         m_puck->runAction(seq);
         }, 
@@ -130,6 +142,9 @@ bool MainMenuScene::init()
         m_streak->setStroke(m_puck->getBoundingBox().size.width);
         }
     , "streak_move");
+
+    auto interm_layer = LayerGradient::create(Color4B(0, 0, 150, 100), Color4B(0, 0, 0, 100));
+    this->addChild(interm_layer, 1);
 
     // caption
     const std::string caption_font = "fonts/RetronoidItalic-ln9V.ttf";
@@ -215,7 +230,7 @@ bool MainMenuScene::init()
     layout->setAnchorPoint(Vec2(0.5, 0.5));
     layout->setPosition(center - Vec2(0, 100));
 
-    this->addChild(layout, 1, MainMenuTags::LAYOUT_TAG);
+    this->addChild(layout, 2, MainMenuTags::LAYOUT_TAG);
 
     auto settings_layer = MainMenuSettingsLayer::create();
     this->addChild(settings_layer, 255, MainMenuLayersTags::TAG_SETTINGS_LAYER);
