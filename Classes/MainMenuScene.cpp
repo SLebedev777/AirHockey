@@ -6,6 +6,8 @@
 #include "UIButtonMenu.h"
 #include "MainMenuSettingsLayer.h"
 #include "audio/include/AudioEngine.h"
+#include <cstdlib>
+
 
 
 USING_NS_CC;
@@ -41,6 +43,12 @@ namespace
         mirror->setPosition(label->getPosition() - Vec2(0, label->getBoundingBox().size.height * (1 - height_coeff)));
         return mirror;
     }
+
+    int genRandomInRange(int min, int max)
+    {
+        int output = min + (rand() * (int)(max - min) / RAND_MAX);
+        return output;
+    }
 }
 
 Scene* MainMenuScene::createScene()
@@ -63,6 +71,54 @@ bool MainMenuScene::init()
 
     auto back_layer = LayerGradient::create(Color4B::BLUE, Color4B::BLACK);
     this->addChild(back_layer);
+
+    // flying puck with motion streak
+    m_puck = Sprite::create("HD/puck.png");
+    const float spawn_interval = 2.0f;
+    const float streak_interval = 1.0f;
+    m_streak = MotionStreak::create(streak_interval, 5, m_puck->getBoundingBox().size.width, Color3B::WHITE, "HD/streak.png");
+    const std::string puck_name = "puck";
+    back_layer->addChild(m_puck, 2, puck_name);
+    const std::string streak_name = "puck_motion_streak";
+    back_layer->addChild(m_streak, 1, streak_name);
+
+    const float MARGIN = 100;
+    const float WIDTH = 500;
+    const Size horiz(s.width, WIDTH);
+    const Size vert(WIDTH, s.height);
+    std::vector<Rect> rects = {
+        Rect(Vec2(-MARGIN - WIDTH, 0), vert),
+        Rect(Vec2(0, s.height + MARGIN), horiz),
+        Rect(Vec2(s.width + MARGIN, 0), vert),
+        Rect(Vec2(0, -MARGIN - WIDTH), horiz)
+    };
+    schedule([this, s, streak_interval, rects = std::move(rects)](float) {
+        int start_rect_index = rand() % rects.size();
+        int end_rect_index = 0;
+        while (start_rect_index == end_rect_index)
+        {
+            end_rect_index = rand() % rects.size();
+        }
+        Rect start_rect = rects[start_rect_index];
+        Rect end_rect = rects[end_rect_index];
+
+        int start_x = genRandomInRange(0, start_rect.size.width) + start_rect.origin.x;
+        int start_y = genRandomInRange(0, start_rect.size.height) + start_rect.origin.y;
+        int end_x = genRandomInRange(0, end_rect.size.width) + end_rect.origin.x;
+        int end_y = genRandomInRange(0, end_rect.size.height) + end_rect.origin.y;
+
+        auto seq = Sequence::create(
+            Hide::create(),
+            MoveTo::create(0, Vec2(start_x, start_y)),
+            DelayTime::create(streak_interval),
+            Show::create(),
+            MoveTo::create(1.0f, Vec2(end_x, end_y)),  // TODO: parameterize motion interval
+            nullptr);
+        this->m_puck->runAction(seq);
+        this->m_streak->runAction(seq->clone());
+        }, 
+        spawn_interval + streak_interval,
+        "puck_streak_schedule");
 
     // caption
     const std::string caption_font = "fonts/RetronoidItalic-ln9V.ttf";
