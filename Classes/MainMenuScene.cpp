@@ -282,7 +282,27 @@ void MainMenuScene::onEnterTransitionDidFinish()
     caption_mirror_left->runAction(seq_appear(Vec2(-1000, mirror_y), Vec2(caption_x_start, mirror_y)));
     caption_mirror_right->runAction(seq_appear(Vec2(2000, mirror_y), Vec2(caption_x_start + offset_x, mirror_y)));
 
+    // particle effect for caption
+    m_fxEmitter = ParticleSystemQuad::create("vfx/Flower.plist");
+    float fx_start_pos_y = caption_left->getPosition().y + 10;
+    m_fxEmitter->setPosition(Vec2(-200, fx_start_pos_y));
+    m_fxEmitter->runAction(Sequence::create(
+        DelayTime::create(1.1f),
+        MoveTo::create(2.0f, Vec2(s.width + 200, fx_start_pos_y)),
+        DelayTime::create(5),
+        RemoveSelf::create(),
+        nullptr)
+    );
+    this->addChild(m_fxEmitter, 2, "fx_emitter");
 
+}
+
+void MainMenuScene::onExitTransitionDidStart()
+{
+    if (m_fxEmitter && getChildByName("fx_emitter"))
+    {
+        m_fxEmitter->runAction(RemoveSelf::create());
+    }
 }
 
 ui::Layout* MainMenuScene::getMenuLayout()
