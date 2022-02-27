@@ -46,6 +46,7 @@ public:
     void updateTimer(float dt);
     void drawHUDString(int str_tag, const std::string& str);
     void onScoreChanged();
+    void VFXGoalHit();
 
     void update(float dt) override;
 

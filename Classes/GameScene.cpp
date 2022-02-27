@@ -729,6 +729,26 @@ void GameScene::onScoreChanged()
     label_score2->runAction(label_score_action(label_score2->getPosition(), y_offset, m_goalHitBy == GoalHitBy::PLAYER2));
 }
 
+void GameScene::VFXGoalHit()
+{
+    if (m_goalHitBy == GoalHitBy::NONE)
+        return;
+
+    using namespace airhockey;
+
+    bool is_upper_goal = m_goalHitBy == GoalHitBy::PLAYER1;
+
+    auto goal_gate_type = is_upper_goal ? GoalGateLocationType::UPPER : GoalGateLocationType::LOWER;
+    const auto& goal_gate = m_field->getGoalGate(goal_gate_type);
+    auto goal_rect = goal_gate.getRect();
+    
+    Color4F color = (is_upper_goal == true) ? Color4F(m_paddle1->getSprite()->getColor()) : Color4F(m_paddle2->getSprite()->getColor());
+    auto emitter = airhockey::VFX::getParticleVFXGoalHit(is_upper_goal, goal_rect.size.width, color);
+    Vec2 emitter_pos = Vec2(goal_rect.getMidX(), is_upper_goal ? goal_rect.getMinY() : goal_rect.getMaxY());
+    emitter->setPosition(emitter_pos);
+    this->getChildByTag(TAG_GAME_LAYER)->addChild(emitter, 100);
+}
+
 
 void GameScene::update(float dt)
 {
@@ -832,6 +852,7 @@ void GameScene::update(float dt)
             rethrowPuck(puck_rethrow_pos);
         }
 
+        VFXGoalHit();
         onScoreChanged();
 
         m_goalHitBy = GoalHitBy::NONE;

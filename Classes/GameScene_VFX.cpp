@@ -51,5 +51,45 @@ namespace airhockey
             return emitter;
         }
 
+        cocos2d::ParticleSystemQuad* getParticleVFXGoalHit(bool is_upper_goal, float goal_width, const Color4F& color)
+        {
+            auto emitter = ParticleSnow::createWithTotalParticles(150);
+
+            emitter->setDuration(1.0f);
+            emitter->setLife(1.5f);
+            emitter->setLifeVar(1);
+
+            emitter->setEmissionRate(emitter->getTotalParticles() / emitter->getLife());
+
+            // gravity
+            float gravity = -10.f;
+            float speed = 300.0f;
+            if (!is_upper_goal)
+            {
+                gravity *= -1;
+                speed *= -1;
+            }
+
+            emitter->setGravity(Vec2(0.0f, gravity));
+
+            // speed of particles
+            emitter->setSpeed(speed);
+            emitter->setSpeedVar(100);
+
+            emitter->setTangentialAccel(0);
+            emitter->setTangentialAccelVar(70);
+
+            emitter->setStartColor(color);
+
+            emitter->setPosVar(Vec2(goal_width / 2, 0));
+
+            emitter->setStartSize(50);
+            emitter->setEndSize(30);
+
+            auto texture = Director::getInstance()->getTextureCache()->addImage("vfx/star.png");
+            emitter->setTexture(texture);
+
+            return emitter;
+        }
     }
 }
