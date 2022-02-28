@@ -731,7 +731,7 @@ void GameScene::onScoreChanged()
 
 void GameScene::VFXGoalHit()
 {
-    if (m_goalHitBy == GoalHitBy::NONE)
+    if (m_goalHitBy == GoalHitBy::NONE || !airhockey::GlobalSettings::isVFXEnabled)
         return;
 
     using namespace airhockey;
