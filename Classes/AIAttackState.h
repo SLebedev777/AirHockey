@@ -37,7 +37,7 @@ namespace airhockey
 		PaddlePtr m_playerPaddle = nullptr;
 		cocos2d::Sprite* m_puck = nullptr;
 		AIPlayerSettings::AttackRadiusFunction m_attackRadiusFunc = nullptr;
-		int m_attackActionTag = 2606;
+		const int m_attackActionTag = 2606;
 	};
 
 }

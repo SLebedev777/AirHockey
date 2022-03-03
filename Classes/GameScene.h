@@ -90,7 +90,7 @@ protected:
     cocos2d::Vec2 m_labelScore1StartPos, m_labelScore2StartPos;
     bool m_isPuckPlayable = true;  // false during period from a goal occured till puck is set at the edge of central circle and ready to continue game
     GoalHitBy m_goalHitBy = GoalHitBy::NONE;
-    const int MAX_SCORE = 7;
+    const uint32_t MAX_SCORE = 7;
 
     static uint32_t m_totalScore1, m_totalScore2, m_totalGames;  // overall score of games played, until player exits to main menu
 

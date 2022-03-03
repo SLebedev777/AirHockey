@@ -12,18 +12,19 @@
 
 USING_NS_CC;
 
-static enum MainMenuLayersTags
-{
-    TAG_SETTINGS_LAYER = 1
-};
-
-static enum MainMenuTags
-{
-    LAYOUT_TAG = 11
-};
-
 namespace
 {
+    enum MainMenuLayersTags
+    {
+        TAG_SETTINGS_LAYER = 1
+    };
+
+    enum MainMenuTags
+    {
+        LAYOUT_TAG = 11
+    };
+
+
     Label* createMirror(Label* label, const std::string& font_name)
     {
         auto mirror = Label::createWithTTF(label->getString(), font_name, label->getRenderingFontSize());
@@ -39,8 +40,8 @@ namespace
         mirror->setTextColor(color);
         mirror->setOpacity(150);
         mirror->setClipMarginEnabled(true);
-        float height_coeff = 0.2;
-        mirror->setPosition(label->getPosition() - Vec2(0, label->getBoundingBox().size.height * (1 - height_coeff)));
+        float height_coeff = 0.2f;
+        mirror->setPosition(label->getPosition() - Vec2(0, label->getBoundingBox().size.height * (1.0f - height_coeff)));
         return mirror;
     }
 
@@ -77,10 +78,10 @@ bool MainMenuScene::init()
     const int dot_step = 60;
     for (int y = dot_step / 2; y < s.height; y += dot_step)
     {
-        float color_step = float(y) / s.height;
+        float color_step = (float)y / s.height;
         for (int x = dot_step / 2; x < s.width; x += dot_step)
         {
-            dots->drawDot(Vec2(x, y), 3, Color4F(0.1f, 0.1f, 1.0f - color_step, 1.0f));
+            dots->drawDot(Vec2((float)x, (float)y), 3.0f, Color4F(0.1f, 0.1f, 1.0f - color_step, 1.0f));
         }
     }
     back_layer->addChild(dots, 1);
@@ -116,10 +117,10 @@ bool MainMenuScene::init()
         Rect start_rect = rects[start_rect_index];
         Rect end_rect = rects[end_rect_index];
 
-        int start_x = genRandomInRange(0, start_rect.size.width) + start_rect.origin.x;
-        int start_y = genRandomInRange(0, start_rect.size.height) + start_rect.origin.y;
-        int end_x = genRandomInRange(0, end_rect.size.width) + end_rect.origin.x;
-        int end_y = genRandomInRange(0, end_rect.size.height) + end_rect.origin.y;
+        float start_x = genRandomInRange(0, (int)start_rect.size.width) + start_rect.origin.x;
+        float start_y = genRandomInRange(0, (int)start_rect.size.height) + start_rect.origin.y;
+        float end_x = genRandomInRange(0, (int)end_rect.size.width) + end_rect.origin.x;
+        float end_y = genRandomInRange(0, (int)end_rect.size.height) + end_rect.origin.y;
 
         auto seq = Sequence::create(
             DelayTime::create(streak_interval),
@@ -321,8 +322,8 @@ void MainMenuScene::menuCloseCallback(Ref* pSender)
 void MainMenuScene::menuNewGameCallback(cocos2d::Ref* pSender)
 {
     Size design_resolution = Director::getInstance()->getOpenGLView()->getDesignResolutionSize();
-    float level_width = design_resolution.width * 0.9;
-    float level_height = level_width * 16 / 9;
+    float level_width = design_resolution.width * 0.9f;
+    float level_height = level_width * 16.0f / 9.0f;
     airhockey::GameLevel level = airhockey::GameLevel(0, level_width, level_height);
 
     Director::getInstance()->pushScene(GameScene::create(level));

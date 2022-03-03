@@ -273,19 +273,23 @@ namespace airhockey
 
 	const GoalGate& GameField::getGoalGate(const GoalGateLocationType& location_type) const
 	{
-		if (location_type == GoalGateLocationType::LOWER)
-			return *m_gateLower.get();
-		else if (location_type == GoalGateLocationType::UPPER)
-			return *m_gateUpper.get();
+		switch (location_type)
+		{
+		case GoalGateLocationType::LOWER: return *m_gateLower.get();
+		case GoalGateLocationType::UPPER: return *m_gateUpper.get();
+		default: throw std::invalid_argument("unknown goal gate location type");
+		}
 	}
 
 	cocos2d::Rect GameField::getPlayRect(const GoalGateLocationType& location_type) const
 	{
 		Rect rect = getPlayRect();
-		if (location_type == GoalGateLocationType::LOWER)
-			return Rect(rect.getMinX(), rect.getMinY(), rect.size.width, rect.size.height / 2);
-		else if (location_type == GoalGateLocationType::UPPER)
-			return Rect(rect.getMinX(), rect.getMidY(), rect.size.width, rect.size.height / 2);
+		switch (location_type)
+		{
+		case GoalGateLocationType::LOWER: return Rect(rect.getMinX(), rect.getMinY(), rect.size.width, rect.size.height / 2);
+		case GoalGateLocationType::UPPER: return Rect(rect.getMinX(), rect.getMidY(), rect.size.width, rect.size.height / 2);
+		default: throw std::invalid_argument("unknown goal gate location type");
+		}
 	}
 
 	/// <summary>

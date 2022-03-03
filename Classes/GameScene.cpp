@@ -120,7 +120,7 @@ bool GameScene::init()
     const Size LONG_PART_SIZE = Size(SIDE_WIDTH, GAMEFIELDRECT.size.height / 2 - 2 * GAP);
     const Size SHORT_PART_SIZE = Size((GAMEFIELDRECT.size.width - GOAL_GATE_SIZE.width)/2 - GAP, SIDE_HEIGHT);
 
-    Color4F SIDE_COLOR = Color4F(0.5, 0.6, 0.15, 1.0);
+    Color4F SIDE_COLOR = Color4F(0.5f, 0.6f, 0.15f, 1.0f);
     GameFieldSidePtr left_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::UP);
     left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, SIDE_COLOR), GAP);
     left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, SIDE_COLOR), 2 * GAP);
@@ -184,11 +184,11 @@ bool GameScene::init()
 
     _physicsWorld->setGravity(Vec2::ZERO);
     _physicsWorld->setSpeed(1.0f);
-    _physicsWorld->setUpdateRate(0.5f);
+    _physicsWorld->setUpdateRate(1);
 
     const float PADDLE_START_Y_CENTER_OFFSET = GOAL_GATE_SIZE.width / 2;
 
-    m_paddle1 = std::make_shared<Paddle>("paddle_gimp.png", m_field->getCenter().x, m_field->getPlayRect().getMinY() + PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
+    m_paddle1 = std::make_shared<Paddle>("paddle_gimp.png", m_field->getCenter().x, m_field->getPlayRect().getMinY() + PADDLE_START_Y_CENTER_OFFSET, 1000.0f, 1000.0f, PADDLE_RADIUS,
         PLAYER1_FIELDRECT, game_layer, this->getPhysicsWorld());
     m_paddle1->getSprite()->setColor(Color3B::RED);
     m_paddle1->getPhysicsBody()->setCategoryBitmask(airhockey::Physics::CollisionCategoryBitMask::CCBM_PADDLE1);
@@ -200,7 +200,7 @@ bool GameScene::init()
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1, /*touch_margin*/PUCK_RADIUS,
                                                                /*touch_offset*/Vec2(0, PADDLE_RADIUS));
 
-    m_paddle2 = std::make_shared<Paddle>("paddle_gimp.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000, 1000, PADDLE_RADIUS,
+    m_paddle2 = std::make_shared<Paddle>("paddle_gimp.png", m_field->getCenter().x, m_field->getPlayRect().getMaxY() - PADDLE_START_Y_CENTER_OFFSET, 1000.0f, 1000.0f, PADDLE_RADIUS,
         PLAYER2_FIELDRECT, game_layer, this->getPhysicsWorld());
     m_paddle2->getSprite()->setColor(Color3B(120, 220, 100));
     m_paddle2->getPhysicsBody()->setCategoryBitmask(airhockey::Physics::CollisionCategoryBitMask::CCBM_PADDLE2);
@@ -221,7 +221,7 @@ bool GameScene::init()
     const float ATTACK_RADIUS = abs(m_paddle2->getStartPosition().y - m_field->getCenter().y) + PUCK_RADIUS;
     
     Rect ai_gate_rect = m_field->getGoalGate(GoalGateLocationType::UPPER).getRect();
-    Vec2 ai_pyramid_left(m_field->getCenter().x - 0.5 * GOAL_GATE_SIZE.width, ai_gate_rect.getMinY() - 1.5*PADDLE_RADIUS);
+    Vec2 ai_pyramid_left(m_field->getCenter().x - 0.5f * GOAL_GATE_SIZE.width, ai_gate_rect.getMinY() - 1.5f * PADDLE_RADIUS);
     Vec2 ai_pyramid_right(ai_pyramid_left + Vec2(GOAL_GATE_SIZE.width, 0));
     Vec2 ai_pyramid_top(m_field->getCenter().x, ai_pyramid_left.y - PADDLE_RADIUS);
     Pyramid pyramid(ai_pyramid_top, ai_pyramid_left, ai_pyramid_right);
@@ -288,14 +288,14 @@ bool GameScene::init()
     label_score2->setPosition(m_labelScore2StartPos);
     hud_layer->addChild(label_score2, 1, TAG_HUD_LAYER_SCORE2_STRING);
 
-    auto label_total_score1 = Label::createWithTTF("0", score_font_filename, score_font_size * 0.7);
+    auto label_total_score1 = Label::createWithTTF("0", score_font_filename, score_font_size * 0.7f);
     label_total_score1->setTextColor(Color4B::RED);
     label_total_score1->setClipMarginEnabled(true);
     label_total_score1->setRotation(90.f);
     label_total_score1->setPosition(frameCenter + Vec2(m_field->getPlayRect().size.width / 2 - 90, -2 * PUCK_RADIUS));
     hud_layer->addChild(label_total_score1, 1, TAG_HUD_LAYER_TOTAL_SCORE1_STRING);
 
-    auto label_total_score2 = Label::createWithTTF("0", score_font_filename, score_font_size * 0.7);
+    auto label_total_score2 = Label::createWithTTF("0", score_font_filename, score_font_size * 0.7f);
     label_total_score2->setTextColor(Color4B::GREEN);
     label_total_score2->setClipMarginEnabled(true);
     label_total_score2->setRotation(90.f);
@@ -309,7 +309,7 @@ bool GameScene::init()
     auto hud_control_layer = LayerColor::create(Color4B(0, 0, 0, 0));
  
     auto button_pause = ui::Button::create("pause.png", "pause_pressed.png");
-    button_pause->setPosition(m_field->getCenter() + Vec2(m_field->getPlayRect().size.width/2 - button_pause->getBoundingBox().size.width*0.75, 0));
+    button_pause->setPosition(m_field->getCenter() + Vec2(m_field->getPlayRect().size.width / 2 - button_pause->getBoundingBox().size.width * 0.75f, 0.0f));
     button_pause->addClickEventListener([=](Ref* sender) {
         onGameMenuOpen(sender);
         });

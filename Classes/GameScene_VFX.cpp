@@ -19,11 +19,11 @@ namespace airhockey
             emitter->setStartSize(15.0f);
             emitter->setEndSize(2.0f);
             cocos2d::Color4F start_color(paddle_color);
-            start_color += cocos2d::Color4F(0.4, 0.4, 0.4, 1.0);
+            start_color += cocos2d::Color4F(0.4f, 0.4f, 0.4f, 1.0f);
             emitter->setStartColor(start_color);
-            emitter->setStartColorVar(cocos2d::Color4F(0.1, 0.1, 0.1, 0));
+            emitter->setStartColorVar(cocos2d::Color4F(0.1f, 0.1f, 0.1f, 0.0f));
             emitter->setEndColor(paddle_color);
-            emitter->setEndColorVar(cocos2d::Color4F(0, 0, 0, 0));
+            emitter->setEndColorVar(cocos2d::Color4F(0.0f, 0.0f, 0.0f, 0.0f));
             emitter->setEmissionRate(1000);
             emitter->setAngleVar(30);
 
@@ -42,9 +42,9 @@ namespace airhockey
             emitter->setEndSize(10.0f);
             cocos2d::Color4F start_color(cocos2d::Color4F::WHITE);
             emitter->setStartColor(start_color);
-            emitter->setStartColorVar(cocos2d::Color4F(0.1, 0.1, 0.1, 0));
+            emitter->setStartColorVar(cocos2d::Color4F(0.1f, 0.1f, 0.1f, 0.0f));
             emitter->setEndColor(cocos2d::Color4F::YELLOW);
-            emitter->setEndColorVar(cocos2d::Color4F(0, 0, 0, 0));
+            emitter->setEndColorVar(cocos2d::Color4F(0.0f, 0.0f, 0.0f, 0.0f));
             emitter->setEmissionRate(1000);
             emitter->setAngleVar(45);
 

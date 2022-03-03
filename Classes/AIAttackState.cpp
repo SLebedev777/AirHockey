@@ -29,6 +29,8 @@ namespace airhockey
 		*/
 		Vec2 directionVector(const Vec2& direction, float length)
 		{
+			if (direction.fuzzyEquals(Vec2::ZERO, 0.00001f))
+				return Vec2::ZERO;
 			float c = direction.length();
 			float sin_a = direction.x / c;
 			float cos_a = direction.y / c;
@@ -221,10 +223,11 @@ namespace airhockey
 		}
 		float alpha1 = asin(z1);
 		float alpha2 = asin(z2);
-		alpha1 += M_PI;
-		alpha2 += M_PI;
-		float alpha1_deg = alpha1 * (180.0f / M_PI);
-		float alpha2_deg = alpha2 * (180.0f / M_PI);
+		const float PI(M_PI);
+		alpha1 += PI;
+		alpha2 += PI;
+		float alpha1_deg = alpha1 * (180.0f / PI);
+		float alpha2_deg = alpha2 * (180.0f / PI);
 		Vec2 v_paddle1 = azimuthVector(alpha1, v_paddle_scalar);
 		Vec2 v_paddle2 = azimuthVector(alpha2, v_paddle_scalar);
 
@@ -334,7 +337,7 @@ namespace airhockey
 
 		auto attack_action_strategy3 = [this]()-> Action* {
 			const float attack_duration = 0.2f;  // consider less than 0.5 sec to avoid weird behaviour
-			cocos2d::Vec2 puck_future_offset = 0.75*attack_duration* m_puck->getPhysicsBody()->getVelocity();
+			cocos2d::Vec2 puck_future_offset = 0.75f * attack_duration * m_puck->getPhysicsBody()->getVelocity();
 			Vec2 x_new_puck = m_puck->getPosition() + puck_future_offset;
 			if (!m_field->getPlayRect(airhockey::GoalGateLocationType::UPPER).containsPoint(x_new_puck))
 				return nullptr;
@@ -344,8 +347,8 @@ namespace airhockey
 		};
 
 		// constants for Strategy 1
-		const float V_PUCK_THRESHOLD_SQR = pow(puck_radius * 30, 2);
-		const float V_PUCK_SLOW_THRESHOLD_SQR = pow(100, 2);
+		const float V_PUCK_THRESHOLD_SQR = powf(puck_radius * 30.0f, 2.0f);
+		const float V_PUCK_SLOW_THRESHOLD_SQR = powf(100.0f, 2.0f);
 		assert(V_PUCK_SLOW_THRESHOLD_SQR < V_PUCK_THRESHOLD_SQR);
 
 		const float CORRIDOR_WIDTH = 0.66f * m_field->getPlayRect().size.width;

@@ -46,10 +46,10 @@ namespace CCHelpers
 		std::function<cocos2d::Sprite* (const std::string&)> transform_func, const std::string& dst_filename)
 	{
 		Sprite* dst_sprite = transform_func(src_filename);
-		dst_sprite->setAnchorPoint(Vec2(0.5, 0.5));
+		dst_sprite->setAnchorPoint(Vec2(0.5f, 0.5f));
 		Size size = dst_sprite->getContentSize();
 		dst_sprite->setPosition(size.width / 2, size.height / 2);
-		RenderTexture* renderTexture = RenderTexture::create(size.width, size.height, backend::PixelFormat::RGBA8888);
+		RenderTexture* renderTexture = RenderTexture::create(static_cast<int>(size.width), static_cast<int>(size.height), backend::PixelFormat::RGBA8888);
 		renderTexture->setKeepMatrix(false);
 		renderTexture->begin();
 		dst_sprite->visit();

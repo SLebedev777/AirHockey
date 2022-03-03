@@ -4,9 +4,6 @@
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.cpp">
       <Filter>Source Files\Classes</Filter>
     </ClCompile>
-    <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.cpp">
-      <Filter>Source Files\Classes</Filter>
-    </ClCompile>
     <ClCompile Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene.cpp">
       <Filter>Source Files\Classes</Filter>
     </ClCompile>
@@ -91,9 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\AppDelegate.h">
-      <Filter>Source Files\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\HelloWorldScene.h">
       <Filter>Source Files\Classes</Filter>
     </ClInclude>
     <ClInclude Include="D:\semen\games\cocos2d-x_projects\airhockey\Classes\GameScene.h">
