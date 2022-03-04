@@ -158,9 +158,11 @@ namespace airhockey
 				dx2 = tan * d2.y;
 			}
 			Vec2 puck_margin_center(target.x + dx2, player_paddle_pos.y);
-			Vec2 puck_margin(puck_margin_center.x - 2*puck_radius, puck_margin_center.x + 2*puck_radius);
-			Vec2 player_paddle_margin(player_paddle_pos.x - player_paddle_radius, player_paddle_pos.x + player_paddle_radius);
-			bool result = ! isMarginsOverlap(player_paddle_margin.x, player_paddle_margin.y, puck_margin.x, puck_margin.y);
+			float puck_margin_left = puck_margin_center.x - puck_radius;
+			float puck_margin_right = puck_margin_center.x + puck_radius;
+			float player_paddle_margin_left = player_paddle_pos.x - player_paddle_radius;
+			float player_paddle_margin_right = player_paddle_pos.x + player_paddle_radius;
+			bool result = ! isMarginsOverlap(player_paddle_margin_left, player_paddle_margin_right, puck_margin_left, puck_margin_right);
 
 			return result;
 		}
@@ -236,7 +238,7 @@ namespace airhockey
 
 		float t1x, t1y, t1;
 		float t2x, t2y, t2;
-		float dx_threshold = paddle_radius;
+		float dx_threshold = 0.1f * paddle_radius;
 		float dv_threshold = 5.0f;
 		std::tie(t1x, t1y, t1) = calcEncounterTime(dx0, v_paddle1 - v_puck, dx_threshold, dv_threshold);
 		std::tie(t2x, t2y, t2) = calcEncounterTime(dx0, v_paddle2 - v_puck, dx_threshold, dv_threshold);
@@ -313,8 +315,8 @@ namespace airhockey
 		// define targets for attacking enemy gate
 		cocos2d::Rect lower_gate_rect = m_field->getGoalGate(airhockey::GoalGateLocationType::LOWER).getRect();
 		Vec2 target_center(lower_gate_rect.getMidX(), lower_gate_rect.getMaxY());
-		Vec2 target_left_corner(lower_gate_rect.getMinX() + puck_radius, lower_gate_rect.getMaxY());
-		Vec2 target_right_corner(lower_gate_rect.getMaxX() - puck_radius, lower_gate_rect.getMaxY());
+		Vec2 target_left_corner(lower_gate_rect.getMinX() + 2.0f * puck_radius, lower_gate_rect.getMaxY());
+		Vec2 target_right_corner(lower_gate_rect.getMaxX() - 2.0f * puck_radius, lower_gate_rect.getMaxY());
 
 
 		cocos2d::Action* attack_action = nullptr;
@@ -384,15 +386,16 @@ namespace airhockey
 				}
 				else
 				{
-					if (isTargetClear(target_center, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+					const float target_dx_threshold = 0.1f * puck_radius;
+					if (isTargetClear(target_center, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, target_dx_threshold))
 					{
 						final_target = target_center;
 					}
-					else if (isTargetClear(target_left_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+					else if (isTargetClear(target_left_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, target_dx_threshold))
 					{
 						final_target = target_left_corner;
 					}
-					else if (isTargetClear(target_right_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, 0.5f * puck_radius))
+					else if (isTargetClear(target_right_corner, x_new_puck, puck_radius, player_paddle_pos, player_paddle_radius, target_dx_threshold))
 					{
 						final_target = target_right_corner;
 					}

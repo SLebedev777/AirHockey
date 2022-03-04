@@ -788,7 +788,6 @@ void GameScene::update(float dt)
     }
 
     float puck_y_offset = m_field->getCentralCircleMarking().getSettings().radius;
-    // goal to Player1's gate (lower)
     if (m_isPuckPlayable && puck_body->getVelocity() != Vec2::ZERO)
     {
         // goal to Player1's gate (lower)
