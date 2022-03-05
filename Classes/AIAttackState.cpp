@@ -326,7 +326,7 @@ namespace airhockey
 			const float KICK_TIME_FRAC = 0.25f;
 			Vec2 prepare_dir_vector = directionVector(x_new_puck - target, prepare_y_offset);
 			Vec2 x_paddle_prepare_to_kick = x_new_puck + prepare_dir_vector;
-			Vec2 x_paddle_kick = x_new_puck - 0.5*prepare_dir_vector;
+			Vec2 x_paddle_kick = x_new_puck - 0.5f * prepare_dir_vector;
 			auto move_to_prepare_point = MoveTo::create(time * (1.0f - KICK_TIME_FRAC), x_paddle_prepare_to_kick);
 			auto kick = MoveTo::create(time * KICK_TIME_FRAC, x_paddle_kick);
 			auto seq = Sequence::create(move_to_prepare_point, kick, nullptr);
@@ -463,10 +463,13 @@ namespace airhockey
 		Vec2 x_paddle = m_aiPaddle->getSprite()->getPosition();
 		Vec2 x_puck = m_puck->getPosition();
 
+		if (m_aiPaddle->getStick()->getActionByTag(m_attackActionTag))
+			return;
+
 		if (x_puck.distance(x_paddle) > m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()) ||
 			x_puck.y > x_paddle.y ||
-			x_paddle.y <= m_field->getCenter().y ||
-			!m_aiPaddle->getStick()->getActionByTag(m_attackActionTag))
+			x_paddle.y <= m_field->getCenter().y
+			)
 		{
 			// back to defense state
 			getContext()->getLogger()->log("AIAttackState::handleTransitions(): back to defense state");
