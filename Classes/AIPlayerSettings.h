@@ -9,6 +9,7 @@ namespace airhockey
 {
 	using namespace cocos2d;
 
+	/* Key points for AI defense */
 	struct Pyramid
 	{
 		explicit Pyramid(const Vec2& p_top, const Vec2& p_left, const Vec2& p_right) :

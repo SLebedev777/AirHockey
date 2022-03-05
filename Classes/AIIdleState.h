@@ -21,7 +21,6 @@ namespace airhockey
 
 		bool onEnter() override;
 		void onExit() override;
-		//void update() override {};
 		void handleTransitions() override;
 		void pause() override;
 		void resume() override;

@@ -56,7 +56,6 @@ namespace airhockey
 		Vec2 x_paddle = m_aiPaddle->getSprite()->getPosition();
 		Vec2 x_puck = m_puck->getPosition();
 
-		//if (x_puck.distance(x_paddle) <= m_attackRadiusFunc(m_puck->getPhysicsBody()->getVelocity()))
 		if (x_puck.y >= m_field->getCenter().y)
 		{
 			getContext()->getLogger()->log("AIIdleState::handleTransitions(): add DefenseState to stack");

@@ -112,7 +112,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     // turn on display FPS
+#ifdef COCOS2D_DEBUG
     director->setDisplayStats(true);
+#endif
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0f / 60);
@@ -130,25 +132,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // proportionally SCALED according to frameSize/designResolutionSize.
     // The "physical" size of assets will CHANGE from design resolution, but RELATIVE size of assets will be
     // AS FOR DESIGN RESOLUTION.
-    
-    /*
-    auto frameSize = glview->getFrameSize();
-    // if the frame's height is larger than the height of medium size.
-    if (frameSize.height > mediumResolutionSize.height)
-    {        
-        director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
-    }
-    // if the frame's height is larger than the height of small size.
-    else if (frameSize.height > smallResolutionSize.height)
-    {        
-        director->setContentScaleFactor(MIN(mediumResolutionSize.height/designResolutionSize.height, mediumResolutionSize.width/designResolutionSize.width));
-    }
-    // if the frame's height is smaller than the height of medium size.
-    else
-    {        
-        director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
-    }
-    */
+
     director->setContentScaleFactor(1.0f);
 
     // add paths to packed art according to design resolution

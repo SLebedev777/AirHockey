@@ -138,14 +138,13 @@ namespace airhockey
 
 	private:
 		cocos2d::Node* m_node = nullptr;
-		//cocos2d::DrawNode* m_drawNode = nullptr;
-		//cocos2d::Sprite* m_sprite = nullptr;
+
 	};
 	typedef std::unique_ptr<GameFieldSidePart> GameFieldSidePartPtr;
 
 
 	/*
-	* Ворота. Пока -просто прямоугольник, на который будет срабатывать расположение шайбы, чтобы засчитать гол.
+	* Ворота. Пока - просто прямоугольник, на который будет срабатывать расположение шайбы, чтобы засчитать гол.
 	*/
 	class GoalGate
 	{
