@@ -36,8 +36,6 @@ namespace airhockey
 		void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
 		void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
 
-		void scheduleDebugOutput(cocos2d::Node* layer);
-
 		void setTouchMargin(float touch_margin) { m_touchMargin = (touch_margin >= 0.0f) ? touch_margin : 0.0f; }
 		float getTouchMargin() const { return m_touchMargin; }
 		cocos2d::Vec2 getTouchOffset() const { return m_touchOffset; }
