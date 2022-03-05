@@ -345,16 +345,16 @@ namespace airhockey
 		switch (play_rect_corner_type)
 		{
 		case GameField::GameFieldPlayRectCornerType::BOTTOM_LEFT:
-			corner->setAnchorPoint(Vec2(1.0, 1.0));
+			corner->setAnchorPoint(Vec2(1.0f, 1.0f));
 			break;
 		case GameField::GameFieldPlayRectCornerType::TOP_LEFT:
-			corner->setAnchorPoint(Vec2(1.0, 0.0));
+			corner->setAnchorPoint(Vec2(1.0f, 0.0f));
 			break;
 		case GameField::GameFieldPlayRectCornerType::TOP_RIGHT:
-			corner->setAnchorPoint(Vec2(0.0, 0.0));
+			corner->setAnchorPoint(Vec2(0.0f, 0.0f));
 			break;
 		case GameField::GameFieldPlayRectCornerType::BOTTOM_RIGHT:
-			corner->setAnchorPoint(Vec2(0.0, 1.0));
+			corner->setAnchorPoint(Vec2(0.0f, 1.0f));
 			break;
 		default:
 			return;

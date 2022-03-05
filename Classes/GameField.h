@@ -62,14 +62,17 @@ namespace airhockey
 		cocos2d::Texture2D* texture = nullptr;
 	};
 
+	/*
+	* –азметка ворот
+	*/
 	class GoalGateMarking
 	{
 	public:
 		GoalGateMarking(const GoalGateMarkingSettings& settings, const GoalGateLocationType& location);
 		~GoalGateMarking() {}
 
-		void setPosition(const cocos2d::Vec2& pos);  // v
-		void setParent(cocos2d::Node* parent);  // v
+		void setPosition(const cocos2d::Vec2& pos);
+		void setParent(cocos2d::Node* parent);
 		const GoalGateMarkingSettings& getSettings() const { return m_settings; }
 
 	private:
@@ -80,7 +83,9 @@ namespace airhockey
 	};
 	typedef std::unique_ptr<GoalGateMarking> GoalGateMarkingPtr;
 
-
+	/*
+	* Ќастройки разметки центрального круга
+	*/
 	struct CentralCircleMarkingSettings
 	{
 		explicit CentralCircleMarkingSettings(float radius, float line_width, const cocos2d::Color4F& fill_color, const cocos2d::Color4F& line_color,
@@ -99,13 +104,16 @@ namespace airhockey
 		cocos2d::Texture2D* texture = nullptr;
 	};
 
+	/*
+	* –азметка центрального круга
+	*/
 	class CentralCircleMarking
 	{
 	public:
-		CentralCircleMarking(const CentralCircleMarkingSettings& settings);  // v
+		CentralCircleMarking(const CentralCircleMarkingSettings& settings);
 		~CentralCircleMarking() {}
-		void setPosition(const cocos2d::Vec2& pos);  // v
-		void setParent(cocos2d::Node* parent);  // v
+		void setPosition(const cocos2d::Vec2& pos);
+		void setParent(cocos2d::Node* parent);
 		const CentralCircleMarkingSettings& getSettings() const { return m_settings; }
 
 	private:
@@ -115,26 +123,29 @@ namespace airhockey
 	};
 	typedef std::unique_ptr<CentralCircleMarking> CentralCircleMarkingPtr;
 
+
 	/* „асть борта игрового стола - элемент, из которых состоит борт.
 	*  ‘ункционально - это графический нод с физическим телом.
 	*/
 	class GameFieldSidePart
 	{
 	public:
+		GameFieldSidePart(const cocos2d::Size& size, const cocos2d::Color4F& fill_color, bool add_default_physics_body = true);
+		// TODO - not implemented now
+		/*
 		GameFieldSidePart(const cocos2d::Size& size, cocos2d::Texture2D* texture, bool add_default_physics_body = true);
-		GameFieldSidePart(const cocos2d::Size& size, const cocos2d::Color4F& fill_color, bool add_default_physics_body = true); // v
 		GameFieldSidePart(const std::string& sprite_name, bool add_default_physics_body = true);
 		GameFieldSidePart(const GameFieldSidePart& other);
 		GameFieldSidePart& operator=(const GameFieldSidePart& other);
-
-		void moveBy(const cocos2d::Vec2& shift);  // v
-		const cocos2d::Vec2& getPosition() const { return m_node->getPosition(); }  // v
-		void setPosition(const cocos2d::Vec2& pos) { m_node->setPosition(pos); }  // v
-		cocos2d::Rect getRect() const { return m_node->getBoundingBox(); }  // v
-		void setAnchorPoint(const cocos2d::Vec2& anchor_point);  // v
-		void setParent(cocos2d::Node* parent);  // v
+		*/
+		void moveBy(const cocos2d::Vec2& shift);
+		const cocos2d::Vec2& getPosition() const { return m_node->getPosition(); }
+		void setPosition(const cocos2d::Vec2& pos) { m_node->setPosition(pos); }
+		cocos2d::Rect getRect() const { return m_node->getBoundingBox(); }
+		void setAnchorPoint(const cocos2d::Vec2& anchor_point);
+		void setParent(cocos2d::Node* parent);
 		void addPhysicsBody(cocos2d::PhysicsBody* body = nullptr, 
-			const cocos2d::PhysicsMaterial& material = cocos2d::PhysicsMaterial(0.1f, 1.0f, 0.0f));  // v
+			const cocos2d::PhysicsMaterial& material = cocos2d::PhysicsMaterial(0.1f, 1.0f, 0.0f));
 
 	private:
 		cocos2d::Node* m_node = nullptr;
@@ -149,11 +160,11 @@ namespace airhockey
 	class GoalGate
 	{
 	public:
-		GoalGate(const cocos2d::Size& size, const GoalGateLocationType& location_type);  // v
+		GoalGate(const cocos2d::Size& size, const GoalGateLocationType& location_type);
 
-		const GoalGateLocationType& getLocationType() const { return m_locationType; }  // v
+		const GoalGateLocationType& getLocationType() const { return m_locationType; }
 		cocos2d::Rect getRect() const { return m_node->getBoundingBox(); }
-		void setPosition(const cocos2d::Vec2& pos);  // v
+		void setPosition(const cocos2d::Vec2& pos);
 		void setParent(cocos2d::Node* parent);
 
 	private:
@@ -184,12 +195,12 @@ namespace airhockey
 		GameFieldSide(const GameFieldSide& other);
 		GameFieldSide& operator=(const GameFieldSide& other);
 
-		void addSidePart(GameFieldSidePartPtr part, float gap = 0.0f);  // v
-		void moveBy(const cocos2d::Vec2& shift);  // v
-		void moveTo(const cocos2d::Vec2& pos);  // v
-		const DIRECTION& getDirection() const { return m_direction; }  // v
-		cocos2d::Vec2 getOrigin() const;  // v стартовый внутренний угол борта, в зависимости от направлени€ борта 
-		void setParent(cocos2d::Node* parent);  // v
+		void addSidePart(GameFieldSidePartPtr part, float gap = 0.0f);
+		void moveBy(const cocos2d::Vec2& shift);
+		void moveTo(const cocos2d::Vec2& pos);
+		const DIRECTION& getDirection() const { return m_direction; }
+		cocos2d::Vec2 getOrigin() const;  // стартовый внутренний угол борта, в зависимости от направлени€ борта 
+		void setParent(cocos2d::Node* parent);
 
 	private:
 		std::vector<GameFieldSidePartPtr> m_parts;
@@ -224,13 +235,13 @@ namespace airhockey
 		GameField() = default;
 		GameField(const GameField& other) = delete;
 		GameField& operator=(const GameField& other) = delete;
-		~GameField(); // v
+		~GameField();
 
-		cocos2d::Vec2 getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type) const;  // v
-		const cocos2d::Vec2& getCenter() const { return m_center; }  // v
-		cocos2d::Rect getPlayRect() const { return m_playRect; }  // v
+		cocos2d::Vec2 getPlayRectCornerPoint(const GameFieldPlayRectCornerType& corner_type) const;
+		const cocos2d::Vec2& getCenter() const { return m_center; }
+		cocos2d::Rect getPlayRect() const { return m_playRect; }
 		cocos2d::Rect getPlayRect(const GoalGateLocationType& location_type) const;  // get play rect for each player
-		void setParent(cocos2d::Node* parent);  // v
+		void setParent(cocos2d::Node* parent);
 		const GoalGate& getGoalGate(const GoalGateLocationType& location_type) const;
 		const CentralCircleMarking& getCentralCircleMarking() const { return *m_centralCircleMarking; }
 
@@ -258,15 +269,15 @@ namespace airhockey
 	{
 
 	public:
-		GameFieldBuilder(); // v
-		void addPlayRect(const cocos2d::Rect& rect, cocos2d::Node* background = nullptr); // v
-		void addSide(GameFieldSidePtr side); // v
-		void addCorner(GameFieldSidePartPtr corner, const GameField::GameFieldPlayRectCornerType& play_rect_corner_type);  // v
+		GameFieldBuilder();
+		void addPlayRect(const cocos2d::Rect& rect, cocos2d::Node* background = nullptr);
+		void addSide(GameFieldSidePtr side);
+		void addCorner(GameFieldSidePartPtr corner, const GameField::GameFieldPlayRectCornerType& play_rect_corner_type);
 		void addGoalGate(GoalGatePtr gate);
 		void addGoalGateMarking(const GoalGateMarkingSettings& settings, const cocos2d::Vec2& pos);
-		void addCentralCircleMarking(const CentralCircleMarkingSettings& settings);  // v
+		void addCentralCircleMarking(const CentralCircleMarkingSettings& settings);
 		void addCentralLine(const cocos2d::Color4F& color, float width);
-		GameFieldPtr getResult();  // v
+		GameFieldPtr getResult();
 
 	private:
 		bool check() const;
