@@ -431,6 +431,29 @@ namespace airhockey
 
 	bool GameFieldBuilder::check() const
 	{
+		if (m_field->m_sides.size() != 4)
+			return false;
+
+		auto find_side_of_type([](GameFieldSide::DIRECTION d) {
+			return [=](const auto& side) {
+				return d == side->getDirection();
+				};
+			});
+
+		std::vector<GameFieldSide::DIRECTION> dirs = { GameFieldSide::DIRECTION::LEFT,
+													   GameFieldSide::DIRECTION::RIGHT,
+													   GameFieldSide::DIRECTION::DOWN,
+													   GameFieldSide::DIRECTION::UP };
+		for (const auto& d : dirs)
+		{
+			auto find_dir = std::find_if(std::begin(m_field->m_sides), std::end(m_field->m_sides), find_side_of_type(d));
+			if (find_dir == std::end(m_field->m_sides))
+				return false;
+		}
+
+		if (!m_field->m_gateLower || !m_field->m_gateUpper)
+			return false;
+
 		return true;
 	}
 

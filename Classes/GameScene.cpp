@@ -159,6 +159,9 @@ bool GameScene::init()
     
     //
     m_field = builder.getResult();
+    if (!m_field)
+        throw std::runtime_error("Failed to build GameField");
+
     m_field->setParent(game_layer);
 
     // PUCK
