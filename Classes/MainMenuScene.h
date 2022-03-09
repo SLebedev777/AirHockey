@@ -9,7 +9,7 @@ class MainMenuScene : public cocos2d::Scene
 public:
     static cocos2d::Scene* createScene();
 
-    virtual bool init();
+    bool init() override;
 
     void onEnterTransitionDidFinish() override;
     void onExitTransitionDidStart() override;

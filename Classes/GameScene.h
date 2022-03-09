@@ -21,7 +21,7 @@ public:
     GameScene(airhockey::GameLevel& level);
     static Scene* createScene(airhockey::GameLevel& level);
 
-    virtual bool init();
+    bool init() override;
 
     static GameScene* create(airhockey::GameLevel& level);
 
