@@ -8,7 +8,6 @@ namespace airhockey
 {
 	namespace Sound
 	{
-
 		extern const char* AUDIOFILE_BUTTON_CLICK;
 		extern const char* AUDIOFILE_BUZZ;
 		extern const char* AUDIOFILE_COLLIDE_PUCK_PADDLE;

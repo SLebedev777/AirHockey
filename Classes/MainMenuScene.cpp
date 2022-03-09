@@ -81,7 +81,7 @@ bool MainMenuScene::init()
         float color_step = (float)y / s.height;
         for (int x = dot_step / 2; x < s.width; x += dot_step)
         {
-            dots->drawDot(Vec2((float)x, (float)y), 3.0f, Color4F(0.1f, 0.1f, 1.0f - color_step, 1.0f));
+            dots->drawDot(Vec2((float)x, (float)y), 4.0f, Color4F(0.1f, 0.1f, 1.0f - color_step, 1.0f));
         }
     }
     back_layer->addChild(dots, 1);

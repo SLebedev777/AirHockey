@@ -1,8 +1,6 @@
 #ifndef __GAMESCENE_VFX_H__
 #define __GAMESCENE_VFX_H__
 
-
-//#include "cocos/2d/CCParticleSystemQuad.h"
 #include "cocos2d.h"
 
 namespace airhockey

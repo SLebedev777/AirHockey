@@ -860,6 +860,7 @@ void GameScene::update(float dt)
     drawHUDString(TAG_HUD_LAYER_TOTAL_SCORE1_STRING, std::to_string(m_totalScore1));
     drawHUDString(TAG_HUD_LAYER_TOTAL_SCORE2_STRING, std::to_string(m_totalScore2));
 
+#if defined COCOS2D_DEBUG
     auto p2_p = CCHelpers::Vec2Str(m_paddle2->getSprite()->getPosition());
     auto p2_v = CCHelpers::Vec2Str(m_paddle2->getPhysicsBody()->getVelocity());
     auto p2_s_p = CCHelpers::Vec2Str(m_paddle2->getStick()->getPosition());
@@ -869,5 +870,5 @@ void GameScene::update(float dt)
     auto puck_pos = CCHelpers::Vec2Str(m_puck->getPosition());
     auto puck_vel = CCHelpers::Vec2Str(m_puck->getPhysicsBody()->getVelocity());
     m_logger->log("Puck pos = " + puck_pos + " puck vel = " + puck_vel);
-
+#endif
 }

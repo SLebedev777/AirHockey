@@ -35,7 +35,7 @@ namespace airhockey
 		{
 			if (event_type == ui::Widget::TouchEventType::ENDED)
 			{
-				AudioEngine::play2d(AUDIOFILE_BUTTON_CLICK, false, 0.5);
+				AudioEngine::play2d(AUDIOFILE_BUTTON_CLICK, false, 0.5f);
 			}
 		}
 	}
