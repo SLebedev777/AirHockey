@@ -20,19 +20,19 @@ namespace airhockey
 
     void KeyboardInputController::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
     {
-        if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
+        if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW || keyCode == EventKeyboard::KeyCode::KEY_A)
         {
             m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_LEFT));
         }
-        else if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
+        else if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW || keyCode == EventKeyboard::KeyCode::KEY_D)
         {
             m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_RIGHT));
         }
-        else if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
+        else if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW || keyCode == EventKeyboard::KeyCode::KEY_W)
         {
             m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_UP));
         }
-        else if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
+        else if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW || keyCode == EventKeyboard::KeyCode::KEY_S)
         {
             m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_MOVE_DOWN));
         }
@@ -40,19 +40,19 @@ namespace airhockey
 
     void KeyboardInputController::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
     {
-        if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
+        if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW || keyCode == EventKeyboard::KeyCode::KEY_A)
         {
             m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_LEFT));
         }
-        else if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
+        else if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW || keyCode == EventKeyboard::KeyCode::KEY_D)
         {
             m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_RIGHT));
         }
-        else if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
+        else if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW || keyCode == EventKeyboard::KeyCode::KEY_W)
         {
             m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_UP));
         }
-        else if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
+        else if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW || keyCode == EventKeyboard::KeyCode::KEY_S)
         {
             m_eventDispatcher->dispatchCustomEvent(makeCustomEventName(InputActionEvent::INPUT_ACTION_EVENT_STOP_MOVE_DOWN));
         }

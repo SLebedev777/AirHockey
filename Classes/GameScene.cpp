@@ -191,7 +191,9 @@ bool GameScene::init()
 
     assert(m_paddle1->getSprite()->getBoundingBox().size.width == 2 * PADDLE_RADIUS);
 
-    //m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+    m_keyboardController = std::make_shared<KeyboardInputController>("KB", m_paddle1);
+#endif
     m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle1, /*touch_margin*/PUCK_RADIUS,
                                                                /*touch_offset*/Vec2(0, PADDLE_RADIUS));
 
