@@ -18,7 +18,6 @@
 #include "Sound.h"
 #include "GameScene_VFX.h"
 
-USING_NS_CC;
 
 uint32_t GameScene::m_totalScore1 = 0;
 uint32_t GameScene::m_totalScore2 = 0;
@@ -69,12 +68,6 @@ Scene* GameScene::createScene(airhockey::GameLevel& level)
     return GameScene::create(level);
 }
 
-// Print useful error message instead of segfaulting when files are not there.
-static void problemLoading(const char* filename)
-{
-    printf("Error while loading: %s\n", filename);
-    printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in GameScene.cpp\n");
-}
 
 // on "init" you need to initialize your instance
 bool GameScene::init()
@@ -120,7 +113,7 @@ bool GameScene::init()
     const Size LONG_PART_SIZE = Size(SIDE_WIDTH, GAMEFIELDRECT.size.height / 2 - 2 * GAP);
     const Size SHORT_PART_SIZE = Size((GAMEFIELDRECT.size.width - GOAL_GATE_SIZE.width)/2 - GAP, SIDE_HEIGHT);
 
-    Color4F SIDE_COLOR = Color4F(0.5f, 0.6f, 0.15f, 1.0f);
+    const Color4F SIDE_COLOR(0.5f, 0.6f, 0.15f, 1.0f);
     GameFieldSidePtr left_long_side = std::make_unique<GameFieldSide>(GameFieldSide::DIRECTION::UP);
     left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, SIDE_COLOR), GAP);
     left_long_side->addSidePart(std::make_unique<GameFieldSidePart>(LONG_PART_SIZE, SIDE_COLOR), 2 * GAP);
@@ -142,7 +135,7 @@ bool GameScene::init()
     builder.addSide(std::move(lower_short_side));
     
     const Size CORNER_SIZE = Size(SIDE_WIDTH, SIDE_WIDTH);
-    Color4F CORNER_COLOR = SIDE_COLOR;
+    const Color4F CORNER_COLOR(SIDE_COLOR);
     builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, CORNER_COLOR), GameField::GameFieldPlayRectCornerType::BOTTOM_LEFT);
     builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, CORNER_COLOR), GameField::GameFieldPlayRectCornerType::TOP_LEFT);
     builder.addCorner(std::make_unique<GameFieldSidePart>(CORNER_SIZE, CORNER_COLOR), GameField::GameFieldPlayRectCornerType::TOP_RIGHT);
@@ -157,7 +150,6 @@ bool GameScene::init()
     builder.addGoalGateMarking(GoalGateMarkingSettings(GOAL_GATE_SIZE.width, 3, Color4F::MAGENTA, Color4F::GRAY, 
         GoalGateMarkingSettings::GoalGateMarkingShapeType::RECTANGLE), Vec2::ZERO);
     
-    //
     m_field = builder.getResult();
     if (!m_field)
         throw std::runtime_error("Failed to build GameField");
@@ -166,12 +158,12 @@ bool GameScene::init()
 
     // PUCK
     m_puck = Sprite::create("puck.png");
-    PhysicsMaterial puck_material = PhysicsMaterial(0.1f, 1.0f, 0.2f);
+    PhysicsMaterial puck_material(0.1f, 1.0f, 0.2f);
     auto puck_body = PhysicsBody::createCircle(m_puck->getBoundingBox().size.width / 2, puck_material);
     puck_body->setLinearDamping(0.15f); // simulate friction when puck glides on table surface, to prevent endless motion
     puck_body->setAngularDamping(0.2f);
     puck_body->setVelocityLimit(3500);
-    puck_body->setName("puck_body");
+    puck_body->setName(m_puckBodyName);
     puck_body->setCategoryBitmask(airhockey::Physics::CollisionCategoryBitMask::CCBM_PUCK);
     puck_body->setContactTestBitmask(airhockey::Physics::contactTestBitmask_Puck);
     m_puck->addComponent(puck_body);
@@ -208,8 +200,6 @@ bool GameScene::init()
     m_paddle2->getSprite()->setColor(Color3B(120, 220, 100));
     m_paddle2->getPhysicsBody()->setCategoryBitmask(airhockey::Physics::CollisionCategoryBitMask::CCBM_PADDLE2);
     m_paddle2->getPhysicsBody()->setContactTestBitmask(airhockey::Physics::contactTestBitmask_Paddle2);
-
-    //m_touchController = std::make_shared<TouchInputController>("TOUCH", m_paddle2);
 
     //adds contact event listener
     auto contactListener = EventListenerPhysicsContact::create();
@@ -378,14 +368,15 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
         return true;
     }
 
+    static const float MIN_DVEL = 40000.0f;
+    static const float MAX_DVEL = 1000000.0f;
+    static const float MIN_VOLUME = 0.01f;
+    static const float MAX_VOLUME = 0.3f;
+
     PhysicsBody* a = contact.getShapeA()->getBody();
     PhysicsBody* b = contact.getShapeB()->getBody();
     Vec2 delta_vel = a->getVelocity() - b->getVelocity();
     float d_vel_scalar = delta_vel.lengthSquared();
-    const float MIN_DVEL = 40000.0f;
-    const float MAX_DVEL = 1000000.0f;
-    const float MIN_VOLUME = 0.01f;
-    const float MAX_VOLUME = 0.3f;
     float volume = 0.0f;
     if (d_vel_scalar <= MIN_DVEL)
     {
@@ -462,7 +453,7 @@ bool GameScene::onContactSeparateVFX(PhysicsContact& contact)
 
     if (emitter && puck_body)
     {
-        float angle = 180 + CC_RADIANS_TO_DEGREES(puck_body->getVelocity().getAngle());
+        float angle = 180.0f + CC_RADIANS_TO_DEGREES(puck_body->getVelocity().getAngle());
         emitter->setAngle(angle);
         emitter->setPosition(contact.getContactData()->points[0]);
         this->getChildByTag(TAG_GAME_LAYER)->addChild(emitter, 100);
@@ -591,27 +582,27 @@ void GameScene::onGameEndMenuClose(Event* event)
     onNewGameStart();
 }
 
-void GameScene::rethrowPuck(cocos2d::Vec2& puck_rethrow_pos)
+void GameScene::rethrowPuck(const cocos2d::Vec2& puck_rethrow_pos)
 {
     m_logger->log("GameScene::rethrowPuck()");
 
     m_isPuckPlayable = false;
 
-    auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
+    auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent(m_puckBodyName));
 
     puck_body->setVelocity(Vec2::ZERO);
     puck_body->setAngularVelocity(0.0f);
     puck_body->setEnabled(false);
 
-    auto puck_restart_action = [](cocos2d::Vec2& puck_rethrow_pos) {
-        auto hide = cocos2d::Hide::create();
-        auto move_to_zero = cocos2d::MoveTo::create(0.0f, Vec2::ZERO);
-        auto delay = cocos2d::DelayTime::create(3.0f);
-        auto move_to_circle = cocos2d::MoveTo::create(0.0f, puck_rethrow_pos);
-        auto rotate_to_zero = cocos2d::RotateTo::create(0.0f, 0.0f);
-        auto show = cocos2d::Show::create();
+    auto puck_restart_action = [](const Vec2& puck_rethrow_pos) {
+        auto hide = Hide::create();
+        auto move_to_zero = MoveTo::create(0.0f, Vec2::ZERO);
+        auto delay = DelayTime::create(3.0f);
+        auto move_to_circle = MoveTo::create(0.0f, puck_rethrow_pos);
+        auto rotate_to_zero = RotateTo::create(0.0f, 0.0f);
+        auto show = Show::create();
 
-        auto seq = cocos2d::Sequence::create(hide, move_to_zero, delay, move_to_circle, rotate_to_zero, show, nullptr);
+        auto seq = Sequence::create(hide, move_to_zero, delay, move_to_circle, rotate_to_zero, show, nullptr);
         return seq;
     };
     m_puck->runAction(puck_restart_action(puck_rethrow_pos));
@@ -619,14 +610,14 @@ void GameScene::rethrowPuck(cocos2d::Vec2& puck_rethrow_pos)
     auto puck_clone = Sprite::create("puck.png");
     puck_clone->setPosition(Vec2(-1000, -1000));
     this->getChildByTag(TAG_GAME_LAYER)->addChild(puck_clone, 1);
-    auto puck_throw_down_effect_action = [](cocos2d::Vec2& puck_rethrow_pos) {
-        auto hide = cocos2d::Hide::create();
-        auto delay = cocos2d::DelayTime::create(2.0f);
-        auto move_to_circle = cocos2d::MoveTo::create(0.0f, puck_rethrow_pos);
-        auto scale_up = cocos2d::ScaleTo::create(0.0, 5);
-        auto show = cocos2d::Show::create();
-        auto scale_down = cocos2d::ScaleTo::create(1.0, 1);
-        auto remove = cocos2d::RemoveSelf::create();
+    auto puck_throw_down_effect_action = [](const Vec2& puck_rethrow_pos) {
+        auto hide = Hide::create();
+        auto delay = DelayTime::create(2.0f);
+        auto move_to_circle = MoveTo::create(0.0f, puck_rethrow_pos);
+        auto scale_up = ScaleTo::create(0.0, 5);
+        auto show = Show::create();
+        auto scale_down = ScaleTo::create(1.0, 1);
+        auto remove = RemoveSelf::create();
 
         auto seq = cocos2d::Sequence::create(hide, delay, move_to_circle, scale_up, show, scale_down, remove, nullptr);
         return seq;
@@ -650,32 +641,16 @@ void GameScene::onNewGameStart()
 
     startDelay(3.0f);
 
-    Vec2 puck_rethrow_pos = this->m_field->getCenter();
-    rethrowPuck(puck_rethrow_pos);
+    rethrowPuck(m_field->getCenter());
 
     onScoreChanged();
 
     Vec2 p1_pos = m_paddle1->getStartPosition();
-    m_logger->log("GameScene::onNewGameStart(): setting paddle1 position immideately to " + CCHelpers::Vec2Str(p1_pos));
     m_paddle1->setPositionImmideately(p1_pos);
 
     Vec2 p2_pos = m_paddle2->getStartPosition();
-    m_logger->log("GameScene::onNewGameStart(): setting paddle2 position immideately to " + CCHelpers::Vec2Str(p2_pos));
     m_paddle2->setPositionImmideately(p2_pos);
 
-}
-
-void GameScene::startDelay(float duration, const std::string& wait_node_name, int action_tag)
-{
-    m_logger->log("GameScene:: delay started");
-    CCHelpers::startDelay(this, duration, wait_node_name, action_tag);
-}
-
-bool GameScene::isDelayOver(const std::string& wait_node_name, int action_tag)
-{
-    bool result = CCHelpers::isDelayOver(this, wait_node_name, action_tag);
-    result ? m_logger->log("GameScene:: delay is over") : m_logger->log("GameScene:: delay is NOT over");
-    return result;
 }
 
 void GameScene::updateTimer(float dt)
@@ -768,7 +743,7 @@ void GameScene::update(float dt)
         m_paddle2->move(dt);
     }
 
-    auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent("puck_body"));
+    auto puck_body = static_cast<PhysicsBody*>(m_puck->getComponent(m_puckBodyName));
     
     m_goalHitBy = GoalHitBy::NONE;
 

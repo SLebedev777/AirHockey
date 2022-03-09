@@ -117,8 +117,6 @@ bool GameMenuLayer::init()
 
     this->addChild(layout, 1, GAME_MENU_LAYER_TAGS::LAYOUT_TAG);
 
-
-
     return true;
 }
 

@@ -9,6 +9,8 @@
 #include "FSMContext.h"
 #include "IFSMState.h"
 #include "DebugLogger.h"
+#include "CCHelpers.h"
+#include <functional>
 
 USING_NS_CC;
 
@@ -40,7 +42,7 @@ public:
     void onGameEndMenuOpen(Ref* sender);
     void onGameEndMenuClose(Event* event);
 
-    void rethrowPuck(cocos2d::Vec2& puck_throw_pos);
+    void rethrowPuck(const Vec2& puck_throw_pos);
     void onNewGameStart();
 
     void updateTimer(float dt);
@@ -53,10 +55,14 @@ public:
     static void resetTotalScore() { m_totalGames = 0; m_totalScore1 = 0; m_totalScore2 = 0; }
 
 private:
-    void startDelay(float duration, const std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345);
-    bool isDelayOver(const std::string& wait_node_name = std::string("WaitNode"), int action_tag = 12345);
+    std::function<void(float)> startDelay = [=](float duration) {
+        CCHelpers::startDelay(this, duration, "WaitNode", 12345);
+    };
+    std::function<bool()> isDelayOver = [=]() {
+        return CCHelpers::isDelayOver(this, "WaitNode", 12345);
+    };
 
-protected:
+private:
     enum class GoalHitBy
     {
         NONE = 0,
@@ -66,14 +72,15 @@ protected:
 
     airhockey::GameLevel m_currLevel;
 
-    airhockey::GameFieldPtr m_field;
+    airhockey::GameFieldPtr m_field = nullptr;
 
-    airhockey::PaddlePtr m_paddle1, m_paddle2;
-    cocos2d::Sprite* m_puck;
+    airhockey::PaddlePtr m_paddle1 = nullptr;
+    airhockey::PaddlePtr m_paddle2 = nullptr;
+    cocos2d::Sprite* m_puck = nullptr;
+    const char* m_puckBodyName = "puck_body";
  
     airhockey::IPlayerInputControllerPtr m_keyboardController = nullptr;
     airhockey::IPlayerInputControllerPtr m_mouseController = nullptr;
-    airhockey::IPlayerInputControllerPtr m_mouseController2 = nullptr;
     airhockey::IPlayerInputControllerPtr m_AIController = nullptr;
     airhockey::IPlayerInputControllerPtr m_touchController = nullptr;
 
