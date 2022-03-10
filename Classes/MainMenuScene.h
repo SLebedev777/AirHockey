@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
+#include <random>
 
 class MainMenuScene : public cocos2d::Scene
 {
@@ -27,6 +28,8 @@ private:
     cocos2d::Sprite* m_puck = nullptr;
     cocos2d::MotionStreak* m_streak = nullptr;
     cocos2d::ParticleSystemQuad* m_fxEmitter = nullptr;
+    std::mt19937 m_gen;
+    std::uniform_int_distribution<> m_distr;
 
 };
 

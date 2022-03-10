@@ -7,7 +7,7 @@
 #include "MainMenuSettingsLayer.h"
 #include "audio/include/AudioEngine.h"
 #include <cstdlib>
-
+#include <ctime>
 
 
 USING_NS_CC;
@@ -45,11 +45,6 @@ namespace
         return mirror;
     }
 
-    int genRandomInRange(int min, int max)
-    {
-        int output = min + (rand() * (int)(max - min) / RAND_MAX);
-        return output;
-    }
 }
 
 Scene* MainMenuScene::createScene()
@@ -107,26 +102,36 @@ bool MainMenuScene::init()
         Rect(Vec2(s.width + MARGIN, 0), vert),
         Rect(Vec2(0, -MARGIN - WIDTH), horiz)
     };
+
+    m_gen = std::mt19937(time(0));
+    m_distr = std::uniform_int_distribution<>(0, rects.size() - 1);
+
     schedule([this, s, streak_interval, rects = std::move(rects)](float) {
-        int start_rect_index = rand() % rects.size();
+        int start_rect_index = m_distr(m_gen);
         int end_rect_index = 0;
         while (start_rect_index == end_rect_index)
         {
-            end_rect_index = rand() % rects.size();
+            end_rect_index = m_distr(m_gen);
         }
         Rect start_rect = rects[start_rect_index];
         Rect end_rect = rects[end_rect_index];
 
-        float start_x = genRandomInRange(0, (int)start_rect.size.width) + start_rect.origin.x;
-        float start_y = genRandomInRange(0, (int)start_rect.size.height) + start_rect.origin.y;
-        float end_x = genRandomInRange(0, (int)end_rect.size.width) + end_rect.origin.x;
-        float end_y = genRandomInRange(0, (int)end_rect.size.height) + end_rect.origin.y;
+        std::uniform_int_distribution<> distr_start_x(0, (int)start_rect.size.width - 1);
+        std::uniform_int_distribution<> distr_start_y(0, (int)start_rect.size.height - 1);
+        std::uniform_int_distribution<> distr_end_x(0, (int)end_rect.size.width - 1);
+        std::uniform_int_distribution<> distr_end_y(0, (int)end_rect.size.height - 1);
+        std::uniform_int_distribution<> distr_scale(1, 8);
+
+        float start_x = distr_start_x(m_gen) + start_rect.origin.x;
+        float start_y = distr_start_y(m_gen) + start_rect.origin.y;
+        float end_x = distr_end_x(m_gen) + end_rect.origin.x;
+        float end_y = distr_end_y(m_gen) + end_rect.origin.y;
 
         auto seq = Sequence::create(
             DelayTime::create(streak_interval),
             Hide::create(),
             MoveTo::create(0, Vec2(start_x, start_y)),
-            ScaleTo::create(0.0f, 1.0f / float(genRandomInRange(1, 8))),
+            ScaleTo::create(0.0f, 1.0f / float(distr_scale(m_gen))),
             DelayTime::create(streak_interval),
             Show::create(),
             Spawn::createWithTwoActions(MoveTo::create(1.0f, Vec2(end_x, end_y)),  // TODO: parameterize motion interval
