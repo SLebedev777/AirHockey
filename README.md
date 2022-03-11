@@ -23,4 +23,5 @@ Download Win32 release: [msi](https://github.com/SLebedev777/AirHockey/raw/maste
 	- very rarely stucks when the puck stops in some corner (well-known bug for many air hockey games)
 - Chipmunk physics engine
 - Particle VFX and sounds use physics information (particles direction and sound volume depend on objects' collision)
+- Particle VFX and sounds can be switched on/off
 - Motion streak VFX for flying puck in main menu screen
